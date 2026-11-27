@@ -1,1522 +1,1015 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Halden · Open-Source HMI Sans Typeface &amp; Design Manual</title>
-<meta name="description" content="Halden v1.1 is an open-source HMI sans typeface in Text, Display, and OLED Dark grades (Regular 400, Medium 500, SemiBold 600) under SIL OFL 1.1.">
+<title>Halden</title>
+<meta name="description" content="Halden v1.1 — an open-source sans-serif for automotive HMI in Text, Display, and OLED Dark grades under SIL OFL 1.1.">
+<script>
+try{
+  const saved=localStorage.getItem('halden-theme');
+  const sys=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+  document.documentElement.dataset.theme=(saved&&saved!==sys)?saved:sys;
+}catch(e){}
+</script>
 <link rel="preload" href="webfonts/Halden-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="webfonts/Halden-Medium.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="webfonts/HaldenDisplay-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="webfonts/HaldenDisplay-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="webfonts/HaldenDisplay-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="webfonts/HaldenDark-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fonts.css">
 <style>
+/* PDS v1.6 — Single unified spine (840px), pure typography & whitespace, GPU-only zero-reflow motion. */
 :root {
-  --bg: #fafafa;
-  --surface: #ffffff;
-  --subtle: #f2f2f5;
-  --line: #e6e6eb;
-  --line-strong: #d4d4dc;
-  --ink: #111114;
-  --ink-2: #52525b;
-  --ink-3: #71717a;
-  --accent: #4b3286;
-  --accent-soft: rgba(75, 50, 134, 0.08);
-  --guide: rgba(75, 50, 134, 0.28);
-  --ok: #146c43;
-  --ok-bg: rgba(20, 108, 67, 0.08);
-  --no: #b42318;
-  --no-bg: rgba(180, 35, 24, 0.08);
-
-  --text-heading: clamp(1.75rem, 2.8vw, 2.25rem);
-  --text-body: 1rem;
-  --text-sm: 0.875rem;
-
-  --font-text: "Halden", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
-  --font-display: "Halden Display", "Halden", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-dark: "Halden Dark", "Halden", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
-
-  --spec-family: var(--font-display);
-  --spec-wt: 600;
-  --spec-calt: "calt" 1;
+  --bg: #fafaf9;
+  --ink: #141413;
+  --on-ink: #fafaf9;
+  --muted: #73726c;
+  --faint: #a3a29c;
+  --hair: rgba(20, 20, 19, .08);
+  --wash: #f1f1ef;
+  --dark-bg: #111110;
+  --dark-ink: #f2f2f0;
+  --font: "Halden", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  --display: "Halden Display", "Halden", -apple-system, BlinkMacSystemFont, sans-serif;
+  --dark: "Halden Dark", "Halden", -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --out: cubic-bezier(.22, 1, .36, 1);
+  --spring: cubic-bezier(.22, 1.12, .36, 1);
+  color-scheme: light;
 }
 
-html[data-theme="dark"] {
-  --bg: #07080a;
-  --surface: #0f1116;
-  --subtle: #161920;
-  --line: #222631;
-  --line-strong: #313746;
-  --ink: #f5f5f7;
-  --ink-2: #a1a5b0;
-  --ink-3: #838896;
-  --accent: #cabdf8;
-  --accent-soft: rgba(202, 189, 248, 0.12);
-  --guide: rgba(202, 189, 248, 0.30);
-  --ok: #5dd39e;
-  --ok-bg: rgba(93, 211, 158, 0.12);
-  --no: #ff8a80;
-  --no-bg: rgba(255, 138, 128, 0.12);
+:root[data-theme="dark"] {
+  --bg: #0e0f11;
+  --ink: #ededef;
+  --on-ink: #0e0f11;
+  --muted: #98989d;
+  --faint: #636368;
+  --hair: rgba(255, 255, 255, .09);
+  --wash: #17181b;
+  --dark-bg: #060607;
+  --dark-ink: #ededef;
+  --font: "Halden Dark", "Halden", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  color-scheme: dark;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--bg); }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 16px/26px var(--font);
+  letter-spacing: 0;
+  font-feature-settings: "calt" 1, "kern" 1;
+  font-kerning: normal;
+  -webkit-font-smoothing: antialiased;
+  padding: 88px 32px 120px;
+  transition: background-color 260ms var(--out), color 260ms var(--out);
+}
+
+/* Single unified architectural spine: every section shares the exact same left & right rails */
+.page {
+  max-width: 840px;
+  margin: 0 auto;
+}
+.measure {
+  max-width: 58ch;
+}
+.sec { margin-top: 88px; }
+.sec-tight { margin-top: 56px; }
+
+/* One-time subtle entrance */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.reveal {
+  animation: rise 520ms var(--out) both;
+  animation-delay: var(--d, 0ms);
+}
+
+/* Circular View Transition for D dark toggle (Dashline 3.7) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  animation: theme-circle 420ms var(--out);
+}
+@keyframes theme-circle {
+  from { clip-path: circle(0% at 50% 50%); }
+  to { clip-path: circle(100% at 50% 50%); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
 
-body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font-text);
-  font-size: var(--text-body);
-  font-feature-settings: "calt" 1;
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
-  transition: background-color 180ms cubic-bezier(0.22, 1, 0.36, 1), color 180ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-html[data-theme="dark"] body {
-  font-family: var(--font-dark);
-}
 a { color: inherit; text-decoration: none; }
-button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 3px; }
 
-/* Sticky Single-Line Header */
-header {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  background: color-mix(in srgb, var(--bg) 86%, transparent);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-bottom: 1px solid transparent;
-  transition: border-color 180ms ease, background-color 180ms ease;
+.ul {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--faint);
+  transition: opacity 150ms var(--out);
 }
-header.scrolled {
-  border-bottom-color: var(--line);
-}
-.nav {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 14px 24px;
+.ul:hover { opacity: .65; }
+
+/* Opening */
+.open-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 16px;
+  margin-bottom: 20px;
 }
-.brand {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  display: inline-flex;
+.brand-line {
+  display: flex;
   align-items: baseline;
-  gap: 8px;
-  white-space: nowrap;
-}
-.brand small {
-  font-family: var(--font-text);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  color: var(--ink-3);
-}
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-  font-size: var(--text-sm);
-  color: var(--ink-2);
-}
-.nav-links a {
-  transition: color 140ms ease;
-  white-space: nowrap;
-}
-.nav-links a:hover { color: var(--ink); }
-.nav-actions {
-  display: flex;
-  align-items: center;
   gap: 10px;
 }
-.theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px;
-  border-radius: 999px;
-  background: var(--subtle);
-  border: 1px solid var(--line);
-  font-size: var(--text-sm);
-}
-.theme-toggle button {
-  padding: 5px 12px;
-  border-radius: 999px;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--ink-2);
-  transition: background-color 150ms ease, color 150ms ease;
-}
-.theme-toggle button.active {
-  background: var(--surface);
+.head-title {
+  font: 500 18px/26px var(--font);
   color: var(--ink);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
-.cta-primary {
+.head-ver {
+  font: 400 13px/18px var(--font);
+  color: var(--muted);
+}
+.dl-btn {
   display: inline-flex;
   align-items: center;
-  padding: 8px 16px;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
   border-radius: 999px;
   background: var(--ink);
-  color: var(--bg);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  white-space: nowrap;
-  transition: opacity 150ms ease, transform 150ms ease;
+  color: var(--on-ink);
+  font: 500 13px/16px var(--font);
+  transition: opacity 160ms var(--out), transform 140ms var(--out);
 }
-.cta-primary:hover { opacity: 0.88; }
-@media (max-width: 860px) {
-  .nav-links { display: none; }
+.dl-btn:hover { opacity: .82; }
+.dl-btn:active { transform: scale(.97); }
+.dl-btn svg {
+  width: 13px;
+  height: 13px;
+  transition: transform 240ms var(--spring);
 }
-@media (max-width: 560px) {
-  .nav { padding: 12px 16px; gap: 10px; }
-  .brand small { display: none; }
-  .theme-toggle button { padding: 5px 9px; font-size: 0.75rem; white-space: nowrap; }
-  .cta-primary { padding: 7px 12px; font-size: 0.8125rem; }
-  main { padding: 0 16px 72px; }
-  .g-line span { display: none; }
-  .seg { max-width: 100%; overflow-x: auto; }
-  .seg button { padding: 5px 10px; font-size: 0.8125rem; white-space: nowrap; }
-  .reflow-stage { padding: 20px 16px; }
-  .cockpit-sim { padding: 20px 18px; }
-  .rule-pair { grid-template-columns: 1fr; }
-}
+.dl-btn:hover svg { transform: translateY(1.5px); }
 
-/* Layout Container */
-main {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 24px 96px;
+.lead {
+  font: 400 16px/26px var(--font);
+  color: var(--muted);
 }
-section {
-  padding: 72px 0;
-  border-top: 1px solid var(--line);
-  scroll-margin-top: 76px;
-}
-section:first-child {
-  border-top: none;
-  padding-top: 44px;
-}
-h1, h2 {
-  font-family: var(--font-display);
-  letter-spacing: -0.025em;
+.lead strong {
+  font-weight: 400;
   color: var(--ink);
 }
-h2 {
-  font-size: var(--text-heading);
-  font-weight: 600;
-  line-height: 1.15;
+
+/* Section headers */
+.kicker {
+  font: 400 13px/18px var(--font);
+  color: var(--muted);
   margin-bottom: 12px;
-}
-.sec-intro {
-  max-width: 64ch;
-  color: var(--ink-2);
-  font-size: var(--text-body);
-  margin-bottom: 36px;
-}
-
-/* ===== HERO SPECIMEN ===== */
-.hero-lead {
-  max-width: 54ch;
-  font-size: var(--text-body);
-  color: var(--ink-2);
-  margin-bottom: 28px;
-}
-.specimen-stage {
-  position: relative;
-  padding: 34px 0 42px;
-  overflow: hidden;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-.guides {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  transition: opacity 180ms ease;
-}
-.guides.off { opacity: 0; }
-.g-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  border-top: 1px dashed var(--guide);
   display: flex;
-  justify-content: flex-end;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
 }
-.g-line span {
-  font-size: 0.8125rem;
-  color: var(--accent);
-  background: var(--bg);
-  padding: 0 6px;
-  transform: translateY(-11px);
+.kicker-note {
+  color: var(--faint);
   font-variant-numeric: tabular-nums;
+  transition: color 180ms var(--out);
 }
-.hero-input {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: var(--ink);
-  font-family: var(--spec-family);
-  font-weight: var(--spec-wt);
-  font-size: clamp(56px, 11vw, 134px);
-  line-height: 1.04;
-  letter-spacing: -0.03em;
-  font-feature-settings: var(--spec-calt);
+.kicker-note.active { color: var(--ink); }
+.prose-muted {
+  font: 400 16px/26px var(--font);
+  color: var(--muted);
 }
 
-/* Connected Specimen Controls */
-.controls-bar {
-  margin-top: 22px;
+/* Live Specimen — ZERO layout shift on toggle (GPU clip-path bleed only!) */
+.spec-controls {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--hair);
+  font: 400 13px/18px var(--font);
+  color: var(--muted);
 }
 .ctrl-group {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
-}
-.seg {
-  display: inline-flex;
-  background: var(--subtle);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 3px;
-  gap: 2px;
-}
-.seg button {
-  padding: 6px 13px;
-  border-radius: 999px;
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--ink-2);
-  transition: background-color 150ms ease, color 150ms ease;
-}
-.seg button.active {
-  background: var(--surface);
-  color: var(--ink);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
-}
-.switch-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: var(--text-sm);
-  color: var(--ink-2);
-  cursor: pointer;
-  user-select: none;
-}
-.switch-label input {
-  accent-color: var(--accent);
-  width: 16px;
-  height: 16px;
-}
-.slider-wrap {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-size: var(--text-sm);
-  color: var(--ink-2);
-  font-variant-numeric: tabular-nums;
-}
-.slider-wrap input[type="range"] {
-  width: 112px;
-  accent-color: var(--accent);
-}
-
-/* ===== LAUNCH FILM ===== */
-.film-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 560px) minmax(0, 1fr);
-  gap: 44px;
-  align-items: center;
-}
-@media (max-width: 860px) {
-  .film-grid { grid-template-columns: 1fr; gap: 28px; }
-}
-.film-frame {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  background: #090a0d;
-}
-.film-frame video {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-}
-.film-notes h3 {
-  font-size: var(--text-body);
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-.film-notes p {
-  color: var(--ink-2);
-  margin-bottom: 20px;
-  max-width: 48ch;
-}
-.beat-list {
-  list-style: none;
-  border-top: 1px solid var(--line);
-}
-.beat-list li {
-  display: grid;
-  grid-template-columns: 78px 1fr;
-  gap: 12px;
-  padding: 11px 0;
-  border-bottom: 1px solid var(--line);
-  font-size: var(--text-sm);
-}
-.beat-list .ts {
-  color: var(--accent);
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
-.beat-list .desc { color: var(--ink-2); }
-
-/* ===== ANATOMY (REAL BEZIER BLUEPRINTS) ===== */
-.anatomy-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 28px;
-}
-@media (max-width: 780px) {
-  .anatomy-grid { grid-template-columns: 1fr; }
-}
-.anat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.anat-visual {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  height: 256px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-.anat-visual svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-.anat-item h3 {
-  font-size: var(--text-body);
-  font-weight: 600;
-}
-.anat-item p {
-  font-size: var(--text-body);
-  color: var(--ink-2);
-}
-.calt-demo-box {
-  flex-direction: column;
-  gap: 14px;
-  padding: 20px;
-}
-.calt-big {
-  font-family: var(--font-display);
-  font-size: clamp(46px, 6vw, 68px);
-  font-weight: 500;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  position: relative;
-  padding: 0 18px;
-}
-.calt-big::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 1px;
-  background: var(--guide);
-}
-.calt-sub-row {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  color: var(--ink-2);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ===== OPTICAL & ZERO-REFLOW OLED DARK ===== */
-.reflow-stage {
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 32px;
-  background: var(--surface);
-  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
-}
-.reflow-stage.oled-preview {
-  background: #06070a;
-  color: #f5f5f7;
-  border-color: #232734;
-}
-.reflow-top {
-  display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+}
+.tabs {
+  position: relative;
+  display: inline-flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 24px;
+  padding-bottom: 6px;
 }
-.reflow-stat {
-  font-size: var(--text-sm);
-  color: var(--ink-2);
-  font-variant-numeric: tabular-nums;
-}
-.reflow-stage.oled-preview .reflow-stat { color: #a1a5b0; }
-.reflow-cells {
-  display: flex;
-  border-top: 1px solid var(--line-strong);
-  border-bottom: 1px solid var(--line-strong);
-}
-.reflow-stage.oled-preview .reflow-cells { border-color: rgba(255,255,255,0.16); }
-.rf-cell {
-  display: flex;
+.tabs button {
+  position: relative;
+  display: inline-flex;
   flex-direction: column;
   align-items: center;
-  padding: 18px 0 14px;
-  border-left: 1px solid var(--line-strong);
-  min-width: 0;
+  color: var(--muted);
+  transition: color 180ms var(--out);
 }
-.rf-cell:last-child { border-right: 1px solid var(--line-strong); }
-.reflow-stage.oled-preview .rf-cell { border-color: rgba(255,255,255,0.16); }
-.rf-glyph {
-  font-family: var(--font-text);
-  font-size: clamp(44px, 9.5vw, 120px);
-  line-height: 1.04;
-  font-weight: 400;
-}
-.reflow-stage.oled-preview .rf-glyph {
-  font-family: var(--font-dark);
-}
-.rf-aw {
-  margin-top: 8px;
-  font-size: var(--text-sm);
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
+/* Reserve exact medium-weight width so switching active tab never shifts neighbors by 1px */
+.tabs button::after {
+  content: attr(data-label);
   font-weight: 500;
-}
-.reflow-stage.oled-preview .rf-aw { color: #cabdf8; }
-
-.grade-compare {
-  margin-top: 32px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-}
-@media (max-width: 820px) {
-  .grade-compare { grid-template-columns: 1fr; }
-}
-.grade-col {
-  padding-top: 18px;
-  border-top: 1px solid var(--line);
-}
-.grade-col h3 {
-  font-size: var(--text-body);
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-.grade-meta {
-  font-size: var(--text-sm);
-  color: var(--ink-3);
-  font-variant-numeric: tabular-nums;
-  margin-bottom: 14px;
-}
-.grade-sample {
-  font-size: 2rem;
-  line-height: 1.15;
-  margin-bottom: 10px;
-}
-.grade-col p {
-  font-size: var(--text-body);
-  color: var(--ink-2);
-}
-
-/* OLED Cockpit Simulator */
-.cockpit-sim {
-  margin-top: 32px;
-  background: #060709;
-  color: #f5f5f7;
-  border-radius: 20px;
-  padding: 28px 32px;
-  border: 1px solid #1e222d;
-  font-family: var(--font-dark);
-  font-feature-settings: "calt" 1;
-}
-.cockpit-bar {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.10);
-  margin-bottom: 24px;
-  font-size: var(--text-sm);
-  color: #9ba0ae;
-  font-variant-numeric: tabular-nums;
-}
-.cockpit-tabs {
-  display: inline-flex;
-  background: rgba(255,255,255,0.06);
-  border-radius: 999px;
-  padding: 3px;
-  gap: 2px;
-}
-.cockpit-tabs button {
-  padding: 5px 12px;
-  border-radius: 999px;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: #a1a5b0;
-}
-.cockpit-tabs button.active {
-  background: rgba(255,255,255,0.16);
-  color: #ffffff;
-}
-.cockpit-main {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 24px;
-  align-items: end;
-}
-@media (max-width: 640px) {
-  .cockpit-main { grid-template-columns: 1fr; }
-}
-.cp-kpi {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-}
-.cp-num {
-  font-family: var(--font-display);
-  font-size: clamp(56px, 8vw, 92px);
-  font-weight: 500;
-  line-height: 0.94;
-  letter-spacing: -0.03em;
-  font-variant-numeric: tabular-nums;
-}
-.cp-unit {
-  font-size: var(--text-body);
-  color: #9ba0ae;
-}
-.cp-route {
-  margin-top: 12px;
-  font-size: var(--text-body);
-  color: #d4d8e2;
-  font-variant-numeric: tabular-nums;
-}
-.cp-right {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-@media (max-width: 640px) {
-  .cp-right { text-align: left; }
-}
-.cp-right strong {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 500;
-  color: #cabdf8;
-}
-.cp-right span {
-  font-size: var(--text-sm);
-  color: #9ba0ae;
-}
-
-/* ===== DESIGN MANUAL TABLES & DO/DON'T ===== */
-.manual-block {
-  margin-bottom: 48px;
-}
-.manual-block:last-child { margin-bottom: 0; }
-.manual-block h3 {
-  font-size: var(--text-body);
-  font-weight: 600;
-  margin-bottom: 14px;
-}
-.table-scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-table.spec-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--text-sm);
-  font-variant-numeric: tabular-nums;
-}
-table.spec-table th {
-  text-align: left;
-  font-weight: 500;
-  color: var(--ink-3);
-  padding: 12px 14px 12px 0;
-  border-bottom: 1px solid var(--line-strong);
-  white-space: nowrap;
-}
-table.spec-table td {
-  padding: 14px 14px 14px 0;
-  border-bottom: 1px solid var(--line);
-  vertical-align: baseline;
-  color: var(--ink-2);
-}
-table.spec-table td:first-child {
-  color: var(--ink);
-  font-weight: 500;
-}
-
-.rules-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
-}
-@media (max-width: 780px) {
-  .rules-grid { grid-template-columns: 1fr; }
-}
-.rule-pair {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-.rule-box {
-  border-radius: 12px;
-  padding: 16px;
-  border: 1px solid var(--line);
-  background: var(--surface);
-}
-.rule-box.dark-box {
-  background: #08090c;
-  color: #f5f5f7;
-  border-color: #232734;
-}
-.rule-status {
-  font-size: var(--text-sm);
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-.rule-status.do { color: var(--ok); }
-.rule-status.dont { color: var(--no); }
-.rule-sample {
-  font-size: 1.25rem;
-  line-height: 1.3;
-  margin-bottom: 8px;
-}
-.rule-note {
-  font-size: var(--text-sm);
-  color: var(--ink-2);
-}
-.rule-box.dark-box .rule-note { color: #a1a5b0; }
-
-/* Copyable CSS Snippet */
-.code-wrap {
-  position: relative;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 14px;
+  height: 0;
+  visibility: hidden;
   overflow: hidden;
+  pointer-events: none;
+  user-select: none;
 }
-.code-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--line);
-  font-size: var(--text-sm);
-  color: var(--ink-2);
-}
-.copy-btn {
-  padding: 5px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--line-strong);
-  font-size: var(--text-sm);
+.tabs button:hover { color: var(--ink); }
+.tabs button.on {
+  color: var(--ink);
   font-weight: 500;
-  color: var(--ink);
-  transition: background-color 140ms ease, border-color 140ms ease;
 }
-.copy-btn:hover { background: var(--subtle); }
-pre.code-body {
-  padding: 18px 20px;
-  overflow-x: auto;
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  line-height: 1.6;
-  color: var(--ink);
-}
-
-/* ===== WATERFALL ===== */
-.wf-row {
-  display: grid;
-  grid-template-columns: 64px minmax(0, 1fr);
-  align-items: baseline;
-  gap: 18px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--line);
-}
-.wf-row:last-child { border-bottom: none; }
-.wf-sz {
-  font-size: var(--text-sm);
-  color: var(--ink-3);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ===== INTERACTIVE GLYPH EXPLORER ===== */
-.glyph-layout {
-  display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
-  gap: 32px;
-  align-items: start;
-}
-@media (max-width: 820px) {
-  .glyph-layout { grid-template-columns: 1fr; }
-}
-.glyph-inspector {
-  position: sticky;
-  top: 84px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 22px;
-}
-.gi-stage {
-  position: relative;
-  height: 196px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid var(--line);
-  margin-bottom: 16px;
-}
-.gi-line {
+.tab-line {
   position: absolute;
   left: 0;
-  right: 0;
-  border-top: 1px dashed var(--guide);
+  bottom: 0;
+  height: 1.5px;
+  background: var(--ink);
+  border-radius: 1px;
+  pointer-events: none;
+  will-change: transform, width;
+  transition: transform 260ms var(--out), width 260ms var(--out);
 }
-.gi-char {
-  position: relative;
-  z-index: 2;
-  font-family: var(--font-display);
-  font-size: 136px;
-  line-height: 1;
-  font-weight: 500;
-}
-.gi-meta {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.size-wrap {
+  display: inline-flex;
+  align-items: center;
   gap: 10px;
-  font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
 }
-.gi-meta span { color: var(--ink-3); display: block; }
-.gi-meta strong { font-weight: 500; color: var(--ink); }
+.size-wrap output {
+  min-width: 34px;
+  text-align: right;
+  color: var(--muted);
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 96px;
+  height: 1px;
+  background: var(--faint);
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink);
+  transition: transform 160ms var(--spring);
+}
+input[type="range"]:hover::-webkit-slider-thumb { transform: scale(1.35); }
+input[type="range"]::-moz-range-thumb {
+  width: 8px;
+  height: 8px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+}
 
-.glyph-group { margin-bottom: 24px; }
-.glyph-group:last-child { margin-bottom: 0; }
-.glyph-group h3 {
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--ink-3);
-  margin-bottom: 10px;
+/* Constant geometry: NEVER transitions padding/margin/height so nothing below ever stutters! */
+.spec-stage {
+  position: relative;
+  padding: 52px 0;
+  border-bottom: 1px solid var(--hair);
+  transition: color 240ms var(--out), border-color 240ms var(--out);
 }
-.glyph-cells {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-  border-top: 1px solid var(--line);
-  border-left: 1px solid var(--line);
+/* Pure GPU dark surface expanding outward symmetrically (-24px bleed) with zero layout impact */
+.spec-stage::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: -24px;
+  right: -24px;
+  border-radius: 8px;
+  background: var(--dark-bg);
+  clip-path: circle(0% at var(--rx, 18%) 0%);
+  will-change: clip-path;
+  transition: clip-path 440ms var(--out);
+  pointer-events: none;
+  z-index: 0;
 }
-.g-btn {
-  height: 52px;
-  border-right: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  font-family: var(--font-text);
-  font-size: 1.25rem;
+.spec-stage.oled {
+  color: var(--dark-ink);
+  border-bottom-color: transparent;
+}
+.spec-stage.oled::before {
+  clip-path: circle(145% at var(--rx, 18%) 0%);
+}
+.specimen-input {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 86px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: var(--ink);
-  transition: background-color 120ms ease, color 120ms ease;
-}
-.g-btn:hover, .g-btn.active {
-  background: var(--accent-soft);
-  color: var(--accent);
+  outline: none;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 48px;
+  line-height: 1.18;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  word-break: break-word;
+  caret-color: currentColor;
+  transition: color 220ms var(--out);
 }
 
-/* ===== PRODUCTION PRODUCTS ===== */
-.prod-grid {
+/* Interactive Day <-> OLED Night Scrub Curtain */
+.curtain {
+  position: relative;
+  margin-top: 28px;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: ew-resize;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+  --split: 50%;
+}
+.curtain-layer {
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.curtain-day {
+  background: var(--wash);
+  color: #141413;
+  font-family: "Halden", -apple-system, sans-serif;
+}
+:root[data-theme="dark"] .curtain-day {
+  background: #f3f3f1;
+  color: #141413;
+}
+.curtain-night {
+  position: absolute;
+  inset: 0;
+  background: var(--dark-bg);
+  color: var(--dark-ink);
+  font-family: "Halden Dark", "Halden", sans-serif;
+  clip-path: inset(0 0 0 var(--split));
+  will-change: clip-path;
+}
+.curtain-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  line-height: 18px;
+  opacity: .52;
+}
+.curtain-big {
+  font-size: clamp(22px, 3vw, 32px);
+  line-height: 1.22;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.curtain-sub {
+  font-size: 15px;
+  line-height: 22px;
+  opacity: .72;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.curtain-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--split);
+  width: 1px;
+  background: rgba(128, 128, 128, .42);
+  pointer-events: none;
+}
+.curtain-knob {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--ink);
+  box-shadow: 0 0 0 1px var(--hair), 0 2px 8px rgba(0, 0, 0, .12);
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
+  place-items: center;
+  font-size: 11px;
+  transition: transform 180ms var(--spring);
 }
-@media (max-width: 780px) {
-  .prod-grid { grid-template-columns: 1fr; }
+.curtain:hover .curtain-knob,
+.curtain.dragging .curtain-knob {
+  transform: translate(-50%, -50%) scale(1.12);
 }
-.prod-link {
-  display: block;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  transition: border-color 150ms ease;
+
+/* Form details — open 3-column typography on unified spine */
+.details {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
 }
-.prod-link:hover { border-top-color: var(--accent); }
-.prod-link strong {
-  display: block;
-  font-weight: 600;
+.detail-item {
+  cursor: pointer;
+  padding-top: 20px;
+  border-top: 1px solid var(--hair);
+}
+.detail-glyph {
+  font-family: var(--display);
+  font-size: 40px;
+  line-height: 1.15;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 14px;
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-height: 46px;
+}
+.detail-glyph .char {
+  display: inline-block;
+  will-change: transform;
+  transition: transform 280ms var(--spring);
+}
+.detail-item[data-demo="apertures"]:hover .char {
+  transform: translateY(-2px) scale(1.06);
+}
+.detail-item[data-demo="apertures"]:hover .char:nth-child(2) { transition-delay: 25ms; }
+.detail-item[data-demo="apertures"]:hover .char:nth-child(3) { transition-delay: 50ms; }
+.detail-item[data-demo="apertures"]:hover .char:nth-child(4) { transition-delay: 75ms; }
+
+.dot-lens {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-left: auto;
+  opacity: 0;
+  transform: scale(.55);
+  transition: opacity 220ms var(--out), transform 320ms var(--spring);
+  color: var(--ink);
+  align-self: center;
+}
+.detail-item[data-demo="dots"]:hover .dot-lens,
+.detail-item[data-demo="dots"].pinned .dot-lens {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.calt-sample.off {
+  font-feature-settings: "calt" 0, "kern" 1;
+}
+.detail-text {
+  font: 400 13px/20px var(--font);
+  color: var(--muted);
+}
+.detail-text strong {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-weight: 500;
+  color: var(--ink);
   margin-bottom: 4px;
 }
-.prod-link span {
-  font-size: var(--text-sm);
-  color: var(--ink-2);
+.detail-state {
+  font-weight: 400;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
 }
 
-footer {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 28px 24px 56px;
-  border-top: 1px solid var(--line);
+/* Scale — clean hairline rows on unified spine */
+.scale-list {
+  margin-top: 12px;
+}
+.scale-row {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  align-items: baseline;
+  gap: 24px;
+  padding: 20px 0;
+  border-top: 1px solid var(--hair);
+  transition: opacity 180ms var(--out);
+}
+.scale-list:hover .scale-row { opacity: .42; }
+.scale-list .scale-row:hover { opacity: 1; }
+.scale-meta {
+  font: 400 13px/18px var(--font);
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.scale-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Open character field with proximity wave + click to copy */
+.glyph-field {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--hair);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.glyph-row {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 14px;
-  font-size: var(--text-sm);
-  color: var(--ink-3);
+  gap: 4px 0;
+  margin-left: -6px;
 }
-footer a { color: var(--ink-2); }
-footer a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.glyph-btn {
+  width: 32px;
+  height: 36px;
+  display: inline-grid;
+  place-items: center;
+  font: 400 19px/1 var(--font);
+  color: var(--ink);
+  border-radius: 4px;
+  will-change: transform, opacity;
+  transition: transform 220ms var(--spring), opacity 160ms var(--out), background-color 140ms var(--out);
+}
+.glyph-btn:active { transform: scale(.94) !important; }
+
+/* Quiet CSS block on unified spine */
+.code-block {
+  margin-top: 16px;
+  padding: 20px 24px;
+  border-radius: 6px;
+  background: var(--wash);
+  position: relative;
+}
+.code-block pre {
+  font: 400 13px/22px var(--mono);
+  color: var(--ink);
+  overflow-x: auto;
+  padding-right: 52px;
+}
+.copy-link {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font: 400 13px/22px var(--font);
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--faint);
+  transition: color 140ms var(--out);
+}
+.copy-link:hover { color: var(--ink); }
+
+/* Footer aligned cleanly to left & right rails */
+footer {
+  margin-top: 88px;
+  padding-top: 24px;
+  border-top: 1px solid var(--hair);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  font: 400 13px/18px var(--font);
+  color: var(--muted);
+}
+.social {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.social a {
+  color: var(--muted);
+  transition: color 150ms var(--out);
+}
+.social a:hover,
+.social a:focus-visible {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 720px) {
+  body { padding: 48px 20px 80px; }
+  .sec { margin-top: 64px; }
+  .spec-stage { padding: 36px 0; }
+  .spec-stage::before { left: -12px; right: -12px; }
+  .specimen-input { font-size: 32px; min-height: 60px; }
+  .curtain-layer { padding: 28px 20px; }
+  .details { grid-template-columns: 1fr; gap: 24px; }
+  .scale-row { grid-template-columns: 56px 1fr; gap: 16px; }
+}
 </style>
 </head>
 <body>
-<header id="topHeader">
-  <div class="nav">
-    <a class="brand" href="#specimen">Halden <small>v1.1</small></a>
-    <nav class="nav-links" aria-label="Primary sections">
-      <a href="#specimen">Specimen</a>
-      <a href="#film">Film</a>
-      <a href="#anatomy">Anatomy</a>
-      <a href="#optical">Optical &amp; OLED</a>
-      <a href="#manual">Design Manual</a>
-      <a href="#glyphs">Glyphs</a>
-    </nav>
-    <div class="nav-actions">
-      <div class="theme-toggle" id="themeToggle" role="group" aria-label="Color theme">
-        <button type="button" class="active" data-theme="light">Light</button>
-        <button type="button" data-theme="dark">OLED Dark</button>
-      </div>
-      <a class="cta-primary" href="https://github.com/Paxton0209/halden/releases/tag/v1.1.0" target="_blank" rel="noopener noreferrer">Download v1.1</a>
-    </div>
-  </div>
-</header>
 
-<main>
-  <!-- HERO SPECIMEN -->
-  <section id="specimen">
-    <p class="hero-lead">An open-source HMI sans typeface engineered for 2-second cockpit legibility across Text, Display, and zero-reflow OLED Dark grades.</p>
-    <div class="specimen-stage">
-      <div class="guides" id="heroGuides">
-        <div class="g-line" style="top: 19%;"><span>Cap 719</span></div>
-        <div class="g-line" style="top: 34%;"><span>x-height 536</span></div>
-        <div class="g-line" style="top: 76%;"><span>Baseline 0</span></div>
-        <div class="g-line" style="top: 93%;"><span>Descender −193</span></div>
+<main class="page">
+  <header class="reveal" style="--d:0ms">
+    <div class="open-row">
+      <div class="brand-line">
+        <h1 class="head-title">Halden</h1>
+        <span class="head-ver">v1.1 · SIL OFL</span>
       </div>
-      <input id="heroInput" class="hero-input" type="text" value="Halden Sans" spellcheck="false" aria-label="Interactive Halden type tester">
+      <a class="dl-btn" href="https://github.com/Paxton0209/halden/archive/refs/heads/main.zip">
+        <span>Download</span>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 2.5v8.2M4.8 7.8 8 11l3.2-3.2M3 13.5h10"/>
+        </svg>
+      </a>
     </div>
-    <div class="controls-bar">
+
+    <p class="lead measure">
+      <strong>An open-source sans-serif for automotive HMI.</strong> Text, Display, and OLED Dark — tuned for legibility across clusters, center displays, and HUDs. Used in <a class="ul" href="https://www.drivescenestudio.com/" target="_blank" rel="noopener">DriveScene Studio</a>, <a class="ul" href="https://paxton0209.github.io/Dashline/" target="_blank" rel="noopener">Dashline</a>, and <a class="ul" href="https://paxton0209.github.io/dashnote/" target="_blank" rel="noopener">Dashnote</a>.
+    </p>
+  </header>
+
+  <!-- Live Specimen -->
+  <section class="sec-tight reveal" style="--d:60ms" aria-label="Type specimen">
+    <div class="spec-controls">
       <div class="ctrl-group">
-        <div class="seg" id="famSeg" role="group" aria-label="Optical grade">
-          <button type="button" data-fam="text">Text</button>
-          <button type="button" class="active" data-fam="display">Display</button>
-          <button type="button" data-fam="dark">OLED Dark</button>
+        <div class="tabs" role="group" aria-label="Optical grade" id="gradeTabs">
+          <button type="button" data-grade="text" data-label="Text">Text</button>
+          <button type="button" class="on" data-grade="display" data-label="Display">Display</button>
+          <button type="button" data-grade="dark" data-label="OLED Dark">OLED Dark</button>
+          <i class="tab-line" aria-hidden="true"></i>
         </div>
-        <div class="seg" id="wtSeg" role="group" aria-label="Font weight">
-          <button type="button" data-wt="400">Regular 400</button>
-          <button type="button" data-wt="500">Medium 500</button>
-          <button type="button" class="active" data-wt="600">SemiBold 600</button>
+        <div class="tabs" role="group" aria-label="Font weight" id="weightTabs">
+          <button type="button" class="on" data-wt="400" data-label="400">400</button>
+          <button type="button" data-wt="500" data-label="500">500</button>
+          <button type="button" data-wt="600" data-label="600">600</button>
+          <i class="tab-line" aria-hidden="true"></i>
         </div>
       </div>
-      <div class="ctrl-group">
-        <label class="slider-wrap">Size <input id="sizeRange" type="range" min="40" max="150" value="116"><span id="sizeVal">116px</span></label>
-        <label class="switch-label"><input type="checkbox" id="caltToggle" checked> calt</label>
-        <label class="switch-label"><input type="checkbox" id="guidesToggle" checked> Metrics</label>
+      <label class="size-wrap">
+        <input type="range" id="sizeRange" min="16" max="72" value="48" aria-label="Font size">
+        <output id="sizeOut" for="sizeRange">48px</output>
+      </label>
+    </div>
+
+    <div class="spec-stage" id="specStage">
+      <div class="specimen-input" id="specimen" contenteditable="true" spellcheck="false" aria-label="Editable Halden specimen">118 km/h · Turn right in 350 m</div>
+    </div>
+  </section>
+
+  <!-- Optical Grades — Interactive Day <-> OLED Night Scrub Curtain -->
+  <section class="sec reveal" style="--d:120ms">
+    <div class="kicker">
+      <span>Optical grades</span>
+      <span class="kicker-note">Drag to compare</span>
+    </div>
+    <p class="prose-muted measure">
+      Light text on dark OLED screens blooms optically. Halden Dark reduces stroke mass while keeping identical advance widths — glide across to verify zero layout shift.
+    </p>
+    <div class="curtain" id="curtain" role="slider" tabindex="0" aria-label="Compare Halden Text and Halden Dark" aria-valuemin="8" aria-valuemax="92" aria-valuenow="50">
+      <div class="curtain-layer curtain-day">
+        <div class="curtain-top"><span>Halden Text</span><span>Day</span></div>
+        <div class="curtain-big">128 km/h · 420 km · 21.5°C</div>
+        <div class="curtain-sub">Navigate to West Lake · Arrive 18:45 · 14 min remaining</div>
+      </div>
+      <div class="curtain-layer curtain-night" aria-hidden="true">
+        <div class="curtain-top"><span>Halden Dark</span><span>OLED Night</span></div>
+        <div class="curtain-big">128 km/h · 420 km · 21.5°C</div>
+        <div class="curtain-sub">Navigate to West Lake · Arrive 18:45 · 14 min remaining</div>
+      </div>
+      <div class="curtain-line">
+        <span class="curtain-knob" aria-hidden="true">↔</span>
       </div>
     </div>
   </section>
 
-  <!-- 20-SECOND LAUNCH FILM -->
-  <section id="film">
-    <h2>Launch film</h2>
-    <p class="sec-intro">Twenty seconds covering Halden's core construction, squircle micro-dots, restrained l-hook, zero-reflow OLED Dark grade, and contextual numeral alignment.</p>
-    <div class="film-grid">
-      <div class="film-frame">
-        <video controls playsinline preload="metadata" poster="media/Halden-v1.1-Poster.jpg">
-          <source src="media/Halden-v1.1-Launch-20s.mp4" type="video/mp4">
-        </video>
+  <!-- Form Details -->
+  <section class="sec reveal" style="--d:180ms">
+    <div class="kicker"><span>Form</span></div>
+    <p class="prose-muted measure">
+      Single-story lowercase a, open numeral counters, continuous-curvature superellipse dots, and tabular figures with contextually centered punctuation.
+    </p>
+    <div class="details">
+      <div class="detail-item" data-demo="apertures">
+        <div class="detail-glyph">
+          <span class="char">a</span><span class="char">3</span><span class="char">6</span><span class="char">9</span>
+        </div>
+        <p class="detail-text">
+          <strong><span>Open apertures</span></strong>
+          Distinct shapes at small cluster sizes and oblique viewing angles.
+        </p>
       </div>
-      <div class="film-notes">
-        <h3>Film structure (20s · 60 fps · 120 BPM)</h3>
-        <p>Every geometric overlay in the film is plotted directly from the compiled Halden v1.1 TrueType outlines and advance-width tables.</p>
-        <ul class="beat-list">
-          <li><span class="ts">00:00–02</span><span class="desc">Squircle dot reveal into Halden Display wordmark</span></li>
-          <li><span class="ts">00:02–06</span><span class="desc">Bezier outline of single-story a and 74.5% x-height</span></li>
-          <li><span class="ts">00:06–10</span><span class="desc">Squircle micro-dot relief and restrained l-hook disambiguation</span></li>
-          <li><span class="ts">00:10–14</span><span class="desc">Light Text to OLED Dark switch with 0 px layout shift</span></li>
-          <li><span class="ts">00:14–16</span><span class="desc">Live calt vertical optical centering on 08:45 and 2026-0417</span></li>
-          <li><span class="ts">00:16–20</span><span class="desc">OLED instrument telemetry, 3-weight staircase, and release card</span></li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- ANATOMY & MICRO-CRAFT -->
-  <section id="anatomy">
-    <h2>Anatomical precision</h2>
-    <p class="sec-intro">Every structural edit targets rapid visual recognition in automotive clusters, sidebars, and dense telemetry without adding decorative flair.</p>
-    <div class="anatomy-grid">
-      <article class="anat-item">
-        <div class="anat-visual">
-          <svg viewBox="0 0 540 256" aria-label="Halden single-story a outline with metric lines">
-            <line x1="24" y1="42" x2="516" y2="42" stroke="var(--line-strong)" stroke-width="1"/>
-            <text x="508" y="36" text-anchor="end" fill="var(--ink-3)" font-size="11" font-family="Halden">Cap 719</text>
-            <line x1="24" y1="84" x2="516" y2="84" stroke="var(--guide)" stroke-width="1" stroke-dasharray="4 4"/>
-            <text x="508" y="78" text-anchor="end" fill="var(--accent)" font-size="11" font-family="Halden">x-height 536 (74.5%)</text>
-            <line x1="24" y1="210" x2="516" y2="210" stroke="var(--line-strong)" stroke-width="1"/>
-            <text x="508" y="226" text-anchor="end" fill="var(--ink-3)" font-size="11" font-family="Halden">Baseline 0</text>
-            <g transform="translate(88, 210) scale(0.235, -0.235)">
-              <path d="M275 -11Q209 -11 158.0 23.0Q107 57 78.0 119.5Q49 182 49 267Q49 351 78.0 413.0Q107 475 158.5 509.0Q210 543 277 543Q326 543 357.5 526.5Q389 510 406.5 488.0Q424 466 434 448H440V536H523V0H441V85H434Q424 67 405.5 44.5Q387 22 355.5 5.5Q324 -11 275 -11ZM289 63Q338 63 372.5 89.0Q407 115 424.5 161.0Q442 207 442 268Q442 328 424.5 373.0Q407 418 372.5 443.5Q338 469 289 469Q238 469 203.5 442.5Q169 416 151.0 370.5Q133 325 133 268Q133 210 151.0 163.5Q169 117 203.5 90.0Q238 63 289 63Z" fill="var(--accent-soft)" stroke="var(--ink)" stroke-width="2.2" vector-effect="non-scaling-stroke"/>
-            </g>
-            <text x="348" y="182" text-anchor="middle" font-family="Halden Display" font-size="78" font-weight="500" fill="var(--ink)">3 4 6 9</text>
+      <div class="detail-item" data-demo="dots" id="dotDemo" tabindex="0" role="button" aria-label="Magnify superellipse dot">
+        <div class="detail-glyph">
+          <span>i j . :</span>
+          <svg class="dot-lens" viewBox="0 0 40 40" aria-hidden="true">
+            <path fill="currentColor" d="M20 4C30.8 4 36 9.2 36 20S30.8 36 20 36 4 30.8 4 20 9.2 4 20 4Z"/>
           </svg>
         </div>
-        <h3>Single-story a and open apertures</h3>
-        <p>Single-story a (cv11) and open-counter 3, 4, 6, and 9 (ss01) are baked directly into the default glyph slots, keeping small figures legible at a glance with no CSS feature flags required.</p>
-      </article>
-
-      <article class="anat-item">
-        <div class="anat-visual">
-          <svg viewBox="0 0 540 256" aria-label="Halden continuous curvature squircle dot geometry">
-            <defs>
-              <pattern id="sqHatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                <line x1="0" y1="0" x2="0" y2="8" stroke="var(--accent)" stroke-width="1.6" opacity="0.65"/>
-              </pattern>
-              <mask id="sqMask">
-                <rect x="122" y="54" width="148" height="148" fill="white"/>
-                <g transform="translate(25.80, 198.27) scale(1.2333, -1.2437)">
-                  <path d="M121 116H155Q175 116 186.5 104.5Q198 93 198 73V40Q198 20 186.5 8.5Q175 -3 155 -3H121Q101 -3 89.5 8.5Q78 20 78 40V73Q78 93 89.5 104.5Q101 116 121 116Z" fill="black"/>
-                </g>
-              </mask>
-            </defs>
-            <rect x="122" y="54" width="148" height="148" fill="url(#sqHatch)" mask="url(#sqMask)"/>
-            <rect x="122" y="54" width="148" height="148" fill="none" stroke="var(--guide)" stroke-width="1.5" stroke-dasharray="5 4"/>
-            <g transform="translate(25.80, 198.27) scale(1.2333, -1.2437)">
-              <path d="M121 116H155Q175 116 186.5 104.5Q198 93 198 73V40Q198 20 186.5 8.5Q175 -3 155 -3H121Q101 -3 89.5 8.5Q78 20 78 40V73Q78 93 89.5 104.5Q101 116 121 116Z" fill="var(--ink)"/>
-            </g>
-            <circle cx="217" cy="107" r="53" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="4 4"/>
-            <text x="314" y="108" fill="var(--ink)" font-family="Halden Display" font-size="22" font-weight="600">r = 36% · κ = 0.62</text>
-            <text x="314" y="138" fill="var(--ink-2)" font-family="Halden" font-size="14">120 × 119 units</text>
-            <text x="314" y="164" fill="var(--ink-3)" font-family="Halden" font-size="14">period · colon · i · j · ! · ?</text>
-          </svg>
-        </div>
-        <h3>Continuous-curvature squircle micro-dots</h3>
-        <p>Every dot contour uses a continuous superellipse profile rather than a rigid 90-degree square or playful circle, unifying punctuation with modern rounded HMI hardware and icons.</p>
-      </article>
-
-      <article class="anat-item">
-        <div class="anat-visual">
-          <svg viewBox="0 0 540 256" aria-label="Disambiguation of I, l, and 1">
-            <line x1="36" y1="68" x2="504" y2="68" stroke="var(--line)" stroke-width="1"/>
-            <line x1="36" y1="186" x2="504" y2="186" stroke="var(--line)" stroke-width="1"/>
-            <text x="128" y="186" text-anchor="middle" font-family="Halden Display" font-size="148" font-weight="500" fill="var(--ink-3)">I</text>
-            <text x="270" y="186" text-anchor="middle" font-family="Halden Display" font-size="148" font-weight="500" fill="var(--ink)">l</text>
-            <text x="412" y="186" text-anchor="middle" font-family="Halden Display" font-size="148" font-weight="500" fill="var(--ink-3)">1</text>
-            <rect x="258" y="162" width="42" height="30" rx="6" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
-            <text x="270" y="222" text-anchor="middle" fill="var(--accent)" font-size="13" font-family="Halden" font-weight="500">Restrained hook: 0.88× reach, 0.92× bend</text>
-          </svg>
-        </div>
-        <h3>Restrained l-hook disambiguation</h3>
-        <p>Lowercase l carries a tightened bottom hook pulled back by 12% in reach and 8% in bend height, separating cleanly from uppercase I and numeral 1 without disrupting dense words like Dashline or all.</p>
-      </article>
-
-      <article class="anat-item">
-        <div class="anat-visual calt-demo-box">
-          <div class="calt-big" id="anatCaltBig" style="font-feature-settings:'calt' 1;">08:45</div>
-          <div class="calt-sub-row" id="anatCaltSub" style="font-feature-settings:'calt' 1;">2026-0417 · 3840×2160</div>
-          <div class="seg" id="anatCaltSeg" role="group" aria-label="Toggle calt demonstration">
-            <button type="button" data-calt="0">calt OFF</button>
-            <button type="button" class="active" data-calt="1">calt ON</button>
-          </div>
-        </div>
-        <h3>Contextual optical centering for telemetry</h3>
-        <p>GPOS calt rules lift colons, hyphens, en-dashes, and multiply signs into the optical center whenever flanked by digits, keeping clocks, ranges, and resolutions balanced automatically.</p>
-      </article>
-    </div>
-  </section>
-
-  <!-- OPTICAL SIZES & ZERO-REFLOW OLED DARK -->
-  <section id="optical">
-    <h2>Optical sizes and zero-reflow OLED Dark</h2>
-    <p class="sec-intro">Bright white glyphs bloom optically on dark OLED dashboards. Halden ships a dedicated Dark grade thinned by 5% with advance widths locked unit-for-unit to Light Text so theme transitions never shift a single pixel.</p>
-
-    <div class="reflow-stage" id="reflowStage">
-      <div class="reflow-top">
-        <div class="seg" id="reflowSeg" role="group" aria-label="Switch zero-reflow Light and OLED Dark preview">
-          <button type="button" class="active" data-mode="light">Light Surface · Halden Text (81.0u)</button>
-          <button type="button" data-mode="dark">OLED Dark · Halden Dark (76.5u, −5%)</button>
-        </div>
-        <div class="reflow-stat" id="reflowStat">Advance width delta: 0 units · Layout shift: 0.0 px</div>
+        <p class="detail-text">
+          <strong><span>Superellipse dots</span><span class="detail-state">Hover</span></strong>
+          Squircle terminals echoing cockpit icon geometry without feeling soft.
+        </p>
       </div>
-      <div class="reflow-cells">
-        <div class="rf-cell" style="width:21.99%"><span class="rf-glyph">H</span><span class="rf-aw">742</span></div>
-        <div class="rf-cell" style="width:17.84%"><span class="rf-glyph">a</span><span class="rf-aw">602</span></div>
-        <div class="rf-cell" style="width:7.71%"><span class="rf-glyph">l</span><span class="rf-aw">260</span></div>
-        <div class="rf-cell" style="width:17.96%"><span class="rf-glyph">d</span><span class="rf-aw">606</span></div>
-        <div class="rf-cell" style="width:17.07%"><span class="rf-glyph">e</span><span class="rf-aw">576</span></div>
-        <div class="rf-cell" style="width:17.43%"><span class="rf-glyph">n</span><span class="rf-aw">588</span></div>
-      </div>
-    </div>
-
-    <div class="grade-compare">
-      <div class="grade-col">
-        <h3>Halden (Text)</h3>
-        <div class="grade-meta">opsz 16 · x-height 536 (74.5%) · 12–20px UI</div>
-        <div class="grade-sample" style="font-family:var(--font-text);font-weight:500;">Calm sidebar density</div>
-        <p>Generous counters and neutral 0em sidebearings tuned for light-mode prose, controls, and 248px inspector panels.</p>
-      </div>
-      <div class="grade-col">
-        <h3>Halden Display</h3>
-        <div class="grade-meta">opsz 28 · x-height 516 (71.8%) · 24px+ headlines</div>
-        <div class="grade-sample" style="font-family:var(--font-display);font-weight:600;letter-spacing:-0.02em;">Quiet precision 82</div>
-        <p>Tighter horizontal rhythm and refined x-height proportion engineered for headlines, hero lockups, and large speedometers.</p>
-      </div>
-      <div class="grade-col">
-        <h3>Halden Dark</h3>
-        <div class="grade-meta">−5% stem grade · 0u width delta · OLED &amp; dark UI</div>
-        <div class="grade-sample" style="font-family:var(--font-dark);font-weight:500;">Anti-halation clarity</div>
-        <p>Compensates for light-on-dark pixel irradiation without altering line wraps, button widths, or column alignment.</p>
-      </div>
-    </div>
-
-    <div class="cockpit-sim">
-      <div class="cockpit-bar">
-        <span id="cpStatus">12:54 · D · SPORT MODE · 23°C</span>
-        <div class="cockpit-tabs" id="cpTabs" role="group" aria-label="Cockpit telemetry state">
-          <button type="button" class="active" data-state="cruise">City 82</button>
-          <button type="button" data-state="highway">Highway 118</button>
-          <button type="button" data-state="charge">Charging 94%</button>
+      <div class="detail-item" data-demo="calt" id="caltDemo" tabindex="0" role="button" aria-label="Toggle contextual colon alignment">
+        <div class="detail-glyph">
+          <span class="calt-sample" id="caltSample">12:45</span>
         </div>
-      </div>
-      <div class="cockpit-main">
-        <div>
-          <div class="cp-kpi">
-            <span class="cp-num" id="cpNum">82</span>
-            <span class="cp-unit" id="cpUnit">KPH</span>
-          </div>
-          <div class="cp-route" id="cpRoute">Turn left in 500 m · ETA 16:42 · 418 km remaining</div>
-        </div>
-        <div class="cp-right">
-          <strong id="cpRightVal">500 m</strong>
-          <span id="cpRightSub">Next maneuver · calt ON</span>
-        </div>
+        <p class="detail-text">
+          <strong><span>Tabular &amp; calt</span><span class="detail-state" id="caltState">calt on</span></strong>
+          Fixed-width digits and optically lifted colons — click to compare.
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- DESIGN MANUAL & USAGE SPECIFICATION -->
-  <section id="manual">
-    <h2>Design manual and specification</h2>
-    <p class="sec-intro">Practical rules for deploying Halden across web apps, design tools, and automotive HMI surfaces.</p>
-
-    <div class="manual-block">
-      <h3>Recommended type scale and family pairing</h3>
-      <div class="table-scroll">
-        <table class="spec-table">
-          <thead>
-            <tr>
-              <th>Role</th>
-              <th>Family</th>
-              <th>Size</th>
-              <th>Weight</th>
-              <th>Line-height</th>
-              <th>Tracking</th>
-              <th>Live specimen</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Cockpit KPI / Hero</td>
-              <td>Halden Display</td>
-              <td>48–96px</td>
-              <td>500–600</td>
-              <td>1.00–1.05</td>
-              <td>−0.03em</td>
-              <td style="font-family:var(--font-display);font-size:1.5rem;font-weight:600;letter-spacing:-0.03em;color:var(--ink);">82 KPH · 08:45</td>
-            </tr>
-            <tr>
-              <td>Section heading</td>
-              <td>Halden Display</td>
-              <td>24–36px</td>
-              <td>600</td>
-              <td>1.15–1.20</td>
-              <td>−0.02em</td>
-              <td style="font-family:var(--font-display);font-size:1.25rem;font-weight:600;letter-spacing:-0.02em;color:var(--ink);">Optical precision</td>
-            </tr>
-            <tr>
-              <td>UI control / Label</td>
-              <td>Halden / Dark</td>
-              <td>13–15px</td>
-              <td>500</td>
-              <td>1.35–1.40</td>
-              <td>0em</td>
-              <td style="font-weight:500;color:var(--ink);">Lane assist · 12:54</td>
-            </tr>
-            <tr>
-              <td>Body prose</td>
-              <td>Halden / Dark</td>
-              <td>14–16px</td>
-              <td>400</td>
-              <td>1.50–1.60</td>
-              <td>0em</td>
-              <td style="font-weight:400;color:var(--ink);">Readable paragraphs at rest.</td>
-            </tr>
-            <tr>
-              <td>Telemetry caption</td>
-              <td>Halden / Dark</td>
-              <td>11–12px</td>
-              <td>400–500</td>
-              <td>1.40</td>
-              <td>0em</td>
-              <td style="font-size:0.75rem;color:var(--ink-2);">3840×2160 · FOV 42.5° · 2026-0417</td>
-            </tr>
-          </tbody>
-        </table>
+  <!-- Scale -->
+  <section class="sec reveal" style="--d:240ms">
+    <div class="kicker"><span>Scale</span></div>
+    <div class="scale-list">
+      <div class="scale-row">
+        <span class="scale-meta">48 · 500</span>
+        <span class="scale-text" style="font-family:var(--display);font-size:48px;line-height:1.15;font-weight:500">118 km/h · Highway assist</span>
       </div>
-    </div>
-
-    <div class="manual-block">
-      <h3>Engineering metrics</h3>
-      <div class="table-scroll">
-        <table class="spec-table">
-          <thead>
-            <tr>
-              <th>Property</th>
-              <th>Halden (Text)</th>
-              <th>Halden Display</th>
-              <th>Halden Dark (OLED)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Units per em (UPM)</td><td>1000</td><td>1000</td><td>1000</td></tr>
-            <tr><td>Cap height / x-height</td><td>719 / 536 (74.5%)</td><td>719 / 516 (71.8%)</td><td>719 / 536 (74.5%)</td></tr>
-            <tr><td>Regular 400 n-stem</td><td>81.0 u</td><td>81.0 u</td><td>76.5 u (−5.6%)</td></tr>
-            <tr><td>Medium 500 n-stem</td><td>103.5 u</td><td>103.5 u</td><td>98.5 u (−4.8%)</td></tr>
-            <tr><td>SemiBold 600 n-stem</td><td>122.5 u</td><td>122.5 u</td><td>116.5 u (−4.9%)</td></tr>
-            <tr><td>Stroke contrast (o thin/side)</td><td>0.907</td><td>0.907</td><td>0.907</td></tr>
-            <tr><td>Advance width sync</td><td>Baseline master</td><td>Tighter display fit</td><td>100% locked to Text (0u delta)</td></tr>
-            <tr><td>Glyph coverage &amp; license</td><td>2,933 glyphs · SIL OFL 1.1</td><td>2,933 glyphs · SIL OFL 1.1</td><td>2,933 glyphs · SIL OFL 1.1</td></tr>
-          </tbody>
-        </table>
+      <div class="scale-row">
+        <span class="scale-meta">32 · 500</span>
+        <span class="scale-text" style="font-family:var(--display);font-size:32px;line-height:1.25;font-weight:500">Exit 14B in 350 m</span>
       </div>
-    </div>
-
-    <div class="manual-block">
-      <h3>Usage rules (Do and Don't)</h3>
-      <div class="rules-grid">
-        <div class="rule-pair">
-          <div class="rule-box dark-box">
-            <div class="rule-status do">Do</div>
-            <div class="rule-sample" style="font-family:var(--font-dark);font-weight:500;">Halden Dark 12:54</div>
-            <div class="rule-note">Switch to Halden Dark on dark UI and OLED surfaces to cancel light bloom.</div>
-          </div>
-          <div class="rule-box dark-box">
-            <div class="rule-status dont">Don't</div>
-            <div class="rule-sample" style="font-family:var(--font-text);font-weight:600;">Heavy Text 12:54</div>
-            <div class="rule-note">Avoid bold Light Text weights on pure black; strokes visually thicken.</div>
-          </div>
-        </div>
-
-        <div class="rule-pair">
-          <div class="rule-box">
-            <div class="rule-status do">Do</div>
-            <div class="rule-sample" style="font-feature-settings:'calt' 1;font-variant-numeric:tabular-nums;">08:45 · 3840×2160</div>
-            <div class="rule-note">Keep calt enabled and use tabular-nums for live clocks and speed readouts.</div>
-          </div>
-          <div class="rule-box">
-            <div class="rule-status dont">Don't</div>
-            <div class="rule-sample" style="font-feature-settings:'calt' 0;">08:45 · 3840×2160</div>
-            <div class="rule-note">Disabling calt leaves colons sitting low against full-height lining numerals.</div>
-          </div>
-        </div>
-
-        <div class="rule-pair">
-          <div class="rule-box">
-            <div class="rule-status do">Do</div>
-            <div class="rule-sample" style="font-size:1rem;letter-spacing:0em;">Inspector controls</div>
-            <div class="rule-note">Keep tracking at 0em for 12–18px UI copy; sidebearings are pre-fitted.</div>
-          </div>
-          <div class="rule-box">
-            <div class="rule-status dont">Don't</div>
-            <div class="rule-sample" style="font-size:1rem;letter-spacing:-0.05em;">Inspector controls</div>
-            <div class="rule-note">Avoid heavy negative tracking on small text; counters crowd quickly.</div>
-          </div>
-        </div>
-
-        <div class="rule-pair">
-          <div class="rule-box">
-            <div class="rule-status do">Do</div>
-            <div class="rule-sample" style="font-family:var(--font-display);font-weight:600;letter-spacing:-0.025em;">Halden 82</div>
-            <div class="rule-note">Use Halden Display at 24px and above for sharper rhythm and tension.</div>
-          </div>
-          <div class="rule-box">
-            <div class="rule-status dont">Don't</div>
-            <div class="rule-sample" style="font-family:var(--font-display);font-size:0.8125rem;letter-spacing:-0.03em;">Small dense caption text</div>
-            <div class="rule-note">Avoid Display below 20px where Text's taller x-height reads faster.</div>
-          </div>
-        </div>
+      <div class="scale-row">
+        <span class="scale-meta">24 · 500</span>
+        <span class="scale-text" style="font-family:var(--display);font-size:24px;line-height:1.33;font-weight:500">Battery 82% · 412 km remaining</span>
       </div>
-    </div>
-
-    <div class="manual-block">
-      <h3>CSS integration</h3>
-      <div class="code-wrap">
-        <div class="code-head">
-          <span>Self-hosted WOFF2 with automatic OLED Dark grade</span>
-          <button type="button" class="copy-btn" id="copyCssBtn">Copy CSS</button>
-        </div>
-        <pre class="code-body" id="cssSnippet">:root {
-  --font-sans: "Halden", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-display: "Halden Display", "Halden", sans-serif;
-}
-:root[data-theme="dark"] {
-  --font-sans: "Halden Dark", "Halden", -apple-system, sans-serif;
-}
-body {
-  font-family: var(--font-sans);
-  font-feature-settings: "calt" 1;
-}
-.telemetry-value {
-  font-family: var(--font-display);
-  font-variant-numeric: tabular-nums;
-}</pre>
+      <div class="scale-row">
+        <span class="scale-meta">16 · 400</span>
+        <span class="scale-text" style="font-size:16px;line-height:26px;font-weight:400">Clear hierarchy at arm's length, tuned for cluster, center display, and HUD.</span>
+      </div>
+      <div class="scale-row">
+        <span class="scale-meta">13 · 400</span>
+        <span class="scale-text" style="font-size:13px;line-height:18px;font-weight:400;color:var(--muted)">Regular 400 · Medium 500 · SemiBold 600 · SIL Open Font License 1.1</span>
       </div>
     </div>
   </section>
 
-  <!-- SCALE WATERFALL -->
-  <section id="waterfall">
-    <h2>Scale waterfall</h2>
-    <p class="sec-intro">Evaluated from 56px Display down to 12px micro-telemetry at 0em text tracking.</p>
-    <div>
-      <div class="wf-row"><span class="wf-sz">56px</span><span style="font-family:var(--font-display);font-size:clamp(32px,5vw,56px);font-weight:600;line-height:1.08;letter-spacing:-0.025em;">Quiet precision in motion</span></div>
-      <div class="wf-row"><span class="wf-sz">32px</span><span style="font-family:var(--font-display);font-size:clamp(24px,3.2vw,32px);font-weight:500;line-height:1.18;letter-spacing:-0.015em;">Built for automotive HMI and spatial design tools</span></div>
-      <div class="wf-row"><span class="wf-sz">20px</span><span style="font-size:20px;font-weight:500;line-height:1.38;">DriveScene Studio, Dashline, Dashnote, and Halden · 08:45 to 17:30</span></div>
-      <div class="wf-row"><span class="wf-sz">15px</span><span style="font-size:15px;line-height:1.55;color:var(--ink-2);">A text face is judged by the paragraph and the sidebar, not the isolated glyph. When a driver stops noticing the typography, the geometry is finally working.</span></div>
-      <div class="wf-row"><span class="wf-sz">12px</span><span style="font-size:12px;line-height:1.5;color:var(--ink-3);font-variant-numeric:tabular-nums;">3840×2160 · Camera FOV 42.5° · Lane width 3.75 m · 2026-0417 · I l 1 · O 0</span></div>
+  <!-- Characters -->
+  <section class="sec reveal" style="--d:300ms">
+    <div class="kicker">
+      <span>Characters</span>
+      <span class="kicker-note" id="glyphReadout">Click to copy</span>
     </div>
+    <div class="glyph-field" id="glyphField"></div>
   </section>
 
-  <!-- INTERACTIVE GLYPH EXPLORER -->
-  <section id="glyphs">
-    <h2>Character set</h2>
-    <p class="sec-intro">Select any character to inspect its Unicode codepoint and exact Halden Regular 400 advance width (1000 UPM).</p>
-    <div class="glyph-layout">
-      <div class="glyph-inspector" aria-live="polite">
-        <div class="gi-stage">
-          <div class="gi-line" style="top: 20%;"></div>
-          <div class="gi-line" style="top: 38%;"></div>
-          <div class="gi-line" style="top: 79%;"></div>
-          <div class="gi-char" id="giChar">a</div>
-        </div>
-        <div class="gi-meta">
-          <div><span>Unicode</span><strong id="giUni">U+0061</strong></div>
-          <div><span>Advance width</span><strong id="giAw">602 u</strong></div>
-          <div><span>Text / Dark Δ</span><strong>0 u</strong></div>
-          <div><span>UPM</span><strong>1000</strong></div>
-        </div>
-      </div>
-      <div id="glyphMatrix"></div>
-    </div>
-  </section>
+  <!-- Use & Footer -->
+  <section class="sec reveal" style="--d:360ms">
+    <div class="kicker"><span>Use</span></div>
+    <div class="code-block">
+      <pre id="cssCode">&lt;link rel="stylesheet" href="https://paxton0209.github.io/halden/fonts.css"&gt;
 
-  <!-- IN PRODUCTION -->
-  <section id="production">
-    <h2>Shipping in production</h2>
-    <p class="sec-intro">Halden v1.1 powers three live automotive HMI tools with full Text, Display, and OLED Dark integration.</p>
-    <div class="prod-grid">
-      <a class="prod-link" href="https://paxton0209.github.io/DriveScene-Studio/" target="_blank" rel="noopener noreferrer">
-        <strong>DriveScene Studio</strong>
-        <span>3D road scene workbench using Halden Text, Display, and OLED Dark across 248px inspectors.</span>
-      </a>
-      <a class="prod-link" href="https://paxton0209.github.io/Dashline/" target="_blank" rel="noopener noreferrer">
-        <strong>Dashline</strong>
-        <span>Rule-based cockpit icon system pairing Halden UI typography with 48px geometric vectors.</span>
-      </a>
-      <a class="prod-link" href="https://paxton0209.github.io/dashnote/" target="_blank" rel="noopener noreferrer">
-        <strong>Dashnote</strong>
-        <span>Before/After cockpit UI comparison cards with live light/dark Halden telemetry.</span>
-      </a>
+:root { font-family: "Halden", -apple-system, sans-serif; font-feature-settings: "calt" 1; }
+:root[data-theme="dark"] { font-family: "Halden Dark", "Halden", sans-serif; }</pre>
+      <button type="button" class="copy-link" id="copyBtn">Copy</button>
     </div>
+
+    <footer>
+      <span>Halden v1.1 · SIL OFL · Press D for Dark</span>
+      <nav class="social" aria-label="Links">
+        <a href="https://github.com/Paxton0209/halden" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://x.com/Parker_EV_UX" target="_blank" rel="noopener">X</a>
+        <a href="https://www.linkedin.com/in/paxton-yao-8080443a2/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://www.youtube.com/@PeixinYao-0209" target="_blank" rel="noopener">YouTube</a>
+      </nav>
+    </footer>
   </section>
 </main>
 
-<footer>
-  <span>Halden v1.1 · Designed by <a href="https://peixinyao.com/" target="_blank" rel="noopener noreferrer">Paxton Yao</a></span>
-  <span><a href="OFL.txt">SIL OFL 1.1</a> · <a href="FONTLOG.txt">FONTLOG</a> · <a href="fonts.css">fonts.css</a> · <a href="https://github.com/Paxton0209/halden" target="_blank" rel="noopener noreferrer">GitHub</a></span>
-</footer>
-
 <script>
-const root = document.documentElement;
-const header = document.getElementById("topHeader");
-addEventListener("scroll", () => header.classList.toggle("scrolled", scrollY > 8), { passive: true });
+const GLYPH_ROWS = [[{"ch": "A", "code": "U+0041", "w": 668}, {"ch": "B", "code": "U+0042", "w": 650}, {"ch": "C", "code": "U+0043", "w": 722}, {"ch": "D", "code": "U+0044", "w": 706}, {"ch": "E", "code": "U+0045", "w": 595}, {"ch": "F", "code": "U+0046", "w": 572}, {"ch": "G", "code": "U+0047", "w": 732}, {"ch": "H", "code": "U+0048", "w": 730}, {"ch": "I", "code": "U+0049", "w": 246}, {"ch": "J", "code": "U+004A", "w": 552}, {"ch": "K", "code": "U+004B", "w": 650}, {"ch": "L", "code": "U+004C", "w": 551}, {"ch": "M", "code": "U+004D", "w": 880}, {"ch": "N", "code": "U+004E", "w": 736}, {"ch": "O", "code": "U+004F", "w": 748}, {"ch": "P", "code": "U+0050", "w": 624}, {"ch": "Q", "code": "U+0051", "w": 748}, {"ch": "R", "code": "U+0052", "w": 644}, {"ch": "S", "code": "U+0053", "w": 619}, {"ch": "T", "code": "U+0054", "w": 627}, {"ch": "U", "code": "U+0055", "w": 726}, {"ch": "V", "code": "U+0056", "w": 668}, {"ch": "W", "code": "U+0057", "w": 964}, {"ch": "X", "code": "U+0058", "w": 660}, {"ch": "Y", "code": "U+0059", "w": 658}, {"ch": "Z", "code": "U+005A", "w": 626}], [{"ch": "a", "code": "U+0061", "w": 573}, {"ch": "b", "code": "U+0062", "w": 590}, {"ch": "c", "code": "U+0063", "w": 547}, {"ch": "d", "code": "U+0064", "w": 590}, {"ch": "e", "code": "U+0065", "w": 561}, {"ch": "f", "code": "U+0066", "w": 329}, {"ch": "g", "code": "U+0067", "w": 590}, {"ch": "h", "code": "U+0068", "w": 571}, {"ch": "i", "code": "U+0069", "w": 221}, {"ch": "j", "code": "U+006A", "w": 222}, {"ch": "k", "code": "U+006B", "w": 528}, {"ch": "l", "code": "U+006C", "w": 234}, {"ch": "m", "code": "U+006D", "w": 866}, {"ch": "n", "code": "U+006E", "w": 570}, {"ch": "o", "code": "U+006F", "w": 573}, {"ch": "p", "code": "U+0070", "w": 590}, {"ch": "q", "code": "U+0071", "w": 590}, {"ch": "r", "code": "U+0072", "w": 343}, {"ch": "s", "code": "U+0073", "w": 500}, {"ch": "t", "code": "U+0074", "w": 323}, {"ch": "u", "code": "U+0075", "w": 571}, {"ch": "v", "code": "U+0076", "w": 537}, {"ch": "w", "code": "U+0077", "w": 785}, {"ch": "x", "code": "U+0078", "w": 529}, {"ch": "y", "code": "U+0079", "w": 537}, {"ch": "z", "code": "U+007A", "w": 508}], [{"ch": "0", "code": "U+0030", "w": 625}, {"ch": "1", "code": "U+0031", "w": 375}, {"ch": "2", "code": "U+0032", "w": 581}, {"ch": "3", "code": "U+0033", "w": 591}, {"ch": "4", "code": "U+0034", "w": 616}, {"ch": "5", "code": "U+0035", "w": 586}, {"ch": "6", "code": "U+0036", "w": 569}, {"ch": "7", "code": "U+0037", "w": 535}, {"ch": "8", "code": "U+0038", "w": 597}, {"ch": "9", "code": "U+0039", "w": 569}, {"ch": ".", "code": "U+002E", "w": 232}, {"ch": ":", "code": "U+003A", "w": 232}, {"ch": ",", "code": "U+002C", "w": 232}, {"ch": ";", "code": "U+003B", "w": 237}, {"ch": "!", "code": "U+0021", "w": 232}, {"ch": "?", "code": "U+003F", "w": 515}, {"ch": "-", "code": "U+002D", "w": 430}, {"ch": "+", "code": "U+002B", "w": 628}, {"ch": "×", "code": "U+00D7", "w": 628}, {"ch": "÷", "code": "U+00F7", "w": 628}, {"ch": "=", "code": "U+003D", "w": 628}, {"ch": "<", "code": "U+003C", "w": 628}, {"ch": ">", "code": "U+003E", "w": 628}, {"ch": "(", "code": "U+0028", "w": 310}, {"ch": ")", "code": "U+0029", "w": 310}, {"ch": "[", "code": "U+005B", "w": 310}, {"ch": "]", "code": "U+005D", "w": 310}, {"ch": "/", "code": "U+002F", "w": 329}, {"ch": "*", "code": "U+002A", "w": 470}, {"ch": "@", "code": "U+0040", "w": 960}, {"ch": "#", "code": "U+0023", "w": 600}, {"ch": "%", "code": "U+0025", "w": 864}, {"ch": "&", "code": "U+0026", "w": 609}, {"ch": "°", "code": "U+00B0", "w": 425}, {"ch": "℃", "code": "U+2103", "w": 1138}, {"ch": "$", "code": "U+0024", "w": 613}, {"ch": "€", "code": "U+20AC", "w": 633}, {"ch": "¥", "code": "U+00A5", "w": 518}, {"ch": "→", "code": "U+2192", "w": 918}]];
 
-// Theme toggle
-const themeToggle = document.getElementById("themeToggle");
-themeToggle.querySelectorAll("button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    root.setAttribute("data-theme", btn.dataset.theme);
-    themeToggle.querySelectorAll("button").forEach(b => b.classList.toggle("active", b === btn));
-  });
-});
-
-// Hero Specimen controls
-const famMap = { text: "var(--font-text)", display: "var(--font-display)", dark: "var(--font-dark)" };
-document.querySelectorAll("#famSeg button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    root.style.setProperty("--spec-family", famMap[btn.dataset.fam]);
-    document.querySelectorAll("#famSeg button").forEach(b => b.classList.toggle("active", b === btn));
-  });
-});
-document.querySelectorAll("#wtSeg button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    root.style.setProperty("--spec-wt", btn.dataset.wt);
-    document.querySelectorAll("#wtSeg button").forEach(b => b.classList.toggle("active", b === btn));
-  });
-});
-const sizeRange = document.getElementById("sizeRange");
-const sizeVal = document.getElementById("sizeVal");
-const heroInput = document.getElementById("heroInput");
-sizeRange.addEventListener("input", () => {
-  heroInput.style.fontSize = sizeRange.value + "px";
-  sizeVal.textContent = sizeRange.value + "px";
-});
-document.getElementById("caltToggle").addEventListener("change", e => {
-  root.style.setProperty("--spec-calt", e.target.checked ? '"calt" 1' : '"calt" 0');
-});
-document.getElementById("guidesToggle").addEventListener("change", e => {
-  document.getElementById("heroGuides").classList.toggle("off", !e.target.checked);
-});
-
-// Anatomy live calt toggle
-const anatBig = document.getElementById("anatCaltBig");
-const anatSub = document.getElementById("anatCaltSub");
-document.querySelectorAll("#anatCaltSeg button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const feat = btn.dataset.calt === "1" ? '"calt" 1' : '"calt" 0';
-    anatBig.style.fontFeatureSettings = feat;
-    anatSub.style.fontFeatureSettings = feat;
-    document.querySelectorAll("#anatCaltSeg button").forEach(b => b.classList.toggle("active", b === btn));
-  });
-});
-
-// Zero-reflow OLED Dark toggle
-const reflowStage = document.getElementById("reflowStage");
-const reflowStat = document.getElementById("reflowStat");
-document.querySelectorAll("#reflowSeg button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const dark = btn.dataset.mode === "dark";
-    reflowStage.classList.toggle("oled-preview", dark);
-    reflowStat.textContent = dark
-      ? "OLED Dark active (−5% stem) · Advance width delta: 0 units · Layout shift: 0.0 px"
-      : "Light Text active (81.0u stem) · Advance width delta: 0 units · Layout shift: 0.0 px";
-    document.querySelectorAll("#reflowSeg button").forEach(b => b.classList.toggle("active", b === btn));
-  });
-});
-
-// Cockpit telemetry simulator
-const CP_STATES = {
-  cruise: { status: "12:54 · D · SPORT MODE · 23°C", num: "82", unit: "KPH", route: "Turn left in 500 m · ETA 16:42 · 418 km remaining", rv: "500 m", rs: "Next maneuver · calt ON" },
-  highway: { status: "14:18 · D · NOA ACTIVE · 19°C", num: "118", unit: "KPH", route: "Keep left onto G2 Express · ETA 15:05 · 346 km remaining", rv: "2.4 km", rs: "Lane merge · tabular-nums" },
-  charge: { status: "19:30 · P · SUPERCHARGING · 142 kW", num: "94", unit: "%", route: "612 km estimated range · 00:08 remaining to 100%", rv: "+142 kW", rs: "Peak DC rate · OLED Dark" }
-};
-document.querySelectorAll("#cpTabs button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const s = CP_STATES[btn.dataset.state];
-    document.getElementById("cpStatus").textContent = s.status;
-    document.getElementById("cpNum").textContent = s.num;
-    document.getElementById("cpUnit").textContent = s.unit;
-    document.getElementById("cpRoute").textContent = s.route;
-    document.getElementById("cpRightVal").textContent = s.rv;
-    document.getElementById("cpRightSub").textContent = s.rs;
-    document.querySelectorAll("#cpTabs button").forEach(b => b.classList.toggle("active", b === btn));
-  });
-});
-
-// Copy CSS button
-const copyBtn = document.getElementById("copyCssBtn");
-copyBtn.addEventListener("click", async () => {
-  try {
-    await navigator.clipboard.writeText(document.getElementById("cssSnippet").textContent);
-    copyBtn.textContent = "Copied";
-    setTimeout(() => { copyBtn.textContent = "Copy CSS"; }, 1600);
-  } catch {
-    copyBtn.textContent = "Select & copy";
+// Warm all 9 Halden weights in background so switching grade/weight is instant with zero flash
+if (document.fonts && document.fonts.load) {
+  for (const fam of ['"Halden"', '"Halden Display"', '"Halden Dark"']) {
+    for (const wt of ['400', '500', '600']) {
+      document.fonts.load(wt + ' 48px ' + fam).catch(() => {});
+    }
   }
-});
-
-// Interactive Character Set Matrix
-const CHAR_SETS = {"Uppercase": "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "Lowercase": "abcdefghijklmnopqrstuvwxyz", "Numerals": "0123456789", "Punctuation & Symbols": ".:,;!?-+×÷=<>()[]{}/*@#%&°℃$€¥"};
-const GLYPH_AW = {"A": 676, "B": 646, "C": 722, "D": 713, "E": 594, "F": 583, "G": 737, "H": 742, "I": 257, "J": 563, "K": 659, "L": 558, "M": 900, "N": 754, "O": 752, "P": 628, "Q": 752, "R": 637, "S": 630, "T": 633, "U": 740, "V": 676, "W": 974, "X": 667, "Y": 666, "Z": 619, "a": 602, "b": 606, "c": 563, "d": 606, "e": 576, "f": 352, "g": 605, "h": 589, "i": 232, "j": 231, "k": 540, "l": 260, "m": 879, "n": 588, "o": 591, "p": 606, "q": 606, "r": 363, "s": 518, "t": 313, "u": 589, "v": 554, "w": 814, "x": 537, "y": 554, "z": 541, "0": 625, "1": 398, "2": 605, "3": 607, "4": 633, "5": 587, "6": 573, "7": 559, "8": 612, "9": 573, ".": 276, ":": 276, ",": 276, ";": 288, "!": 276, "?": 505, "-": 450, "+": 648, "×": 648, "÷": 648, "=": 648, "<": 648, ">": 648, "(": 351, ")": 351, "[": 351, "]": 351, "{": 415, "}": 415, "/": 350, "*": 491, "@": 956, "#": 622, "%": 949, "&": 630, "°": 446, "℃": 1156, "$": 629, "€": 656, "¥": 538};
-const matrix = document.getElementById("glyphMatrix");
-const giChar = document.getElementById("giChar");
-const giUni = document.getElementById("giUni");
-const giAw = document.getElementById("giAw");
-
-function selectGlyph(ch, btn) {
-  giChar.textContent = ch;
-  const hex = ch.codePointAt(0).toString(16).toUpperCase().padStart(4, "0");
-  giUni.textContent = "U+" + hex;
-  giAw.textContent = (GLYPH_AW[ch] ?? "-") + " u";
-  matrix.querySelectorAll(".g-btn.active").forEach(b => b.classList.remove("active"));
-  if (btn) btn.classList.add("active");
 }
 
-Object.entries(CHAR_SETS).forEach(([label, chars]) => {
-  const grp = document.createElement("div");
-  grp.className = "glyph-group";
-  grp.innerHTML = `<h3>${label}</h3>`;
-  const cells = document.createElement("div");
-  cells.className = "glyph-cells";
-  for (const ch of chars) {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "g-btn" + (ch === "a" ? " active" : "");
-    btn.textContent = ch;
-    btn.setAttribute("aria-label", `Inspect ${ch}`);
-    btn.addEventListener("mouseenter", () => selectGlyph(ch, btn));
-    btn.addEventListener("click", () => selectGlyph(ch, btn));
-    cells.appendChild(btn);
+const specimen = document.getElementById('specimen');
+const specStage = document.getElementById('specStage');
+const sizeRange = document.getElementById('sizeRange');
+const sizeOut = document.getElementById('sizeOut');
+
+const GRADE_MAP = {
+  text: '"Halden", -apple-system, sans-serif',
+  display: '"Halden Display", "Halden", -apple-system, sans-serif',
+  dark: '"Halden Dark", "Halden", -apple-system, sans-serif',
+};
+
+// Sliding 1.5px ink underline for tab groups
+function moveLine(group) {
+  const active = group.querySelector('button.on');
+  const line = group.querySelector('.tab-line');
+  if (!active || !line) return;
+  line.style.width = active.offsetWidth + 'px';
+  line.style.transform = 'translateX(' + active.offsetLeft + 'px)';
+}
+const gradeTabs = document.getElementById('gradeTabs');
+const weightTabs = document.getElementById('weightTabs');
+requestAnimationFrame(() => { moveLine(gradeTabs); moveLine(weightTabs); });
+window.addEventListener('resize', () => { moveLine(gradeTabs); moveLine(weightTabs); });
+if (document.fonts) document.fonts.ready.then(() => { moveLine(gradeTabs); moveLine(weightTabs); });
+
+gradeTabs.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-grade]');
+  if (!btn) return;
+  for (const b of gradeTabs.querySelectorAll('button')) b.classList.toggle('on', b === btn);
+  moveLine(gradeTabs);
+  const g = btn.dataset.grade;
+  const rect = specStage.getBoundingClientRect();
+  const bRect = btn.getBoundingClientRect();
+  const rx = Math.max(0, Math.min(100, ((bRect.left + bRect.width / 2 - rect.left) / Math.max(1, rect.width)) * 100));
+  specStage.style.setProperty('--rx', rx.toFixed(1) + '%');
+  specimen.style.fontFamily = GRADE_MAP[g];
+  specStage.classList.toggle('oled', g === 'dark');
+});
+
+weightTabs.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-wt]');
+  if (!btn) return;
+  for (const b of weightTabs.querySelectorAll('button')) b.classList.toggle('on', b === btn);
+  moveLine(weightTabs);
+  specimen.style.fontWeight = btn.dataset.wt;
+});
+
+sizeRange.addEventListener('input', () => {
+  const v = sizeRange.value + 'px';
+  specimen.style.fontSize = v;
+  sizeOut.textContent = v;
+});
+
+// Interactive Day <-> OLED Night Scrub Curtain
+const curtain = document.getElementById('curtain');
+let dragging = false;
+function setSplit(pct) {
+  const clamped = Math.max(8, Math.min(92, pct));
+  curtain.style.setProperty('--split', clamped.toFixed(2) + '%');
+  curtain.setAttribute('aria-valuenow', Math.round(clamped));
+}
+function pointerSplit(e) {
+  const r = curtain.getBoundingClientRect();
+  setSplit(((e.clientX - r.left) / Math.max(1, r.width)) * 100);
+}
+curtain.addEventListener('pointerdown', (e) => {
+  dragging = true;
+  curtain.classList.add('dragging');
+  curtain.setPointerCapture(e.pointerId);
+  pointerSplit(e);
+});
+curtain.addEventListener('pointermove', (e) => {
+  if (dragging || e.pointerType === 'mouse') pointerSplit(e);
+});
+curtain.addEventListener('pointerup', () => {
+  dragging = false;
+  curtain.classList.remove('dragging');
+});
+curtain.addEventListener('keydown', (e) => {
+  const cur = Number(curtain.getAttribute('aria-valuenow') || 50);
+  if (e.key === 'ArrowLeft') { e.preventDefault(); setSplit(cur - 5); }
+  if (e.key === 'ArrowRight') { e.preventDefault(); setSplit(cur + 5); }
+});
+
+// Live tabular ticking clock + interactive calt toggle
+const caltDemo = document.getElementById('caltDemo');
+const caltSample = document.getElementById('caltSample');
+const caltState = document.getElementById('caltState');
+let caltOn = true;
+function toggleCalt() {
+  caltOn = !caltOn;
+  caltSample.classList.toggle('off', !caltOn);
+  caltState.textContent = caltOn ? 'calt on' : 'calt off';
+}
+caltDemo.addEventListener('click', toggleCalt);
+caltDemo.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCalt(); } });
+
+let tickSec = 45;
+setInterval(() => {
+  tickSec = (tickSec + 1) % 60;
+  caltSample.textContent = '12:' + String(tickSec).padStart(2, '0');
+}, 1000);
+
+// Dot lens pin on click
+const dotDemo = document.getElementById('dotDemo');
+dotDemo.addEventListener('click', () => dotDemo.classList.toggle('pinned'));
+
+// Open character field with proximity wave + click to copy
+const field = document.getElementById('glyphField');
+const readout = document.getElementById('glyphReadout');
+const allBtns = [];
+for (const row of GLYPH_ROWS) {
+  const rowEl = document.createElement('div');
+  rowEl.className = 'glyph-row';
+  for (const g of row) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'glyph-btn';
+    btn.textContent = g.ch;
+    btn.dataset.ch = g.ch;
+    btn.dataset.code = g.code;
+    btn.dataset.w = g.w;
+    btn.setAttribute('aria-label', g.ch + ' ' + g.code);
+    btn.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(g.ch); } catch (e) {}
+      readout.classList.add('active');
+      readout.textContent = 'Copied  ' + g.ch + '  ' + g.code + '  ' + g.w + ' upm';
+      setTimeout(() => readout.classList.remove('active'), 1100);
+    });
+    rowEl.appendChild(btn);
+    allBtns.push(btn);
   }
-  grp.appendChild(cells);
-  matrix.appendChild(grp);
+  field.appendChild(rowEl);
+}
+
+function applyWave(target) {
+  const idx = allBtns.indexOf(target);
+  if (idx < 0) return;
+  readout.textContent = target.dataset.ch + '  ' + target.dataset.code + '  ' + target.dataset.w + ' upm';
+  allBtns.forEach((b, i) => {
+    const d = Math.abs(i - idx);
+    if (d === 0) { b.style.transform = 'scale(1.36)'; b.style.opacity = '1'; b.style.background = 'var(--wash)'; }
+    else if (d === 1) { b.style.transform = 'scale(1.12)'; b.style.opacity = '.85'; b.style.background = ''; }
+    else { b.style.transform = ''; b.style.opacity = '.34'; b.style.background = ''; }
+  });
+}
+function clearWave() {
+  allBtns.forEach((b) => { b.style.transform = ''; b.style.opacity = ''; b.style.background = ''; });
+  if (!readout.classList.contains('active')) readout.textContent = 'Click to copy';
+}
+field.addEventListener('mouseover', (e) => {
+  const btn = e.target.closest('.glyph-btn');
+  if (btn) applyWave(btn);
+});
+field.addEventListener('focusin', (e) => {
+  const btn = e.target.closest('.glyph-btn');
+  if (btn) applyWave(btn);
+});
+field.addEventListener('mouseleave', clearWave);
+field.addEventListener('focusout', (e) => {
+  if (!field.contains(e.relatedTarget)) clearWave();
+});
+
+// Copy CSS
+const copyBtn = document.getElementById('copyBtn');
+const cssCode = document.getElementById('cssCode').textContent;
+copyBtn.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(cssCode);
+    copyBtn.textContent = 'Copied';
+    setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1400);
+  } catch (e) {}
+});
+
+// System theme + D shortcut with circular View Transition (Dashline 3.7)
+const mq = matchMedia('(prefers-color-scheme: dark)');
+function setTheme(next, persist) {
+  const apply = () => {
+    document.documentElement.dataset.theme = next;
+    const sys = mq.matches ? 'dark' : 'light';
+    if (!persist || next === sys) localStorage.removeItem('halden-theme');
+    else localStorage.setItem('halden-theme', next);
+  };
+  if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.startViewTransition(apply);
+  } else {
+    apply();
+  }
+}
+mq.addEventListener('change', () => setTheme(mq.matches ? 'dark' : 'light', false));
+document.addEventListener('keydown', (e) => {
+  if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
+  const tag = (e.target && e.target.tagName) || '';
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable)) return;
+  if (e.key === 'd' || e.key === 'D') {
+    const cur = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+    setTheme(cur === 'dark' ? 'light' : 'dark', true);
+  }
 });
 </script>
 </body>
