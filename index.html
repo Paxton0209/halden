@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Halden</title>
-<meta name="description" content="Halden v1.1 — an open-source sans-serif for automotive HMI in Text, Display, and OLED Dark grades under SIL OFL 1.1.">
+<meta name="description" content="Halden v1.1, an open-source sans-serif for automotive HMI with OLED Dark optical compensation under SIL OFL 1.1.">
 <script>
 try{
   const saved=localStorage.getItem('halden-theme');
@@ -19,128 +19,189 @@ try{
 <link rel="preload" href="webfonts/HaldenDark-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fonts.css">
 <style>
-/* PDS v1.6 — Single unified spine (840px), pure typography & whitespace, GPU-only zero-reflow motion. */
+/* PDS v1.7 surface tokens */
 :root {
-  --bg: #fafaf9;
-  --ink: #141413;
-  --on-ink: #fafaf9;
-  --muted: #73726c;
-  --faint: #a3a29c;
-  --hair: rgba(20, 20, 19, .08);
-  --wash: #f1f1ef;
-  --dark-bg: #111110;
-  --dark-ink: #f2f2f0;
+  --canvas: #f3f3f3;
+  --stage: #f8f8f8;
+  --raised: #ffffff;
+  --track: #ececec;
+  --selected: #ffffff;
+  --line: rgba(0, 0, 0, .06);
+  --line-control: rgba(0, 0, 0, .07);
+  --line-selected: rgba(0, 0, 0, .07);
+  --line-strong: rgba(0, 0, 0, .14);
+  --text-1: #1d1d1f;
+  --text-2: #6e6e6e;
+  --text-3: #8c8c8c;
+  --ink: #1d1d1f;
+  --on-ink: #ffffff;
+  --oled-bg: #0f0f10;
+  --oled-ink: #ededef;
   --font: "Halden", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
   --display: "Halden Display", "Halden", -apple-system, BlinkMacSystemFont, sans-serif;
   --dark: "Halden Dark", "Halden", -apple-system, BlinkMacSystemFont, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, monospace;
-  --out: cubic-bezier(.22, 1, .36, 1);
-  --spring: cubic-bezier(.22, 1.12, .36, 1);
+  --ease: cubic-bezier(.2, 0, 0, 1);
+  --ease-out: cubic-bezier(.23, 1, .32, 1);
   color-scheme: light;
 }
 
 :root[data-theme="dark"] {
-  --bg: #0e0f11;
+  --canvas: #0a0a0b;
+  --stage: #0f0f10;
+  --raised: #141416;
+  --track: #1c1c1e;
+  --selected: #333336;
+  --line: rgba(255, 255, 255, .08);
+  --line-control: rgba(255, 255, 255, .09);
+  --line-selected: transparent;
+  --line-strong: rgba(255, 255, 255, .16);
+  --text-1: #ededef;
+  --text-2: #a0a0a4;
+  --text-3: #7a7a7e;
   --ink: #ededef;
-  --on-ink: #0e0f11;
-  --muted: #98989d;
-  --faint: #636368;
-  --hair: rgba(255, 255, 255, .09);
-  --wash: #17181b;
-  --dark-bg: #060607;
-  --dark-ink: #ededef;
+  --on-ink: #0a0a0b;
+  --oled-bg: #060607;
+  --oled-ink: #ededef;
   --font: "Halden Dark", "Halden", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
   color-scheme: dark;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { background: var(--bg); }
+html { background: var(--canvas); }
 body {
-  background: var(--bg);
-  color: var(--ink);
+  background: var(--canvas);
+  color: var(--text-1);
   font: 400 16px/26px var(--font);
   letter-spacing: 0;
   font-feature-settings: "calt" 1, "kern" 1;
   font-kerning: normal;
   -webkit-font-smoothing: antialiased;
-  padding: 88px 32px 120px;
-  transition: background-color 260ms var(--out), color 260ms var(--out);
+  padding: 56px 32px 112px;
+  transition: background-color 220ms var(--ease-out), color 220ms var(--ease-out);
 }
 
-/* Single unified architectural spine: every section shares the exact same left & right rails */
+/* Single unified 960px architectural spine */
 .page {
-  max-width: 840px;
+  max-width: 960px;
   margin: 0 auto;
 }
-.measure {
-  max-width: 58ch;
-}
-.sec { margin-top: 88px; }
-.sec-tight { margin-top: 56px; }
 
-/* One-time subtle entrance */
 @keyframes rise {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }
 }
 .reveal {
-  animation: rise 520ms var(--out) both;
+  animation: rise 420ms var(--ease-out) both;
   animation-delay: var(--d, 0ms);
 }
-
-/* Circular View Transition for D dark toggle (Dashline 3.7) */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
 }
 ::view-transition-new(root) {
-  animation: theme-circle 420ms var(--out);
+  animation: theme-circle 420ms var(--ease-out);
 }
 @keyframes theme-circle {
   from { clip-path: circle(0% at 50% 50%); }
   to { clip-path: circle(100% at 50% 50%); }
 }
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
 
 a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
-:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 3px; }
+:focus-visible { outline: 2px solid var(--text-1); outline-offset: 2px; border-radius: 4px; }
 
 .ul {
-  color: var(--ink);
+  color: var(--text-1);
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
-  text-decoration-color: var(--faint);
-  transition: opacity 150ms var(--out);
+  text-decoration-color: var(--line-strong);
+  transition: opacity 120ms var(--ease);
 }
-.ul:hover { opacity: .65; }
+.ul:hover { opacity: .7; }
 
-/* Opening */
-.open-row {
+/* ── 1. Masthead ── */
+.masthead {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 24px;
+  padding-bottom: 36px;
 }
-.brand-line {
+.mast-left { max-width: 560px; }
+.mast-title-row {
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 .head-title {
-  font: 500 18px/26px var(--font);
-  color: var(--ink);
+  font: 500 28px/34px var(--display);
+  color: var(--text-1);
 }
 .head-ver {
   font: 400 13px/18px var(--font);
-  color: var(--muted);
+  color: var(--text-2);
 }
+.lead {
+  font: 400 16px/26px var(--font);
+  color: var(--text-2);
+}
+.lead strong {
+  font-weight: 500;
+  color: var(--text-1);
+}
+.mast-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+/* PDS Segmented Control */
+.seg {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 2px;
+  border-radius: 8px;
+  background: var(--track);
+  gap: 2px;
+}
+.seg--compact {
+  height: 28px;
+  border-radius: 6px;
+}
+.seg button {
+  height: 100%;
+  padding: 0 11px;
+  border-radius: 6px;
+  font: 400 13px/16px var(--font);
+  color: var(--text-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  transition: background-color 160ms var(--ease), color 160ms var(--ease), box-shadow 160ms var(--ease), opacity 120ms var(--ease);
+}
+.seg--compact button {
+  border-radius: 4px;
+  padding: 0 10px;
+}
+.seg button:hover:not(.on) { opacity: .7; }
+.seg button.on {
+  background: var(--selected);
+  color: var(--text-1);
+  font-weight: 500;
+  box-shadow: inset 0 0 0 1px var(--line-selected);
+}
+
 .dl-btn {
   display: inline-flex;
   align-items: center;
@@ -151,223 +212,360 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   background: var(--ink);
   color: var(--on-ink);
   font: 500 13px/16px var(--font);
-  transition: opacity 160ms var(--out), transform 140ms var(--out);
+  transition: opacity 120ms var(--ease), transform 110ms var(--ease);
 }
 .dl-btn:hover { opacity: .82; }
 .dl-btn:active { transform: scale(.97); }
-.dl-btn svg {
-  width: 13px;
-  height: 13px;
-  transition: transform 240ms var(--spring);
-}
-.dl-btn:hover svg { transform: translateY(1.5px); }
+.dl-btn svg { width: 13px; height: 13px; }
 
-.lead {
-  font: 400 16px/26px var(--font);
-  color: var(--muted);
-}
-.lead strong {
-  font-weight: 400;
-  color: var(--ink);
+/* ── 2. Living Specimen Instrument (Replaces generic Google Fonts box & dead scale table) ── */
+.instrument {
+  background: var(--raised);
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px var(--line-control);
+  overflow: hidden;
 }
 
-/* Section headers */
-.kicker {
-  font: 400 13px/18px var(--font);
-  color: var(--muted);
-  margin-bottom: 12px;
+/* Locked stage height ensures 0px vertical jump when switching Cockpit / Weights / Type */
+.inst-viewport {
+  height: 312px;
+  display: flex;
+  flex-direction: column;
+}
+.inst-panel {
+  flex: 1;
+  min-height: 0;
+  display: none;
+}
+.inst-panel.active {
+  display: grid;
+}
+
+/* Mode 1: Cockpit — Halden alive at 4 real HMI scales simultaneously */
+.cockpit-grid {
+  grid-template-columns: 310px minmax(0, 1fr);
+  height: 100%;
+}
+.cockpit-speed {
+  padding: 36px 36px 32px;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.speed-top {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 16px;
+  font: 400 12px/16px var(--font);
+  color: var(--text-2);
 }
-.kicker-note {
-  color: var(--faint);
+.speed-readout {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.speed-num {
+  font-family: var(--display);
+  font-size: 84px;
+  line-height: 1;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
-  transition: color 180ms var(--out);
+  color: var(--text-1);
+  outline: none;
 }
-.kicker-note.active { color: var(--ink); }
-.prose-muted {
-  font: 400 16px/26px var(--font);
-  color: var(--muted);
+.speed-unit {
+  font: 400 15px/20px var(--font);
+  color: var(--text-2);
+}
+.speed-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font: 400 13px/18px var(--font);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.speed-meta strong {
+  font-weight: 500;
+  color: var(--text-1);
 }
 
-/* Live Specimen — ZERO layout shift on toggle (GPU clip-path bleed only!) */
-.spec-controls {
+.cockpit-right {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-width: 0;
+}
+.cockpit-nav {
+  padding: 36px 40px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+}
+.nav-kicker {
+  font: 400 12px/16px var(--font);
+  color: var(--text-2);
+  margin-bottom: 4px;
+}
+.nav-primary {
+  font-family: var(--display);
+  font-size: 32px;
+  line-height: 1.2;
+  font-weight: 500;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+  outline: none;
+}
+.nav-secondary {
+  font: 400 16px/24px var(--font);
+  color: var(--text-2);
+  outline: none;
+}
+
+.cockpit-telemetry {
+  border-top: 1px solid var(--line);
+  padding: 20px 40px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.tele-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tele-val {
+  font-family: var(--display);
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 500;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+  outline: none;
+}
+.tele-lbl {
+  font: 400 12px/16px var(--font);
+  color: var(--text-2);
+}
+
+/* Mode 2: Weights — All 3 weights side-by-side simultaneously (zero toggling memory tax) */
+.weights-grid {
+  grid-template-rows: repeat(3, 1fr);
+  height: 100%;
+}
+.wt-row {
+  padding: 0 36px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+}
+.wt-row:first-child { border-top: 0; }
+.wt-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.wt-name {
+  font: 500 13px/18px var(--font);
+  color: var(--text-1);
+}
+.wt-num {
+  font: 400 12px/16px var(--font);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.wt-sample {
+  font-family: var(--display);
+  font-size: 32px;
+  line-height: 1.2;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  outline: none;
+}
+
+/* Mode 3: Type — Open blank canvas for free testing */
+.free-grid {
+  grid-template-rows: 1fr;
+  height: 100%;
+  padding: 36px 40px;
+  align-items: center;
+  cursor: text;
+}
+.free-input {
+  width: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  outline: none;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 48px;
+  line-height: 1.2;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  word-break: break-word;
+  color: var(--text-1);
+  caret-color: var(--text-1);
+}
+
+/* Subtle focus highlight on editable instrument fields */
+[contenteditable="true"] {
+  border-radius: 4px;
+  transition: background-color 120ms var(--ease);
+}
+[contenteditable="true"]:hover {
+  background: var(--stage);
+}
+[contenteditable="true"]:focus {
+  background: var(--stage);
+}
+
+/* Unified quiet bottom bar of the instrument */
+.inst-bar {
+  min-height: 52px;
+  padding: 10px 20px;
+  border-top: 1px solid var(--line);
+  background: var(--stage);
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px 24px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--hair);
-  font: 400 13px/18px var(--font);
-  color: var(--muted);
+  gap: 10px 16px;
 }
-.ctrl-group {
+.inst-bar-right {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 16px;
   flex-wrap: wrap;
 }
-.tabs {
-  position: relative;
-  display: inline-flex;
+.bar-hint {
+  font: 400 12px/16px var(--font);
+  color: var(--text-2);
+}
+.free-tools {
+  display: none;
   align-items: center;
-  gap: 16px;
-  padding-bottom: 6px;
+  gap: 14px;
+  flex-wrap: wrap;
 }
-.tabs button {
-  position: relative;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  color: var(--muted);
-  transition: color 180ms var(--out);
-}
-/* Reserve exact medium-weight width so switching active tab never shifts neighbors by 1px */
-.tabs button::after {
-  content: attr(data-label);
-  font-weight: 500;
-  height: 0;
-  visibility: hidden;
-  overflow: hidden;
-  pointer-events: none;
-  user-select: none;
-}
-.tabs button:hover { color: var(--ink); }
-.tabs button.on {
-  color: var(--ink);
-  font-weight: 500;
-}
-.tab-line {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 1.5px;
-  background: var(--ink);
-  border-radius: 1px;
-  pointer-events: none;
-  will-change: transform, width;
-  transition: transform 260ms var(--out), width 260ms var(--out);
+.free-tools.visible {
+  display: flex;
 }
 .size-wrap {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  font: 400 13px/16px var(--font);
+  color: var(--text-2);
   font-variant-numeric: tabular-nums;
 }
 .size-wrap output {
   min-width: 34px;
   text-align: right;
-  color: var(--muted);
+  color: var(--text-1);
+  font-weight: 500;
 }
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   width: 96px;
-  height: 1px;
-  background: var(--faint);
+  height: 4px;
+  border-radius: 999px;
+  background: var(--track);
   cursor: pointer;
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+  width: 12px;
+  height: 16px;
+  border-radius: 4px;
   background: var(--ink);
-  transition: transform 160ms var(--spring);
+  transition: transform 120ms var(--ease);
 }
-input[type="range"]:hover::-webkit-slider-thumb { transform: scale(1.35); }
+input[type="range"]:hover::-webkit-slider-thumb { transform: scale(1.08); }
 input[type="range"]::-moz-range-thumb {
-  width: 8px;
-  height: 8px;
+  width: 12px;
+  height: 16px;
   border: 0;
-  border-radius: 50%;
+  border-radius: 4px;
   background: var(--ink);
 }
 
-/* Constant geometry: NEVER transitions padding/margin/height so nothing below ever stutters! */
-.spec-stage {
-  position: relative;
-  padding: 52px 0;
-  border-bottom: 1px solid var(--hair);
-  transition: color 240ms var(--out), border-color 240ms var(--out);
+/* ── 3. Swiss 2-Column Editorial Chapters (Only 4 focused chapters total) ── */
+.chapter {
+  margin-top: 64px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 24px 40px;
+  align-items: start;
 }
-/* Pure GPU dark surface expanding outward symmetrically (-24px bleed) with zero layout impact */
-.spec-stage::before {
-  content: "";
-  position: absolute;
-  top: 12px;
-  bottom: 12px;
-  left: -24px;
-  right: -24px;
-  border-radius: 8px;
-  background: var(--dark-bg);
-  clip-path: circle(0% at var(--rx, 18%) 0%);
-  will-change: clip-path;
-  transition: clip-path 440ms var(--out);
-  pointer-events: none;
-  z-index: 0;
-}
-.spec-stage.oled {
-  color: var(--dark-ink);
-  border-bottom-color: transparent;
-}
-.spec-stage.oled::before {
-  clip-path: circle(145% at var(--rx, 18%) 0%);
-}
-.specimen-input {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  min-height: 86px;
+.ch-rail {
   display: flex;
-  align-items: center;
-  outline: none;
-  font-family: var(--display);
-  font-weight: 400;
-  font-size: 48px;
-  line-height: 1.18;
-  letter-spacing: 0;
+  flex-direction: column;
+  gap: 6px;
+}
+.ch-title {
+  font: 500 16px/22px var(--font);
+  color: var(--text-1);
+}
+.ch-note {
+  font: 400 13px/20px var(--font);
+  color: var(--text-2);
   font-variant-numeric: tabular-nums;
-  word-break: break-word;
-  caret-color: currentColor;
-  transition: color 220ms var(--out);
+}
+.ch-note.active {
+  color: var(--text-1);
+  font-weight: 500;
+}
+.ch-body { min-width: 0; }
+.ch-desc {
+  max-width: 58ch;
+  font: 400 15px/24px var(--font);
+  color: var(--text-2);
+  margin-bottom: 20px;
 }
 
-/* Interactive Day <-> OLED Night Scrub Curtain */
+/* Day & OLED Night press-and-drag comparator */
+.curtain-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px var(--line-control);
+  background: var(--raised);
+}
 .curtain {
   position: relative;
-  margin-top: 28px;
-  border-radius: 6px;
   overflow: hidden;
-  cursor: ew-resize;
+  cursor: grab;
   user-select: none;
   -webkit-user-select: none;
   touch-action: pan-y;
   --split: 50%;
 }
+.curtain.dragging { cursor: grabbing; }
 .curtain-layer {
-  padding: 40px 32px;
+  padding: 28px 28px 30px;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 .curtain-day {
-  background: var(--wash);
-  color: #141413;
+  background: #ffffff;
+  color: #1d1d1f;
   font-family: "Halden", -apple-system, sans-serif;
-}
-:root[data-theme="dark"] .curtain-day {
-  background: #f3f3f1;
-  color: #141413;
 }
 .curtain-night {
   position: absolute;
   inset: 0;
-  background: var(--dark-bg);
-  color: var(--dark-ink);
+  background: var(--oled-bg);
+  color: var(--oled-ink);
   font-family: "Halden Dark", "Halden", sans-serif;
   clip-path: inset(0 0 0 var(--split));
   will-change: clip-path;
@@ -375,22 +573,24 @@ input[type="range"]::-moz-range-thumb {
 .curtain-top {
   display: flex;
   justify-content: space-between;
-  font-size: 13px;
-  line-height: 18px;
-  opacity: .52;
+  font-size: 12px;
+  line-height: 16px;
+  opacity: .56;
 }
 .curtain-big {
-  font-size: clamp(22px, 3vw, 32px);
-  line-height: 1.22;
+  display: flex;
+  align-items: baseline;
+  gap: 28px;
+  font-size: clamp(20px, 2.6vw, 30px);
+  line-height: 1.2;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 .curtain-sub {
-  font-size: 15px;
-  line-height: 22px;
+  font-size: 14px;
+  line-height: 20px;
   opacity: .72;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -403,199 +603,200 @@ input[type="range"]::-moz-range-thumb {
   bottom: 0;
   left: var(--split);
   width: 1px;
-  background: rgba(128, 128, 128, .42);
+  background: rgba(128, 128, 128, .48);
   pointer-events: none;
 }
-.curtain-knob {
+.curtain-bar {
+  position: relative;
+  height: 40px;
+  background: var(--stage);
+  border-top: 1px solid var(--line);
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+}
+.curtain-bar.dragging { cursor: grabbing; }
+.curtain-bar::before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 50%;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--track);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.curtain-handle {
   position: absolute;
   top: 50%;
-  left: 0;
-  width: 24px;
-  height: 24px;
+  left: var(--split);
+  width: 34px;
+  height: 22px;
   transform: translate(-50%, -50%);
-  border-radius: 999px;
-  background: var(--bg);
-  color: var(--ink);
-  box-shadow: 0 0 0 1px var(--hair), 0 2px 8px rgba(0, 0, 0, .12);
-  display: grid;
-  place-items: center;
-  font-size: 11px;
-  transition: transform 180ms var(--spring);
+  border-radius: 6px;
+  background: var(--selected);
+  color: var(--text-1);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+  transition: transform 120ms var(--ease);
 }
-.curtain:hover .curtain-knob,
-.curtain.dragging .curtain-knob {
-  transform: translate(-50%, -50%) scale(1.12);
+.curtain-handle svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+.curtain-card.dragging .curtain-handle {
+  transform: translate(-50%, -50%) scale(.96);
 }
 
-/* Form details — open 3-column typography on unified spine */
+/* Anatomy details */
 .details {
-  margin-top: 28px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
 }
 .detail-item {
+  background: var(--raised);
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px var(--line-control);
+  padding: 20px;
   cursor: pointer;
-  padding-top: 20px;
-  border-top: 1px solid var(--hair);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  transition: opacity 120ms var(--ease);
 }
+.detail-item:hover { opacity: .92; }
 .detail-glyph {
   font-family: var(--display);
-  font-size: 40px;
-  line-height: 1.15;
+  font-size: 36px;
+  line-height: 1.1;
   font-weight: 500;
-  color: var(--ink);
-  margin-bottom: 14px;
+  color: var(--text-1);
   font-variant-numeric: tabular-nums;
   display: flex;
   align-items: baseline;
-  gap: 10px;
-  min-height: 46px;
+  gap: 6px;
+  min-height: 42px;
 }
 .detail-glyph .char {
   display: inline-block;
   will-change: transform;
-  transition: transform 280ms var(--spring);
+  transition: transform 220ms var(--ease-out);
 }
-.detail-item[data-demo="apertures"]:hover .char {
-  transform: translateY(-2px) scale(1.06);
-}
-.detail-item[data-demo="apertures"]:hover .char:nth-child(2) { transition-delay: 25ms; }
-.detail-item[data-demo="apertures"]:hover .char:nth-child(3) { transition-delay: 50ms; }
-.detail-item[data-demo="apertures"]:hover .char:nth-child(4) { transition-delay: 75ms; }
-
+.detail-item[data-demo="apertures"]:hover .char { transform: translateY(-2px); }
 .dot-lens {
-  display: inline-block;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   margin-left: auto;
-  opacity: 0;
-  transform: scale(.55);
-  transition: opacity 220ms var(--out), transform 320ms var(--spring);
-  color: var(--ink);
   align-self: center;
+  color: var(--text-1);
+  opacity: .22;
+  transform: scale(.8);
+  transition: opacity 160ms var(--ease), transform 220ms var(--ease-out);
 }
 .detail-item[data-demo="dots"]:hover .dot-lens,
 .detail-item[data-demo="dots"].pinned .dot-lens {
   opacity: 1;
-  transform: scale(1);
+  transform: scale(1.15);
 }
-
-.calt-sample.off {
-  font-feature-settings: "calt" 0, "kern" 1;
-}
-.detail-text {
-  font: 400 13px/20px var(--font);
-  color: var(--muted);
-}
-.detail-text strong {
+.calt-sample.off { font-feature-settings: "calt" 0, "kern" 1; }
+.detail-meta {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  font-weight: 500;
-  color: var(--ink);
+  gap: 8px;
   margin-bottom: 4px;
 }
+.detail-meta strong {
+  font: 500 13px/18px var(--font);
+  color: var(--text-1);
+}
 .detail-state {
-  font-weight: 400;
-  color: var(--faint);
+  font: 400 12px/16px var(--font);
+  color: var(--text-2);
   font-variant-numeric: tabular-nums;
+}
+.detail-copy {
+  font: 400 13px/19px var(--font);
+  color: var(--text-2);
 }
 
-/* Scale — clean hairline rows on unified spine */
-.scale-list {
-  margin-top: 12px;
-}
-.scale-row {
-  display: grid;
-  grid-template-columns: 76px 1fr;
-  align-items: baseline;
-  gap: 24px;
-  padding: 20px 0;
-  border-top: 1px solid var(--hair);
-  transition: opacity 180ms var(--out);
-}
-.scale-list:hover .scale-row { opacity: .42; }
-.scale-list .scale-row:hover { opacity: 1; }
-.scale-meta {
-  font: 400 13px/18px var(--font);
-  color: var(--faint);
-  font-variant-numeric: tabular-nums;
-}
-.scale-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Open character field with proximity wave + click to copy */
+/* Characters grid */
 .glyph-field {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid var(--hair);
+  background: var(--raised);
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px var(--line-control);
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 .glyph-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 0;
-  margin-left: -6px;
+  gap: 2px;
 }
 .glyph-btn {
-  width: 32px;
-  height: 36px;
+  width: 30px;
+  height: 34px;
   display: inline-grid;
   place-items: center;
-  font: 400 19px/1 var(--font);
-  color: var(--ink);
-  border-radius: 4px;
+  font: 400 17px/1 var(--font);
+  color: var(--text-1);
+  border-radius: 6px;
   will-change: transform, opacity;
-  transition: transform 220ms var(--spring), opacity 160ms var(--out), background-color 140ms var(--out);
+  transition: transform 180ms var(--ease-out), opacity 140ms var(--ease), background-color 120ms var(--ease);
 }
 .glyph-btn:active { transform: scale(.94) !important; }
 
-/* Quiet CSS block on unified spine */
+/* Install snippet */
 .code-block {
-  margin-top: 16px;
   padding: 20px 24px;
-  border-radius: 6px;
-  background: var(--wash);
+  border-radius: 10px;
+  background: var(--raised);
+  box-shadow: inset 0 0 0 1px var(--line-control);
   position: relative;
 }
 .code-block pre {
   font: 400 13px/22px var(--mono);
-  color: var(--ink);
+  color: var(--text-1);
   overflow-x: auto;
-  padding-right: 52px;
+  padding-right: 60px;
 }
 .copy-link {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  font: 400 13px/22px var(--font);
-  color: var(--muted);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  text-decoration-color: var(--faint);
-  transition: color 140ms var(--out);
+  top: 16px;
+  right: 16px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 6px;
+  background: var(--track);
+  font: 500 12px/16px var(--font);
+  color: var(--text-1);
+  transition: opacity 120ms var(--ease);
 }
-.copy-link:hover { color: var(--ink); }
+.copy-link:hover { opacity: .7; }
 
-/* Footer aligned cleanly to left & right rails */
 footer {
-  margin-top: 88px;
+  margin-top: 72px;
   padding-top: 24px;
-  border-top: 1px solid var(--hair);
+  border-top: 1px solid var(--line);
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px 24px;
   font: 400 13px/18px var(--font);
-  color: var(--muted);
+  color: var(--text-2);
 }
 .social {
   display: flex;
@@ -603,36 +804,51 @@ footer {
   gap: 20px;
 }
 .social a {
-  color: var(--muted);
-  transition: color 150ms var(--out);
+  color: var(--text-2);
+  transition: opacity 120ms var(--ease), color 120ms var(--ease);
 }
-.social a:hover,
-.social a:focus-visible {
-  color: var(--ink);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
+.social a:hover { color: var(--text-1); }
 
-@media (max-width: 720px) {
-  body { padding: 48px 20px 80px; }
-  .sec { margin-top: 64px; }
-  .spec-stage { padding: 36px 0; }
-  .spec-stage::before { left: -12px; right: -12px; }
-  .specimen-input { font-size: 32px; min-height: 60px; }
-  .curtain-layer { padding: 28px 20px; }
-  .details { grid-template-columns: 1fr; gap: 24px; }
-  .scale-row { grid-template-columns: 56px 1fr; gap: 16px; }
+@media (max-width: 760px) {
+  body { padding: 32px 16px 80px; }
+  .masthead { flex-direction: column; gap: 20px; padding-bottom: 24px; }
+  .inst-viewport { height: auto; min-height: 260px; }
+  .cockpit-grid { grid-template-columns: 1fr; }
+  .cockpit-speed { border-right: 0; border-bottom: 1px solid var(--line); padding: 24px; gap: 16px; }
+  .speed-num { font-size: 64px; }
+  .cockpit-nav { padding: 24px; }
+  .nav-primary { font-size: 26px; }
+  .cockpit-telemetry { padding: 16px 24px; gap: 16px; }
+  .wt-row { padding: 16px 20px; grid-template-columns: 84px minmax(0, 1fr); gap: 12px; }
+  .wt-sample { font-size: 22px; }
+  .free-grid { padding: 28px 20px; min-height: 220px; }
+  .free-input { font-size: 32px; }
+  .chapter { grid-template-columns: 1fr; gap: 16px; margin-top: 48px; padding-top: 24px; }
+  .details { grid-template-columns: 1fr; }
+  .curtain-layer { padding: 20px; }
+  .curtain-big { gap: 18px; }
 }
 </style>
 </head>
 <body>
 
 <main class="page">
-  <header class="reveal" style="--d:0ms">
-    <div class="open-row">
-      <div class="brand-line">
+  <!-- 1. Masthead -->
+  <header class="masthead reveal" style="--d:0ms">
+    <div class="mast-left">
+      <div class="mast-title-row">
         <h1 class="head-title">Halden</h1>
-        <span class="head-ver">v1.1 · SIL OFL</span>
+        <span class="head-ver">v1.1, SIL OFL 1.1</span>
+      </div>
+      <p class="lead">
+        <strong>An open-source sans-serif for automotive HMI.</strong> Built for rapid glance legibility with OLED dark-mode optical compensation. Used in <a class="ul" href="https://www.drivescenestudio.com/" target="_blank" rel="noopener">DriveScene Studio</a>, <a class="ul" href="https://paxton0209.github.io/Dashline/" target="_blank" rel="noopener">Dashline</a>, and <a class="ul" href="https://paxton0209.github.io/dashnote/" target="_blank" rel="noopener">Dashnote</a>.
+      </p>
+    </div>
+
+    <div class="mast-actions">
+      <div class="seg" role="group" aria-label="Page theme" id="themeSeg">
+        <button type="button" data-theme-choice="light">Light</button>
+        <button type="button" data-theme-choice="dark">Dark</button>
       </div>
       <a class="dl-btn" href="https://github.com/Paxton0209/halden/archive/refs/heads/main.zip">
         <span>Download</span>
@@ -641,169 +857,227 @@ footer {
         </svg>
       </a>
     </div>
-
-    <p class="lead measure">
-      <strong>An open-source sans-serif for automotive HMI.</strong> Text, Display, and OLED Dark — tuned for legibility across clusters, center displays, and HUDs. Used in <a class="ul" href="https://www.drivescenestudio.com/" target="_blank" rel="noopener">DriveScene Studio</a>, <a class="ul" href="https://paxton0209.github.io/Dashline/" target="_blank" rel="noopener">Dashline</a>, and <a class="ul" href="https://paxton0209.github.io/dashnote/" target="_blank" rel="noopener">Dashnote</a>.
-    </p>
   </header>
 
-  <!-- Live Specimen -->
-  <section class="sec-tight reveal" style="--d:60ms" aria-label="Type specimen">
-    <div class="spec-controls">
-      <div class="ctrl-group">
-        <div class="tabs" role="group" aria-label="Optical grade" id="gradeTabs">
-          <button type="button" data-grade="text" data-label="Text">Text</button>
-          <button type="button" class="on" data-grade="display" data-label="Display">Display</button>
-          <button type="button" data-grade="dark" data-label="OLED Dark">OLED Dark</button>
-          <i class="tab-line" aria-hidden="true"></i>
+  <!-- 2. Living Specimen Instrument: Cockpit (default) / Weights (all 3 at once) / Type (free canvas) -->
+  <section class="instrument reveal" style="--d:50ms" aria-label="Halden specimen">
+    <div class="inst-viewport">
+      <!-- View A: Real HMI Cockpit Hierarchy -->
+      <div class="inst-panel cockpit-grid active" id="panelCockpit">
+        <div class="cockpit-speed">
+          <div class="speed-top">
+            <span>Highway assist</span>
+            <span>D</span>
+          </div>
+          <div class="speed-readout">
+            <span class="speed-num" contenteditable="true" spellcheck="false" aria-label="Editable speed">118</span>
+            <span class="speed-unit">km/h</span>
+          </div>
+          <div class="speed-meta">
+            <span>Limit <strong>120</strong></span>
+            <span>82%</span>
+          </div>
         </div>
-        <div class="tabs" role="group" aria-label="Font weight" id="weightTabs">
-          <button type="button" class="on" data-wt="400" data-label="400">400</button>
-          <button type="button" data-wt="500" data-label="500">500</button>
-          <button type="button" data-wt="600" data-label="600">600</button>
-          <i class="tab-line" aria-hidden="true"></i>
+
+        <div class="cockpit-right">
+          <div class="cockpit-nav">
+            <span class="nav-kicker">Next maneuver</span>
+            <div class="nav-primary" contenteditable="true" spellcheck="false" aria-label="Editable navigation prompt">Turn right in 350 m</div>
+            <div class="nav-secondary" contenteditable="true" spellcheck="false" aria-label="Editable street name">West Lake Avenue, Exit 14B</div>
+          </div>
+
+          <div class="cockpit-telemetry">
+            <div class="tele-cell">
+              <span class="tele-val" id="liveClock">18:45</span>
+              <span class="tele-lbl">Arrival</span>
+            </div>
+            <div class="tele-cell">
+              <span class="tele-val" contenteditable="true" spellcheck="false" aria-label="Editable range">420 km</span>
+              <span class="tele-lbl">Range</span>
+            </div>
+            <div class="tele-cell">
+              <span class="tele-val" contenteditable="true" spellcheck="false" aria-label="Editable cabin temperature">21.5°C</span>
+              <span class="tele-lbl">Cabin</span>
+            </div>
+          </div>
         </div>
       </div>
-      <label class="size-wrap">
-        <input type="range" id="sizeRange" min="16" max="72" value="48" aria-label="Font size">
-        <output id="sizeOut" for="sizeRange">48px</output>
-      </label>
+
+      <!-- View B: All 3 Weights Compared Simultaneously -->
+      <div class="inst-panel weights-grid" id="panelWeights">
+        <div class="wt-row">
+          <div class="wt-meta">
+            <span class="wt-name">Regular</span>
+            <span class="wt-num">400</span>
+          </div>
+          <div class="wt-sample" style="font-weight:400" contenteditable="true" spellcheck="false">Clear legibility at arm's length, 118 km/h</div>
+        </div>
+        <div class="wt-row">
+          <div class="wt-meta">
+            <span class="wt-name">Medium</span>
+            <span class="wt-num">500</span>
+          </div>
+          <div class="wt-sample" style="font-weight:500" contenteditable="true" spellcheck="false">Clear legibility at arm's length, 118 km/h</div>
+        </div>
+        <div class="wt-row">
+          <div class="wt-meta">
+            <span class="wt-name">SemiBold</span>
+            <span class="wt-num">600</span>
+          </div>
+          <div class="wt-sample" style="font-weight:600" contenteditable="true" spellcheck="false">Clear legibility at arm's length, 118 km/h</div>
+        </div>
+      </div>
+
+      <!-- View C: Free Type Playground -->
+      <div class="inst-panel free-grid" id="panelType">
+        <div class="free-input" id="freeInput" contenteditable="true" spellcheck="false" aria-label="Type your own text">Turn right in 350 m</div>
+      </div>
     </div>
 
-    <div class="spec-stage" id="specStage">
-      <div class="specimen-input" id="specimen" contenteditable="true" spellcheck="false" aria-label="Editable Halden specimen">118 km/h · Turn right in 350 m</div>
-    </div>
-  </section>
+    <div class="inst-bar">
+      <div class="seg seg--compact" role="tablist" aria-label="Specimen view" id="viewTabs">
+        <button type="button" role="tab" aria-selected="true" class="on" data-view="cockpit">Cockpit</button>
+        <button type="button" role="tab" aria-selected="false" data-view="weights">Weights</button>
+        <button type="button" role="tab" aria-selected="false" data-view="type">Type</button>
+      </div>
 
-  <!-- Optical Grades — Interactive Day <-> OLED Night Scrub Curtain -->
-  <section class="sec reveal" style="--d:120ms">
-    <div class="kicker">
-      <span>Optical grades</span>
-      <span class="kicker-note">Drag to compare</span>
-    </div>
-    <p class="prose-muted measure">
-      Light text on dark OLED screens blooms optically. Halden Dark reduces stroke mass while keeping identical advance widths — glide across to verify zero layout shift.
-    </p>
-    <div class="curtain" id="curtain" role="slider" tabindex="0" aria-label="Compare Halden Text and Halden Dark" aria-valuemin="8" aria-valuemax="92" aria-valuenow="50">
-      <div class="curtain-layer curtain-day">
-        <div class="curtain-top"><span>Halden Text</span><span>Day</span></div>
-        <div class="curtain-big">128 km/h · 420 km · 21.5°C</div>
-        <div class="curtain-sub">Navigate to West Lake · Arrive 18:45 · 14 min remaining</div>
-      </div>
-      <div class="curtain-layer curtain-night" aria-hidden="true">
-        <div class="curtain-top"><span>Halden Dark</span><span>OLED Night</span></div>
-        <div class="curtain-big">128 km/h · 420 km · 21.5°C</div>
-        <div class="curtain-sub">Navigate to West Lake · Arrive 18:45 · 14 min remaining</div>
-      </div>
-      <div class="curtain-line">
-        <span class="curtain-knob" aria-hidden="true">↔</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Form Details -->
-  <section class="sec reveal" style="--d:180ms">
-    <div class="kicker"><span>Form</span></div>
-    <p class="prose-muted measure">
-      Single-story lowercase a, open numeral counters, continuous-curvature superellipse dots, and tabular figures with contextually centered punctuation.
-    </p>
-    <div class="details">
-      <div class="detail-item" data-demo="apertures">
-        <div class="detail-glyph">
-          <span class="char">a</span><span class="char">3</span><span class="char">6</span><span class="char">9</span>
+      <div class="inst-bar-right">
+        <span class="bar-hint" id="barHint">Click any value or text to edit</span>
+        <div class="free-tools" id="freeTools">
+          <div class="seg seg--compact" role="group" aria-label="Font weight" id="weightTabs">
+            <button type="button" class="on" data-wt="400">Regular</button>
+            <button type="button" data-wt="500">Medium</button>
+            <button type="button" data-wt="600">SemiBold</button>
+          </div>
+          <label class="size-wrap">
+            <input type="range" id="sizeRange" min="16" max="72" value="48" aria-label="Font size">
+            <output id="sizeOut" for="sizeRange">48px</output>
+          </label>
         </div>
-        <p class="detail-text">
-          <strong><span>Open apertures</span></strong>
-          Distinct shapes at small cluster sizes and oblique viewing angles.
-        </p>
-      </div>
-      <div class="detail-item" data-demo="dots" id="dotDemo" tabindex="0" role="button" aria-label="Magnify superellipse dot">
-        <div class="detail-glyph">
-          <span>i j . :</span>
-          <svg class="dot-lens" viewBox="0 0 40 40" aria-hidden="true">
-            <path fill="currentColor" d="M20 4C30.8 4 36 9.2 36 20S30.8 36 20 36 4 30.8 4 20 9.2 4 20 4Z"/>
-          </svg>
-        </div>
-        <p class="detail-text">
-          <strong><span>Superellipse dots</span><span class="detail-state">Hover</span></strong>
-          Squircle terminals echoing cockpit icon geometry without feeling soft.
-        </p>
-      </div>
-      <div class="detail-item" data-demo="calt" id="caltDemo" tabindex="0" role="button" aria-label="Toggle contextual colon alignment">
-        <div class="detail-glyph">
-          <span class="calt-sample" id="caltSample">12:45</span>
-        </div>
-        <p class="detail-text">
-          <strong><span>Tabular &amp; calt</span><span class="detail-state" id="caltState">calt on</span></strong>
-          Fixed-width digits and optically lifted colons — click to compare.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Scale -->
-  <section class="sec reveal" style="--d:240ms">
-    <div class="kicker"><span>Scale</span></div>
-    <div class="scale-list">
-      <div class="scale-row">
-        <span class="scale-meta">48 · 500</span>
-        <span class="scale-text" style="font-family:var(--display);font-size:48px;line-height:1.15;font-weight:500">118 km/h · Highway assist</span>
-      </div>
-      <div class="scale-row">
-        <span class="scale-meta">32 · 500</span>
-        <span class="scale-text" style="font-family:var(--display);font-size:32px;line-height:1.25;font-weight:500">Exit 14B in 350 m</span>
-      </div>
-      <div class="scale-row">
-        <span class="scale-meta">24 · 500</span>
-        <span class="scale-text" style="font-family:var(--display);font-size:24px;line-height:1.33;font-weight:500">Battery 82% · 412 km remaining</span>
-      </div>
-      <div class="scale-row">
-        <span class="scale-meta">16 · 400</span>
-        <span class="scale-text" style="font-size:16px;line-height:26px;font-weight:400">Clear hierarchy at arm's length, tuned for cluster, center display, and HUD.</span>
-      </div>
-      <div class="scale-row">
-        <span class="scale-meta">13 · 400</span>
-        <span class="scale-text" style="font-size:13px;line-height:18px;font-weight:400;color:var(--muted)">Regular 400 · Medium 500 · SemiBold 600 · SIL Open Font License 1.1</span>
       </div>
     </div>
   </section>
 
-  <!-- Characters -->
-  <section class="sec reveal" style="--d:300ms">
-    <div class="kicker">
-      <span>Characters</span>
-      <span class="kicker-note" id="glyphReadout">Click to copy</span>
+  <!-- 3. Day & OLED Night Optical Compensation -->
+  <section class="chapter reveal" style="--d:100ms">
+    <div class="ch-rail">
+      <h2 class="ch-title">Day and OLED night</h2>
+      <p class="ch-note">Press and drag divider</p>
     </div>
-    <div class="glyph-field" id="glyphField"></div>
+    <div class="ch-body">
+      <p class="ch-desc">
+        White type on dark OLED screens blooms optically. Halden Dark thins stroke mass while locking identical character widths so switching themes causes zero layout shift.
+      </p>
+      <div class="curtain-card" id="curtainCard" style="--split:50%">
+        <div class="curtain" id="curtain">
+          <div class="curtain-layer curtain-day">
+            <div class="curtain-top"><span>Halden</span><span>Day</span></div>
+            <div class="curtain-big"><span>128 km/h</span><span>420 km</span><span>21.5°C</span></div>
+            <div class="curtain-sub">West Lake, arrive 18:45 (14 min remaining)</div>
+          </div>
+          <div class="curtain-layer curtain-night" aria-hidden="true">
+            <div class="curtain-top"><span>Halden Dark</span><span>OLED Night</span></div>
+            <div class="curtain-big"><span>128 km/h</span><span>420 km</span><span>21.5°C</span></div>
+            <div class="curtain-sub">West Lake, arrive 18:45 (14 min remaining)</div>
+          </div>
+          <div class="curtain-line" aria-hidden="true"></div>
+        </div>
+        <div class="curtain-bar" id="curtainBar" role="slider" tabindex="0" aria-label="Press and drag to compare Halden and Halden Dark" aria-valuemin="8" aria-valuemax="92" aria-valuenow="50">
+          <span class="curtain-handle" aria-hidden="true">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 4.2 2.2 7 5 9.8M9 4.2 11.8 7 9 9.8"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- Use & Footer -->
-  <section class="sec reveal" style="--d:360ms">
-    <div class="kicker"><span>Use</span></div>
-    <div class="code-block">
-      <pre id="cssCode">&lt;link rel="stylesheet" href="https://paxton0209.github.io/halden/fonts.css"&gt;
+  <!-- 4. Anatomy -->
+  <section class="chapter reveal" style="--d:140ms">
+    <div class="ch-rail">
+      <h2 class="ch-title">Anatomy</h2>
+      <p class="ch-note">Optical craft at glance distance</p>
+    </div>
+    <div class="ch-body">
+      <div class="details">
+        <div class="detail-item" data-demo="apertures">
+          <div class="detail-glyph">
+            <span class="char">a</span><span class="char">3</span><span class="char">6</span><span class="char">9</span>
+          </div>
+          <div>
+            <div class="detail-meta"><strong>Open apertures</strong></div>
+            <p class="detail-copy">Single-story a and open numeral counters stay distinct at small cluster sizes.</p>
+          </div>
+        </div>
+        <div class="detail-item" data-demo="dots" id="dotDemo" tabindex="0" role="button" aria-label="Magnify superellipse dot">
+          <div class="detail-glyph">
+            <span>i j . :</span>
+            <svg class="dot-lens" viewBox="0 0 40 40" aria-hidden="true">
+              <path fill="currentColor" d="M20 4C30.8 4 36 9.2 36 20S30.8 36 20 36 4 30.8 4 20 9.2 4 20 4Z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="detail-meta"><strong>Superellipse dots</strong><span class="detail-state">Hover</span></div>
+            <p class="detail-copy">Continuous-curvature squircle terminals echo cockpit icon geometry.</p>
+          </div>
+        </div>
+        <div class="detail-item" data-demo="calt" id="caltDemo" tabindex="0" role="button" aria-label="Toggle contextual colon alignment">
+          <div class="detail-glyph">
+            <span class="calt-sample" id="caltSample">12:45</span>
+          </div>
+          <div>
+            <div class="detail-meta"><strong>Tabular and calt</strong><span class="detail-state" id="caltState">On</span></div>
+            <p class="detail-copy">Fixed-width digits with optically centered colons, click to compare.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Characters -->
+  <section class="chapter reveal" style="--d:180ms">
+    <div class="ch-rail">
+      <h2 class="ch-title">Characters</h2>
+      <p class="ch-note" id="glyphReadout">Click any glyph to copy</p>
+    </div>
+    <div class="ch-body">
+      <div class="glyph-field" id="glyphField"></div>
+    </div>
+  </section>
+
+  <!-- 6. Install -->
+  <section class="chapter reveal" style="--d:220ms">
+    <div class="ch-rail">
+      <h2 class="ch-title">Install</h2>
+      <p class="ch-note">Static WOFF2 stylesheet</p>
+    </div>
+    <div class="ch-body">
+      <div class="code-block">
+        <pre id="cssCode">&lt;link rel="stylesheet" href="https://paxton0209.github.io/halden/fonts.css"&gt;
 
 :root { font-family: "Halden", -apple-system, sans-serif; font-feature-settings: "calt" 1; }
 :root[data-theme="dark"] { font-family: "Halden Dark", "Halden", sans-serif; }</pre>
-      <button type="button" class="copy-link" id="copyBtn">Copy</button>
+        <button type="button" class="copy-link" id="copyBtn">Copy</button>
+      </div>
     </div>
-
-    <footer>
-      <span>Halden v1.1 · SIL OFL · Press D for Dark</span>
-      <nav class="social" aria-label="Links">
-        <a href="https://github.com/Paxton0209/halden" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://x.com/Parker_EV_UX" target="_blank" rel="noopener">X</a>
-        <a href="https://www.linkedin.com/in/paxton-yao-8080443a2/" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="https://www.youtube.com/@PeixinYao-0209" target="_blank" rel="noopener">YouTube</a>
-      </nav>
-    </footer>
   </section>
+
+  <footer>
+    <span>Halden v1.1, SIL OFL (Press D to switch theme)</span>
+    <nav class="social" aria-label="Links">
+      <a href="https://github.com/Paxton0209/halden" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://x.com/Parker_EV_UX" target="_blank" rel="noopener">X</a>
+      <a href="https://www.linkedin.com/in/paxton-yao-8080443a2/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://www.youtube.com/@PeixinYao-0209" target="_blank" rel="noopener">YouTube</a>
+    </nav>
+  </footer>
 </main>
 
 <script>
 const GLYPH_ROWS = [[{"ch": "A", "code": "U+0041", "w": 668}, {"ch": "B", "code": "U+0042", "w": 650}, {"ch": "C", "code": "U+0043", "w": 722}, {"ch": "D", "code": "U+0044", "w": 706}, {"ch": "E", "code": "U+0045", "w": 595}, {"ch": "F", "code": "U+0046", "w": 572}, {"ch": "G", "code": "U+0047", "w": 732}, {"ch": "H", "code": "U+0048", "w": 730}, {"ch": "I", "code": "U+0049", "w": 246}, {"ch": "J", "code": "U+004A", "w": 552}, {"ch": "K", "code": "U+004B", "w": 650}, {"ch": "L", "code": "U+004C", "w": 551}, {"ch": "M", "code": "U+004D", "w": 880}, {"ch": "N", "code": "U+004E", "w": 736}, {"ch": "O", "code": "U+004F", "w": 748}, {"ch": "P", "code": "U+0050", "w": 624}, {"ch": "Q", "code": "U+0051", "w": 748}, {"ch": "R", "code": "U+0052", "w": 644}, {"ch": "S", "code": "U+0053", "w": 619}, {"ch": "T", "code": "U+0054", "w": 627}, {"ch": "U", "code": "U+0055", "w": 726}, {"ch": "V", "code": "U+0056", "w": 668}, {"ch": "W", "code": "U+0057", "w": 964}, {"ch": "X", "code": "U+0058", "w": 660}, {"ch": "Y", "code": "U+0059", "w": 658}, {"ch": "Z", "code": "U+005A", "w": 626}], [{"ch": "a", "code": "U+0061", "w": 573}, {"ch": "b", "code": "U+0062", "w": 590}, {"ch": "c", "code": "U+0063", "w": 547}, {"ch": "d", "code": "U+0064", "w": 590}, {"ch": "e", "code": "U+0065", "w": 561}, {"ch": "f", "code": "U+0066", "w": 329}, {"ch": "g", "code": "U+0067", "w": 590}, {"ch": "h", "code": "U+0068", "w": 571}, {"ch": "i", "code": "U+0069", "w": 221}, {"ch": "j", "code": "U+006A", "w": 222}, {"ch": "k", "code": "U+006B", "w": 528}, {"ch": "l", "code": "U+006C", "w": 234}, {"ch": "m", "code": "U+006D", "w": 866}, {"ch": "n", "code": "U+006E", "w": 570}, {"ch": "o", "code": "U+006F", "w": 573}, {"ch": "p", "code": "U+0070", "w": 590}, {"ch": "q", "code": "U+0071", "w": 590}, {"ch": "r", "code": "U+0072", "w": 343}, {"ch": "s", "code": "U+0073", "w": 500}, {"ch": "t", "code": "U+0074", "w": 323}, {"ch": "u", "code": "U+0075", "w": 571}, {"ch": "v", "code": "U+0076", "w": 537}, {"ch": "w", "code": "U+0077", "w": 785}, {"ch": "x", "code": "U+0078", "w": 529}, {"ch": "y", "code": "U+0079", "w": 537}, {"ch": "z", "code": "U+007A", "w": 508}], [{"ch": "0", "code": "U+0030", "w": 625}, {"ch": "1", "code": "U+0031", "w": 375}, {"ch": "2", "code": "U+0032", "w": 581}, {"ch": "3", "code": "U+0033", "w": 591}, {"ch": "4", "code": "U+0034", "w": 616}, {"ch": "5", "code": "U+0035", "w": 586}, {"ch": "6", "code": "U+0036", "w": 569}, {"ch": "7", "code": "U+0037", "w": 535}, {"ch": "8", "code": "U+0038", "w": 597}, {"ch": "9", "code": "U+0039", "w": 569}, {"ch": ".", "code": "U+002E", "w": 232}, {"ch": ":", "code": "U+003A", "w": 232}, {"ch": ",", "code": "U+002C", "w": 232}, {"ch": ";", "code": "U+003B", "w": 237}, {"ch": "!", "code": "U+0021", "w": 232}, {"ch": "?", "code": "U+003F", "w": 515}, {"ch": "-", "code": "U+002D", "w": 430}, {"ch": "+", "code": "U+002B", "w": 628}, {"ch": "×", "code": "U+00D7", "w": 628}, {"ch": "÷", "code": "U+00F7", "w": 628}, {"ch": "=", "code": "U+003D", "w": 628}, {"ch": "<", "code": "U+003C", "w": 628}, {"ch": ">", "code": "U+003E", "w": 628}, {"ch": "(", "code": "U+0028", "w": 310}, {"ch": ")", "code": "U+0029", "w": 310}, {"ch": "[", "code": "U+005B", "w": 310}, {"ch": "]", "code": "U+005D", "w": 310}, {"ch": "/", "code": "U+002F", "w": 329}, {"ch": "*", "code": "U+002A", "w": 470}, {"ch": "@", "code": "U+0040", "w": 960}, {"ch": "#", "code": "U+0023", "w": 600}, {"ch": "%", "code": "U+0025", "w": 864}, {"ch": "&", "code": "U+0026", "w": 609}, {"ch": "°", "code": "U+00B0", "w": 425}, {"ch": "℃", "code": "U+2103", "w": 1138}, {"ch": "$", "code": "U+0024", "w": 613}, {"ch": "€", "code": "U+20AC", "w": 633}, {"ch": "¥", "code": "U+00A5", "w": 518}, {"ch": "→", "code": "U+2192", "w": 918}]];
 
-// Warm all 9 Halden weights in background so switching grade/weight is instant with zero flash
+// Warm all Halden weights so view/theme transitions never flash
 if (document.fonts && document.fonts.load) {
   for (const fam of ['"Halden"', '"Halden Display"', '"Halden Dark"']) {
     for (const wt of ['400', '500', '600']) {
@@ -812,86 +1086,122 @@ if (document.fonts && document.fonts.load) {
   }
 }
 
-const specimen = document.getElementById('specimen');
-const specStage = document.getElementById('specStage');
+// Living Specimen View Switcher (Cockpit / Weights / Type)
+const viewTabs = document.getElementById('viewTabs');
+const panels = {
+  cockpit: document.getElementById('panelCockpit'),
+  weights: document.getElementById('panelWeights'),
+  type: document.getElementById('panelType'),
+};
+const barHint = document.getElementById('barHint');
+const freeTools = document.getElementById('freeTools');
+const freeInput = document.getElementById('freeInput');
+const weightTabs = document.getElementById('weightTabs');
 const sizeRange = document.getElementById('sizeRange');
 const sizeOut = document.getElementById('sizeOut');
+const themeSeg = document.getElementById('themeSeg');
 
-const GRADE_MAP = {
-  text: '"Halden", -apple-system, sans-serif',
-  display: '"Halden Display", "Halden", -apple-system, sans-serif',
-  dark: '"Halden Dark", "Halden", -apple-system, sans-serif',
+const HINTS = {
+  cockpit: 'Click any value or text to edit',
+  weights: 'Regular, Medium, and SemiBold side by side',
 };
 
-// Sliding 1.5px ink underline for tab groups
-function moveLine(group) {
-  const active = group.querySelector('button.on');
-  const line = group.querySelector('.tab-line');
-  if (!active || !line) return;
-  line.style.width = active.offsetWidth + 'px';
-  line.style.transform = 'translateX(' + active.offsetLeft + 'px)';
+function applyFreeFont() {
+  const px = Number(sizeRange.value);
+  const isDark = document.documentElement.dataset.theme === 'dark';
+  if (px >= 24) {
+    freeInput.style.fontFamily = '"Halden Display", "Halden", -apple-system, sans-serif';
+    freeInput.style.lineHeight = '1.2';
+  } else {
+    freeInput.style.fontFamily = isDark
+      ? '"Halden Dark", "Halden", -apple-system, sans-serif'
+      : '"Halden", -apple-system, sans-serif';
+    freeInput.style.lineHeight = '1.45';
+  }
 }
-const gradeTabs = document.getElementById('gradeTabs');
-const weightTabs = document.getElementById('weightTabs');
-requestAnimationFrame(() => { moveLine(gradeTabs); moveLine(weightTabs); });
-window.addEventListener('resize', () => { moveLine(gradeTabs); moveLine(weightTabs); });
-if (document.fonts) document.fonts.ready.then(() => { moveLine(gradeTabs); moveLine(weightTabs); });
 
-gradeTabs.addEventListener('click', (e) => {
-  const btn = e.target.closest('button[data-grade]');
+viewTabs.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-view]');
   if (!btn) return;
-  for (const b of gradeTabs.querySelectorAll('button')) b.classList.toggle('on', b === btn);
-  moveLine(gradeTabs);
-  const g = btn.dataset.grade;
-  const rect = specStage.getBoundingClientRect();
-  const bRect = btn.getBoundingClientRect();
-  const rx = Math.max(0, Math.min(100, ((bRect.left + bRect.width / 2 - rect.left) / Math.max(1, rect.width)) * 100));
-  specStage.style.setProperty('--rx', rx.toFixed(1) + '%');
-  specimen.style.fontFamily = GRADE_MAP[g];
-  specStage.classList.toggle('oled', g === 'dark');
+  const v = btn.dataset.view;
+  for (const b of viewTabs.querySelectorAll('button')) {
+    const on = b === btn;
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  }
+  for (const [k, el] of Object.entries(panels)) {
+    el.classList.toggle('active', k === v);
+  }
+  const isType = v === 'type';
+  freeTools.classList.toggle('visible', isType);
+  barHint.style.display = isType ? 'none' : '';
+  if (!isType) barHint.textContent = HINTS[v] || '';
+  else freeInput.focus();
+});
+
+panels.type.addEventListener('click', (e) => {
+  if (e.target === panels.type) freeInput.focus();
 });
 
 weightTabs.addEventListener('click', (e) => {
   const btn = e.target.closest('button[data-wt]');
   if (!btn) return;
   for (const b of weightTabs.querySelectorAll('button')) b.classList.toggle('on', b === btn);
-  moveLine(weightTabs);
-  specimen.style.fontWeight = btn.dataset.wt;
+  freeInput.style.fontWeight = btn.dataset.wt;
 });
 
 sizeRange.addEventListener('input', () => {
-  const v = sizeRange.value + 'px';
-  specimen.style.fontSize = v;
-  sizeOut.textContent = v;
+  const px = Number(sizeRange.value);
+  freeInput.style.fontSize = px + 'px';
+  sizeOut.textContent = px + 'px';
+  applyFreeFont();
 });
 
-// Interactive Day <-> OLED Night Scrub Curtain
+// Strictly press-and-drag Day <-> OLED Night scrubber (never triggers on hover)
+const curtainCard = document.getElementById('curtainCard');
 const curtain = document.getElementById('curtain');
+const curtainBar = document.getElementById('curtainBar');
 let dragging = false;
+
 function setSplit(pct) {
   const clamped = Math.max(8, Math.min(92, pct));
-  curtain.style.setProperty('--split', clamped.toFixed(2) + '%');
-  curtain.setAttribute('aria-valuenow', Math.round(clamped));
+  const val = clamped.toFixed(2) + '%';
+  curtainCard.style.setProperty('--split', val);
+  curtain.style.setProperty('--split', val);
+  curtainBar.setAttribute('aria-valuenow', String(Math.round(clamped)));
 }
 function pointerSplit(e) {
-  const r = curtain.getBoundingClientRect();
+  const r = curtainCard.getBoundingClientRect();
   setSplit(((e.clientX - r.left) / Math.max(1, r.width)) * 100);
 }
-curtain.addEventListener('pointerdown', (e) => {
+function startDrag(target, e) {
+  if (e.button !== 0 && e.pointerType === 'mouse') return;
   dragging = true;
+  curtainCard.classList.add('dragging');
   curtain.classList.add('dragging');
-  curtain.setPointerCapture(e.pointerId);
+  curtainBar.classList.add('dragging');
+  target.setPointerCapture(e.pointerId);
   pointerSplit(e);
-});
-curtain.addEventListener('pointermove', (e) => {
-  if (dragging || e.pointerType === 'mouse') pointerSplit(e);
-});
-curtain.addEventListener('pointerup', () => {
+}
+function moveDrag(e) {
+  if (!dragging) return;
+  pointerSplit(e);
+}
+function endDrag() {
+  if (!dragging) return;
   dragging = false;
+  curtainCard.classList.remove('dragging');
   curtain.classList.remove('dragging');
-});
-curtain.addEventListener('keydown', (e) => {
-  const cur = Number(curtain.getAttribute('aria-valuenow') || 50);
+  curtainBar.classList.remove('dragging');
+}
+for (const el of [curtain, curtainBar]) {
+  el.addEventListener('pointerdown', (e) => startDrag(el, e));
+  el.addEventListener('pointermove', moveDrag);
+  el.addEventListener('pointerup', endDrag);
+  el.addEventListener('pointercancel', endDrag);
+}
+curtainBar.addEventListener('keydown', (e) => {
+  const cur = Number(curtainBar.getAttribute('aria-valuenow') || 50);
   if (e.key === 'ArrowLeft') { e.preventDefault(); setSplit(cur - 5); }
   if (e.key === 'ArrowRight') { e.preventDefault(); setSplit(cur + 5); }
 });
@@ -904,7 +1214,7 @@ let caltOn = true;
 function toggleCalt() {
   caltOn = !caltOn;
   caltSample.classList.toggle('off', !caltOn);
-  caltState.textContent = caltOn ? 'calt on' : 'calt off';
+  caltState.textContent = caltOn ? 'On' : 'Off';
 }
 caltDemo.addEventListener('click', toggleCalt);
 caltDemo.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCalt(); } });
@@ -919,7 +1229,7 @@ setInterval(() => {
 const dotDemo = document.getElementById('dotDemo');
 dotDemo.addEventListener('click', () => dotDemo.classList.toggle('pinned'));
 
-// Open character field with proximity wave + click to copy
+// Character field with gentle hover scale + click to copy
 const field = document.getElementById('glyphField');
 const readout = document.getElementById('glyphReadout');
 const allBtns = [];
@@ -938,8 +1248,8 @@ for (const row of GLYPH_ROWS) {
     btn.addEventListener('click', async () => {
       try { await navigator.clipboard.writeText(g.ch); } catch (e) {}
       readout.classList.add('active');
-      readout.textContent = 'Copied  ' + g.ch + '  ' + g.code + '  ' + g.w + ' upm';
-      setTimeout(() => readout.classList.remove('active'), 1100);
+      readout.textContent = 'Copied ' + g.ch + ' (' + g.code + ', ' + g.w + ' upm)';
+      setTimeout(() => readout.classList.remove('active'), 1200);
     });
     rowEl.appendChild(btn);
     allBtns.push(btn);
@@ -950,17 +1260,17 @@ for (const row of GLYPH_ROWS) {
 function applyWave(target) {
   const idx = allBtns.indexOf(target);
   if (idx < 0) return;
-  readout.textContent = target.dataset.ch + '  ' + target.dataset.code + '  ' + target.dataset.w + ' upm';
+  readout.textContent = target.dataset.ch + ' (' + target.dataset.code + ', ' + target.dataset.w + ' upm)';
   allBtns.forEach((b, i) => {
     const d = Math.abs(i - idx);
-    if (d === 0) { b.style.transform = 'scale(1.36)'; b.style.opacity = '1'; b.style.background = 'var(--wash)'; }
-    else if (d === 1) { b.style.transform = 'scale(1.12)'; b.style.opacity = '.85'; b.style.background = ''; }
-    else { b.style.transform = ''; b.style.opacity = '.34'; b.style.background = ''; }
+    if (d === 0) { b.style.transform = 'scale(1.28)'; b.style.opacity = '1'; b.style.background = 'var(--track)'; }
+    else if (d === 1) { b.style.transform = 'scale(1.08)'; b.style.opacity = '.85'; b.style.background = ''; }
+    else { b.style.transform = ''; b.style.opacity = '.38'; b.style.background = ''; }
   });
 }
 function clearWave() {
   allBtns.forEach((b) => { b.style.transform = ''; b.style.opacity = ''; b.style.background = ''; });
-  if (!readout.classList.contains('active')) readout.textContent = 'Click to copy';
+  if (!readout.classList.contains('active')) readout.textContent = 'Click any glyph to copy';
 }
 field.addEventListener('mouseover', (e) => {
   const btn = e.target.closest('.glyph-btn');
@@ -986,14 +1296,22 @@ copyBtn.addEventListener('click', async () => {
   } catch (e) {}
 });
 
-// System theme + D shortcut with circular View Transition (Dashline 3.7)
+// System theme + segmented toggle + D shortcut
 const mq = matchMedia('(prefers-color-scheme: dark)');
+function syncThemeUI() {
+  const cur = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+  for (const b of themeSeg.querySelectorAll('button')) {
+    b.classList.toggle('on', b.dataset.themeChoice === cur);
+  }
+  applyFreeFont();
+}
 function setTheme(next, persist) {
   const apply = () => {
     document.documentElement.dataset.theme = next;
     const sys = mq.matches ? 'dark' : 'light';
     if (!persist || next === sys) localStorage.removeItem('halden-theme');
     else localStorage.setItem('halden-theme', next);
+    syncThemeUI();
   };
   if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.startViewTransition(apply);
@@ -1001,6 +1319,12 @@ function setTheme(next, persist) {
     apply();
   }
 }
+syncThemeUI();
+themeSeg.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-theme-choice]');
+  if (!btn) return;
+  setTheme(btn.dataset.themeChoice, true);
+});
 mq.addEventListener('change', () => setTheme(mq.matches ? 'dark' : 'light', false));
 document.addEventListener('keydown', (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
