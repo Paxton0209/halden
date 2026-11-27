@@ -1,21 +1,46 @@
+/* Halden v1.1 — Text (opsz=16), Display (opsz=28), and OLED Dark Grade */
 @font-face {
   font-family: "Halden";
   src: url("webfonts/Halden-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+  font-weight: 400; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: "Halden";
   src: url("webfonts/Halden-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
+  font-weight: 500; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: "Halden";
   src: url("webfonts/Halden-SemiBold.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Halden Display";
+  src: url("webfonts/HaldenDisplay-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Halden Display";
+  src: url("webfonts/HaldenDisplay-Medium.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Halden Display";
+  src: url("webfonts/HaldenDisplay-SemiBold.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Halden Dark";
+  src: url("webfonts/HaldenDark-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Halden Dark";
+  src: url("webfonts/HaldenDark-Medium.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Halden Dark";
+  src: url("webfonts/HaldenDark-SemiBold.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
 }

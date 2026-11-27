@@ -10,20 +10,17 @@ Files: ttf/Halden-Regular.ttf, webfonts/Halden-Regular.woff2, ttf/Halden-Medium.
 
 ChangeLog
 ---------
-2026-11-27 (version 1.000)
+2026-11-27 (version 1.100)
   1. Base: Inter[opsz,wght].ttf, axes {'opsz': (14.0, 14.0, 32.0), 'wght': (100.0, 400.0, 900.0)}.
-  2. Regular: y coordinates from {'opsz': 20.0, 'wght': 389.84}; x per width class from its own location, factors {'lc_straight': 1.045, 'lc_bowl': 1.05, 'lc_round': 1.037, 'lc_diagonal': 1.0478, 'lc_narrow': 1.05, 'uc_straight': 1.0463, 'uc_round': 1.0354, 'uc_diagonal': 1.05, 'uc_wide': 1.0276, 'uc_narrow': 1.05, 'figures': 1.0201}.
-     Width fit: 8 pass(es), error % by class {'lc_straight': 0.012, 'lc_bowl': -1.557, 'lc_round': 0.007, 'lc_diagonal': -0.004, 'lc_narrow': -5.979, 'uc_straight': 0.017, 'uc_round': 0.005, 'uc_diagonal': -0.702, 'uc_wide': -0.017, 'uc_narrow': -2.326, 'figures': -0.001}.
-     Stretch limit reached for ['lc_bowl', 'lc_narrow', 'uc_diagonal', 'uc_narrow'].
-  3. Medium: y coordinates from {'opsz': 20.0, 'wght': 508.59}; x per width class from its own location, factors {'lc_straight': 1.0035, 'lc_bowl': 1.0306, 'lc_round': 0.9994, 'lc_diagonal': 1.0003, 'lc_narrow': 1.0142, 'uc_straight': 1.0141, 'uc_round': 1.0082, 'uc_diagonal': 0.9994, 'uc_wide': 0.99, 'uc_narrow': 1.03, 'figures': 0.9971}.
-     Width fit: 3 pass(es), error % by class {'lc_straight': 0.173, 'lc_bowl': 0.107, 'lc_round': -0.036, 'lc_diagonal': 0.009, 'lc_narrow': 0.238, 'uc_straight': 0.143, 'uc_round': 0.137, 'uc_diagonal': 0.157, 'uc_wide': 0.137, 'uc_narrow': 0.198, 'figures': -0.001}.
-  4. SemiBold: y coordinates from {'opsz': 20.0, 'wght': 608.59}; x per width class from its own location, factors {'lc_straight': 0.9598, 'lc_bowl': 0.9957, 'lc_round': 0.9636, 'lc_diagonal': 0.9546, 'lc_narrow': 0.95, 'uc_straight': 0.984, 'uc_round': 0.984, 'uc_diagonal': 0.95, 'uc_wide': 0.9547, 'uc_narrow': 0.986, 'figures': 0.978}.
-     Width fit: 8 pass(es), error % by class {'lc_straight': -0.024, 'lc_bowl': -0.01, 'lc_round': 0.007, 'lc_diagonal': -0.004, 'lc_narrow': 3.167, 'uc_straight': -0.022, 'uc_round': -0.008, 'uc_diagonal': 0.357, 'uc_wide': -0.017, 'uc_narrow': -0.003, 'figures': -0.026}.
-     Stretch limit reached for ['lc_narrow', 'uc_diagonal'].
-  5. Spacing (PaxtonSans-Regular.baked.ttf): side moves {'lc': {'S': 4.1, 'R': 0.0, 'O': 2.1}, 'uc': {'S': -0.2, 'R': -0.1, 'O': -0.2}}, track 0, 0 pairs opened by the collision guard.
-  6. Spacing (PaxtonSans-Medium.baked.ttf): side moves {'lc': {'S': 4.4, 'R': 0.3, 'O': 2.4}, 'uc': {'S': 0.2, 'R': 0.0, 'O': 0.1}}, track 0, 0 pairs opened by the collision guard.
-  7. Spacing (PaxtonSans-SemiBold.baked.ttf): side moves {'lc': {'S': 4.6, 'R': 0.1, 'O': 2.4}, 'uc': {'S': 0.0, 'R': -0.1, 'O': -0.1}}, track 0, 0 pairs opened by the collision guard.
-  8. Renamed to Halden, trademark record removed, OFL notice set, overlaps removed, variation tables removed, spacing accents classed as base glyphs in GDEF.
+  2. Regular: y coordinates from {'opsz': 16.0, 'wght': 385.16}; x per width class from its own location, factors {'lc_straight': 1.03, 'lc_bowl': 1.03, 'lc_round': 1.03, 'lc_diagonal': 1.03, 'lc_narrow': 1.03, 'uc_straight': 1.03, 'uc_round': 1.03, 'uc_diagonal': 1.03, 'uc_wide': 1.0263, 'uc_narrow': 1.03, 'figures': 1.0118}.
+     Width fit: 6 pass(es), error % by class {'lc_straight': -0.854, 'lc_bowl': -1.776, 'lc_round': -0.569, 'lc_diagonal': -1.046, 'lc_narrow': -6.396, 'uc_straight': -0.857, 'uc_round': -0.794, 'uc_diagonal': -1.74, 'uc_wide': 0.009, 'uc_narrow': -2.465, 'figures': -0.029}.
+     Stretch limit reached for ['lc_straight', 'lc_bowl', 'lc_round', 'lc_diagonal', 'lc_narrow', 'uc_straight', 'uc_round', 'uc_diagonal', 'uc_narrow'].
+  3. Medium: y coordinates from {'opsz': 16.0, 'wght': 503.91}; x per width class from its own location, factors {'lc_straight': 0.9952, 'lc_bowl': 1.0103, 'lc_round': 0.9985, 'lc_diagonal': 0.9932, 'lc_narrow': 0.9919, 'uc_straight': 1.0058, 'uc_round': 1.0105, 'uc_diagonal': 0.987, 'uc_wide': 0.9881, 'uc_narrow': 1.0098, 'figures': 0.9894}.
+     Width fit: 2 pass(es), error % by class {'lc_straight': 0.004, 'lc_bowl': -0.009, 'lc_round': -0.013, 'lc_diagonal': -0.031, 'lc_narrow': 0.007, 'uc_straight': 0.129, 'uc_round': -0.008, 'uc_diagonal': 0.007, 'uc_wide': 0.06, 'uc_narrow': 0.078, 'figures': -0.021}.
+  4. SemiBold: y coordinates from {'opsz': 16.0, 'wght': 603.91}; x per width class from its own location, factors {'lc_straight': 0.97, 'lc_bowl': 0.9795, 'lc_round': 0.97, 'lc_diagonal': 0.97, 'lc_narrow': 0.97, 'uc_straight': 0.9759, 'uc_round': 0.9871, 'uc_diagonal': 0.97, 'uc_wide': 0.97, 'uc_narrow': 0.97, 'figures': 0.9708}.
+     Width fit: 6 pass(es), error % by class {'lc_straight': 1.208, 'lc_bowl': -0.035, 'lc_round': 0.372, 'lc_diagonal': 1.715, 'lc_narrow': 5.958, 'uc_straight': 0.001, 'uc_round': 0.005, 'uc_diagonal': 3.726, 'uc_wide': 1.812, 'uc_narrow': 0.225, 'figures': -0.004}.
+     Stretch limit reached for ['lc_straight', 'lc_round', 'lc_diagonal', 'lc_narrow', 'uc_diagonal', 'uc_wide'].
+  5. Renamed to Halden, trademark record removed, OFL notice set, overlaps removed, variation tables removed, spacing accents classed as base glyphs in GDEF.
 
 Acknowledgements
 ----------------

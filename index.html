@@ -41,6 +41,18 @@ body {
   -webkit-font-smoothing: antialiased;
   line-height: 1.5;
 }
+html[data-theme="dark"] body {
+  font-family: "Halden Dark", "Halden", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.hero-input, .wt-big, .speed, .micro-glyph {
+  font-family: "Halden Display", "Halden", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.cockpit {
+  font-family: "Halden Dark", "Halden", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.cockpit .speed {
+  font-family: "Halden Display", "Halden", -apple-system, BlinkMacSystemFont, sans-serif;
+}
 a { color: inherit; text-decoration: none; }
 header {
   position: sticky;
@@ -297,7 +309,7 @@ footer a { color: var(--ink-2); text-decoration: underline; text-underline-offse
   <div class="nav">
     <div class="brand">
       <strong>Halden</strong>
-      <span>v1.0 · SIL OFL 1.1 · 400 / 500 / 600</span>
+      <span>v1.1 · Text / Display / OLED Dark · SIL OFL 1.1</span>
     </div>
     <div class="actions">
       <div class="seg" id="wtSeg">
