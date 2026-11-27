@@ -78,7 +78,7 @@ body {
   font-kerning: normal;
   -webkit-font-smoothing: antialiased;
   padding: 56px 32px 112px;
-  transition: background-color 220ms var(--ease-out), color 220ms var(--ease-out);
+  transition: background-color .4s, color .4s;
 }
 
 /* Single unified 960px architectural spine */
@@ -95,17 +95,37 @@ body {
   animation: rise 420ms var(--ease-out) both;
   animation-delay: var(--d, 0ms);
 }
+/* Dashline / DriveScene Studio feathered radial theme reveal */
+@property --theme-reveal-progress {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+::view-transition-group(root),
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
 }
-::view-transition-new(root) {
-  animation: theme-circle 420ms var(--ease-out);
+::view-transition {
+  pointer-events: none;
 }
-@keyframes theme-circle {
-  from { clip-path: circle(0% at 50% 50%); }
-  to { clip-path: circle(100% at 50% 50%); }
+.theme-changing,
+.theme-changing * {
+  transition: none !important;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .theme-changing::view-transition-old(root) { z-index: 1; }
+  .theme-changing::view-transition-new(root) {
+    z-index: 2;
+    -webkit-mask-image: radial-gradient(circle at var(--theme-reveal-x) var(--theme-reveal-y), #fff calc(var(--theme-reveal-progress) - 160px), transparent var(--theme-reveal-progress));
+    mask-image: radial-gradient(circle at var(--theme-reveal-x) var(--theme-reveal-y), #fff calc(var(--theme-reveal-progress) - 160px), transparent var(--theme-reveal-progress));
+    animation: theme-reveal 400ms cubic-bezier(.65, 0, .35, 1) both;
+  }
+  @keyframes theme-reveal {
+    from { --theme-reveal-progress: 0px; opacity: .5; }
+    to { --theme-reveal-progress: var(--theme-reveal-radius); opacity: 1; }
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
@@ -1296,43 +1316,88 @@ copyBtn.addEventListener('click', async () => {
   } catch (e) {}
 });
 
-// System theme + segmented toggle + D shortcut
+// System theme + segmented toggle + D shortcut (Dashline feathered radial View Transition)
 const mq = matchMedia('(prefers-color-scheme: dark)');
+const currentTheme = () => document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
 function syncThemeUI() {
-  const cur = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+  const cur = currentTheme();
   for (const b of themeSeg.querySelectorAll('button')) {
     b.classList.toggle('on', b.dataset.themeChoice === cur);
   }
   applyFreeFont();
 }
-function setTheme(next, persist) {
-  const apply = () => {
-    document.documentElement.dataset.theme = next;
-    const sys = mq.matches ? 'dark' : 'light';
-    if (!persist || next === sys) localStorage.removeItem('halden-theme');
-    else localStorage.setItem('halden-theme', next);
-    syncThemeUI();
-  };
-  if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    document.startViewTransition(apply);
-  } else {
-    apply();
+function applyThemeImmediate(next, persist) {
+  document.documentElement.dataset.theme = next;
+  const sys = mq.matches ? 'dark' : 'light';
+  if (!persist || next === sys) localStorage.removeItem('halden-theme');
+  else localStorage.setItem('halden-theme', next);
+  syncThemeUI();
+}
+
+let requestedTheme = currentTheme();
+let requestedPersist = true;
+let requestedOrigin = null;
+let changingTheme = false;
+
+async function setTheme(next, persist, originEl = null) {
+  if (next === currentTheme() && !changingTheme) return;
+  requestedTheme = next;
+  requestedPersist = persist;
+  requestedOrigin = originEl;
+  if (changingTheme) return;
+  const root = document.documentElement;
+  if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    applyThemeImmediate(requestedTheme, requestedPersist);
+    return;
+  }
+  changingTheme = true;
+  try {
+    while (currentTheme() !== requestedTheme) {
+      const target = requestedTheme;
+      const persistFlag = requestedPersist;
+      const el = requestedOrigin;
+      let x = innerWidth / 2;
+      let y = innerHeight / 2;
+      if (el && el.getBoundingClientRect) {
+        const r = el.getBoundingClientRect();
+        x = r.left + r.width / 2;
+        y = r.top + r.height / 2;
+      }
+      const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) + 180;
+      root.style.setProperty('--theme-reveal-x', x + 'px');
+      root.style.setProperty('--theme-reveal-y', y + 'px');
+      root.style.setProperty('--theme-reveal-radius', radius + 'px');
+      let transition;
+      try {
+        root.classList.add('theme-changing');
+        transition = document.startViewTransition(() => applyThemeImmediate(target, persistFlag));
+        await transition.ready;
+        await transition.finished;
+      } catch {
+        if (currentTheme() !== target) applyThemeImmediate(target, persistFlag);
+      } finally {
+        if (transition) await transition.finished.catch(() => {});
+        root.classList.remove('theme-changing');
+      }
+    }
+  } finally {
+    changingTheme = false;
   }
 }
 syncThemeUI();
 themeSeg.addEventListener('click', (e) => {
   const btn = e.target.closest('button[data-theme-choice]');
   if (!btn) return;
-  setTheme(btn.dataset.themeChoice, true);
+  setTheme(btn.dataset.themeChoice, true, btn);
 });
-mq.addEventListener('change', () => setTheme(mq.matches ? 'dark' : 'light', false));
+mq.addEventListener('change', () => setTheme(mq.matches ? 'dark' : 'light', false, null));
 document.addEventListener('keydown', (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
   const tag = (e.target && e.target.tagName) || '';
   if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable)) return;
   if (e.key === 'd' || e.key === 'D') {
-    const cur = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
-    setTheme(cur === 'dark' ? 'light' : 'dark', true);
+    const next = (changingTheme ? requestedTheme : currentTheme()) === 'dark' ? 'light' : 'dark';
+    setTheme(next, true, null);
   }
 });
 </script>
