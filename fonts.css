@@ -44,3 +44,34 @@
   src: url("webfonts/HaldenDark-SemiBold.woff2") format("woff2");
   font-weight: 600; font-style: normal; font-display: swap;
 }
+/* Halden SC (Source Han Sans CN VF, SIL OFL 1.1) — Day & OLED Dark */
+@font-face {
+  font-family: "Halden SC";
+  src: url("webfonts/HaldenSC-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Halden SC";
+  src: url("webfonts/HaldenSC-Medium.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Halden SC";
+  src: url("webfonts/HaldenSC-SemiBold.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Halden SC Dark";
+  src: url("webfonts/HaldenSCDark-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Halden SC Dark";
+  src: url("webfonts/HaldenSCDark-Medium.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Halden SC Dark";
+  src: url("webfonts/HaldenSCDark-SemiBold.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
+}

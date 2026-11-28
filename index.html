@@ -1,10 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Halden</title>
 <meta name="description" content="Halden v1.1, an open-source sans-serif for automotive HMI with OLED Dark optical compensation under SIL OFL 1.1.">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-64.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <script>
 try{
   const saved=localStorage.getItem('halden-theme');
@@ -17,7 +20,7 @@ try{
 <link rel="preload" href="webfonts/HaldenDisplay-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="webfonts/HaldenDisplay-Medium.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="webfonts/HaldenDark-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="fonts.css?v=3">
 <style>
 /* PDS v1.7 surface tokens */
 :root {
@@ -36,9 +39,9 @@ try{
   --on-ink: #ffffff;
   --oled-bg: #0f0f10;
   --oled-ink: #ededef;
-  --font: "Halden", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
-  --display: "Halden Display", "Halden", -apple-system, BlinkMacSystemFont, sans-serif;
-  --dark: "Halden Dark", "Halden", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font: "Halden", "Halden SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  --display: "Halden Display", "Halden", "Halden SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  --dark: "Halden Dark", "Halden", "Halden SC Dark", "Halden SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, monospace;
   --ease: cubic-bezier(.2, 0, 0, 1);
   --ease-out: cubic-bezier(.23, 1, .32, 1);
@@ -62,7 +65,8 @@ try{
   --on-ink: #0a0a0b;
   --oled-bg: #060607;
   --oled-ink: #ededef;
-  --font: "Halden Dark", "Halden", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  --font: "Halden Dark", "Halden", "Halden SC Dark", "Halden SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  --display: "Halden Dark", "Halden", "Halden SC Dark", "Halden SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
   color-scheme: dark;
 }
 
@@ -138,13 +142,15 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 
 /* ── 1. Masthead ── */
 .masthead {
+  padding-bottom: 56px;
+}
+.mast-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 32px;
-  padding-bottom: 56px;
 }
-.mast-left { max-width: 560px; }
+.mast-left { max-width: 640px; }
 .head-title {
   font: 500 32px/38px var(--display);
   color: var(--text-1);
@@ -153,24 +159,29 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .lead {
   font: 400 16px/26px var(--font);
   color: var(--text-2);
+  min-height: 52px;
 }
 .lead strong {
   font-weight: 500;
   color: var(--text-1);
 }
 .mast-cta {
-  margin-top: 24px;
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
 }
 .mast-actions {
   display: flex;
   align-items: center;
+  gap: 6px;
   flex-shrink: 0;
   padding-top: 2px;
-  margin-right: -9px;
+  margin-right: -8px;
 }
 
-/* Dashnote pure icon theme toggle (no background fill) */
-.theme-btn {
+/* Dashnote pure icon buttons (no background fill) */
+.theme-btn,
+.lang-btn {
   width: 34px;
   height: 34px;
   border-radius: 50%;
@@ -180,11 +191,13 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   background: transparent;
   transition: transform .42s var(--sp-rel), color .15s;
 }
-.theme-btn:hover {
+.theme-btn:hover,
+.lang-btn:hover {
   color: var(--text-1);
 }
-.theme-btn:active {
-  transform: scale(.94);
+.theme-btn:active,
+.lang-btn:active {
+  transform: scale(.92);
   transition-duration: .10s;
   transition-timing-function: var(--ease);
 }
@@ -192,17 +205,50 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   display: block;
   transition: transform .46s var(--sp-rel);
 }
+.lang-btn svg {
+  display: block;
+  transition: transform .36s var(--sp-rel);
+}
 :root[data-theme="dark"] .theme-btn svg {
   transform: rotate(180deg);
 }
 
-/* PDS D-29 single primary ink pill CTA (pure text, 36px height) */
+/* Bilingual Simultaneous Cross-Morph (zero blank gap, GPU-only) */
+.morph-ghost {
+  position: fixed;
+  margin: 0 !important;
+  pointer-events: none;
+  z-index: 9990;
+  transform-origin: left center;
+  will-change: transform, opacity, filter;
+  transition: transform 240ms cubic-bezier(.4, 0, .2, 1), opacity 220ms cubic-bezier(.4, 0, .2, 1), filter 220ms ease;
+}
+.morph-ghost.centered {
+  transform-origin: center center;
+}
+.morph-in-prep {
+  display: inline-block;
+  transform-origin: left center;
+  will-change: transform, opacity, filter;
+}
+.morph-in-prep.block-node {
+  display: block;
+}
+.morph-in-prep.centered {
+  transform-origin: center center;
+}
+.morph-in-active {
+  transition: transform 320ms cubic-bezier(.16, 1, .3, 1), opacity 260ms cubic-bezier(.16, 1, .3, 1), filter 280ms cubic-bezier(.16, 1, .3, 1);
+}
+
+/* PDS D-29 single primary ink pill CTA (rock-steady shell, only inner label morphs) */
 .dl-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 36px;
-  padding: 0 20px;
+  min-width: 116px;
+  height: 40px;
+  padding: 0 24px;
   border-radius: 999px;
   background: var(--ink);
   color: var(--on-ink);
@@ -298,6 +344,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .nav-secondary {
   font: 400 16px/24px var(--font);
   color: var(--text-2);
+  font-variant-numeric: proportional-nums;
   outline: none;
 }
 
@@ -495,14 +542,14 @@ input[type="range"]::-moz-range-thumb {
 .curtain-day {
   background: #ffffff;
   color: #1d1d1f;
-  font-family: "Halden", -apple-system, sans-serif;
+  font-family: "Halden", "Halden SC", -apple-system, "PingFang SC", sans-serif;
 }
 .curtain-night {
   position: absolute;
   inset: 0;
   background: var(--oled-bg);
   color: var(--oled-ink);
-  font-family: "Halden Dark", "Halden", sans-serif;
+  font-family: "Halden Dark", "Halden", "Halden SC Dark", "Halden SC", -apple-system, "PingFang SC", sans-serif;
   clip-path: inset(0 0 0 var(--split));
   will-change: clip-path;
 }
@@ -694,7 +741,7 @@ input[type="range"]::-moz-range-thumb {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 14px 16px 12px 20px;
+  padding: 18px 20px 14px 24px;
 }
 .code-title {
   font: 500 14px/20px var(--font);
@@ -702,14 +749,14 @@ input[type="range"]::-moz-range-thumb {
 }
 .code-block pre {
   margin: 0;
-  padding: 2px 20px 14px;
-  font: 400 12.5px/20px var(--mono);
+  padding: 4px 24px 20px;
+  font: 400 12.5px/21px var(--mono);
   color: var(--text-2);
   white-space: pre-wrap;
   word-break: break-word;
 }
 .code-foot {
-  padding: 10px 20px 14px;
+  padding: 14px 24px 16px;
   border-top: 1px solid var(--line);
   font: 400 12px/18px var(--font);
   color: var(--text-3);
@@ -811,23 +858,52 @@ footer {
 <main class="page">
   <!-- 1. Masthead -->
   <header class="masthead">
-    <div class="mast-left">
-      <h1 class="head-title">Halden</h1>
-      <p class="lead">
-        <strong>An open-source sans-serif for automotive HMI.</strong> Built for rapid glance legibility with OLED dark-mode optical compensation. Used in <a class="ul" href="https://www.drivescenestudio.com/" target="_blank" rel="noopener">DriveScene Studio</a>, <a class="ul" href="https://paxton0209.github.io/Dashline/" target="_blank" rel="noopener">Dashline</a>, and <a class="ul" href="https://paxton0209.github.io/dashnote/" target="_blank" rel="noopener">Dashnote</a>.
-      </p>
-      <div class="mast-cta">
-        <a class="dl-btn" href="https://github.com/Paxton0209/halden/archive/refs/heads/main.zip">Download</a>
+    <div class="mast-top">
+      <div class="mast-left">
+        <h1 class="head-title">Halden</h1>
+        <p class="lead" id="leadCopy">
+          <strong>An open-source sans-serif for automotive HMI.</strong> Tuned for daylight and dark OLED screens, used in <a class="ul" href="https://www.drivescenestudio.com/" target="_blank" rel="noopener">DriveScene Studio</a>, <a class="ul" href="https://paxton0209.github.io/Dashline/" target="_blank" rel="noopener">Dashline</a>, and <a class="ul" href="https://paxton0209.github.io/dashnote/" target="_blank" rel="noopener">Dashnote</a>.
+        </p>
+      </div>
+
+      <div class="mast-actions">
+        <button type="button" class="lang-btn" id="langBtn" aria-label="Switch English and Chinese" title="Switch language (L)">
+          <svg width="20" height="18" viewBox="0 0 22 20" fill="none" aria-hidden="true">
+            <defs>
+              <mask id="langBackMask">
+                <rect width="22" height="20" fill="#fff"/>
+                <rect x="8.6" y="4.6" width="12.6" height="12.2" rx="3.2" fill="#000"/>
+              </mask>
+              <mask id="langWenMask">
+                <rect width="22" height="20" fill="#fff"/>
+                <g stroke="#000" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" fill="none">
+                  <path d="M15.15 7.45v1.05"/>
+                  <path d="M12.35 8.85h5.6"/>
+                  <path d="M16.75 8.85c-.45 2.05-1.55 3.6-4.05 4.65"/>
+                  <path d="M13.55 9.95c.75 1.45 2.05 2.7 4.1 3.55"/>
+                </g>
+              </mask>
+            </defs>
+            <!-- Outlined A speech bubble (back-left) -->
+            <g mask="url(#langBackMask)">
+              <path d="M3.7 1.5h7.1a2.2 2.2 0 0 1 2.2 2.2v6.1a2.2 2.2 0 0 1-2.2 2.2H7.2l-2.75 2.35V12H3.7A2.2 2.2 0 0 1 1.5 9.8V3.7A2.2 2.2 0 0 1 3.7 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M5.15 9.35 6.85 4.45l1.7 4.9M5.7 7.85h2.3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <!-- Filled 文 speech bubble (front-right) -->
+            <path mask="url(#langWenMask)" d="M11.6 5.4h6.9a2.2 2.2 0 0 1 2.2 2.2v6.1a2.2 2.2 0 0 1-2.2 2.2h-.65v2.45L15.1 15.9h-3.5a2.2 2.2 0 0 1-2.2-2.2V7.6a2.2 2.2 0 0 1 2.2-2.2Z" fill="currentColor"/>
+          </svg>
+        </button>
+        <button type="button" class="theme-btn" id="themeBtn" aria-label="Day / Night" title="Switch theme (D)">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+            <circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M8 1.5a6.5 6.5 0 0 1 0 13Z" fill="currentColor"/>
+          </svg>
+        </button>
       </div>
     </div>
 
-    <div class="mast-actions">
-      <button type="button" class="theme-btn" id="themeBtn" aria-label="Day / Night" title="Switch theme (D)">
-        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-          <circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M8 1.5a6.5 6.5 0 0 1 0 13Z" fill="currentColor"/>
-        </svg>
-      </button>
+    <div class="mast-cta">
+      <a class="dl-btn" href="https://github.com/Paxton0209/halden/releases/latest" target="_blank" rel="noopener"><span class="btn-label" data-morph-center="1" data-i18n-en="Download" data-i18n-zh="下载字体">Download</span></a>
     </div>
   </header>
 
@@ -836,7 +912,7 @@ footer {
     <div class="cockpit-grid">
       <div class="cockpit-speed">
         <div class="speed-top">
-          <span>Highway assist</span>
+          <span data-i18n-en="Highway assist" data-i18n-zh="领航辅助">Highway assist</span>
           <span>D</span>
         </div>
         <div class="speed-readout">
@@ -844,30 +920,30 @@ footer {
           <span class="speed-unit">km/h</span>
         </div>
         <div class="speed-meta">
-          <span>Limit <strong>120</strong></span>
+          <span><span data-i18n-en="Limit" data-i18n-zh="限速">Limit</span> <strong>120</strong></span>
           <span>82%</span>
         </div>
       </div>
 
       <div class="cockpit-right">
         <div class="cockpit-nav">
-          <span class="nav-kicker">Next maneuver</span>
-          <div class="nav-primary" contenteditable="true" spellcheck="false" aria-label="Editable navigation prompt">Turn right in 350 m</div>
-          <div class="nav-secondary" contenteditable="true" spellcheck="false" aria-label="Editable street name">West Lake Avenue, Exit 14B</div>
+          <span class="nav-kicker" data-i18n-en="Next maneuver" data-i18n-zh="下一导航动作">Next maneuver</span>
+          <div class="nav-primary" contenteditable="true" spellcheck="false" aria-label="Editable navigation prompt" data-i18n-en="Turn right in 350 m" data-i18n-zh="前方 350 米右转">Turn right in 350 m</div>
+          <div class="nav-secondary" contenteditable="true" spellcheck="false" aria-label="Editable street name" data-i18n-en="West Lake Avenue, Exit 14B" data-i18n-zh="西湖大道，14B 出口">West Lake Avenue, Exit 14B</div>
         </div>
 
         <div class="cockpit-telemetry">
           <div class="tele-cell">
             <span class="tele-val" id="cockpitClock" aria-label="Local time"><span id="clockH">--</span><span class="clock-colon">:</span><span id="clockM">--</span></span>
-            <span class="tele-lbl">Time</span>
+            <span class="tele-lbl" data-i18n-en="Time" data-i18n-zh="当前时间">Time</span>
           </div>
           <div class="tele-cell">
             <span class="tele-val" contenteditable="true" spellcheck="false" aria-label="Editable range">420 km</span>
-            <span class="tele-lbl">Range</span>
+            <span class="tele-lbl" data-i18n-en="Range" data-i18n-zh="剩余续航">Range</span>
           </div>
           <div class="tele-cell">
             <span class="tele-val" id="cockpitTemp" contenteditable="true" spellcheck="false" aria-label="Editable local temperature">21.5°C</span>
-            <span class="tele-lbl" id="cockpitTempLbl">Outside</span>
+            <span class="tele-lbl" id="cockpitTempLbl" data-i18n-en="Outside" data-i18n-zh="车外气温">Outside</span>
           </div>
         </div>
       </div>
@@ -877,11 +953,11 @@ footer {
   <!-- 3. Linked 3-Weight Type Tester -->
   <section class="chapter">
     <div class="ch-rail">
-      <h2 class="ch-title">Weights</h2>
-      <p class="ch-note">Edit any line to sync all three</p>
+      <h2 class="ch-title" data-i18n-en="Weights" data-i18n-zh="字重层级">Weights</h2>
+      <p class="ch-note" data-i18n-en="Edit any line to sync all three" data-i18n-zh="点击任意一行可编辑，三行联动">Edit any line to sync all three</p>
       <label class="rail-control">
         <span class="rail-control-head">
-          <span>Size</span>
+          <span data-i18n-en="Size" data-i18n-zh="字号">Size</span>
           <output id="sizeOut" for="sizeRange">32px</output>
         </span>
         <input type="range" id="sizeRange" min="16" max="56" value="32" aria-label="Specimen font size">
@@ -894,21 +970,21 @@ footer {
             <span class="wt-name">Regular</span>
             <span class="wt-num">400</span>
           </div>
-          <div class="wt-sample" data-wt="400" style="font-weight:400" contenteditable="true" spellcheck="false" aria-label="Regular 400 editable sample">Clear legibility at arm's length, 118 km/h</div>
+          <div class="wt-sample" data-wt="400" style="font-weight:400" contenteditable="true" spellcheck="false" aria-label="Regular 400 editable sample" data-i18n-en="Clear legibility at arm's length, 118 km/h" data-i18n-zh="一臂视距清晰可读，118 km/h">Clear legibility at arm's length, 118 km/h</div>
         </div>
         <div class="wt-row">
           <div class="wt-meta">
             <span class="wt-name">Medium</span>
             <span class="wt-num">500</span>
           </div>
-          <div class="wt-sample" data-wt="500" style="font-weight:500" contenteditable="true" spellcheck="false" aria-label="Medium 500 editable sample">Clear legibility at arm's length, 118 km/h</div>
+          <div class="wt-sample" data-wt="500" style="font-weight:500" contenteditable="true" spellcheck="false" aria-label="Medium 500 editable sample" data-i18n-en="Clear legibility at arm's length, 118 km/h" data-i18n-zh="一臂视距清晰可读，118 km/h">Clear legibility at arm's length, 118 km/h</div>
         </div>
         <div class="wt-row">
           <div class="wt-meta">
             <span class="wt-name">SemiBold</span>
             <span class="wt-num">600</span>
           </div>
-          <div class="wt-sample" data-wt="600" style="font-weight:600" contenteditable="true" spellcheck="false" aria-label="SemiBold 600 editable sample">Clear legibility at arm's length, 118 km/h</div>
+          <div class="wt-sample" data-wt="600" style="font-weight:600" contenteditable="true" spellcheck="false" aria-label="SemiBold 600 editable sample" data-i18n-en="Clear legibility at arm's length, 118 km/h" data-i18n-zh="一臂视距清晰可读，118 km/h">Clear legibility at arm's length, 118 km/h</div>
         </div>
       </div>
     </div>
@@ -917,24 +993,24 @@ footer {
   <!-- 4. Day & OLED Night Optical Compensation -->
   <section class="chapter">
     <div class="ch-rail">
-      <h2 class="ch-title">Day and OLED night</h2>
-      <p class="ch-note">Press and drag divider</p>
+      <h2 class="ch-title" data-i18n-en="Day and OLED night" data-i18n-zh="日间与 OLED 暗夜">Day and OLED night</h2>
+      <p class="ch-note" data-i18n-en="Press and drag divider" data-i18n-zh="按住并左右拖动分割线">Press and drag divider</p>
     </div>
     <div class="ch-body">
-      <p class="ch-desc">
+      <p class="ch-desc" data-i18n-en="White type on dark OLED screens blooms optically. Halden Dark thins stroke mass while locking identical character widths so switching themes causes zero layout shift." data-i18n-zh="高对比度 OLED 暗屏上，亮色文字会产生明显光晕膨胀。Halden Dark 适度细化笔画并严格锁定每个字符步宽，深浅切换零位移。">
         White type on dark OLED screens blooms optically. Halden Dark thins stroke mass while locking identical character widths so switching themes causes zero layout shift.
       </p>
       <div class="curtain-card" id="curtainCard" style="--split:50%">
         <div class="curtain" id="curtain">
           <div class="curtain-layer curtain-day">
-            <div class="curtain-top"><span>Halden</span><span>Day</span></div>
+            <div class="curtain-top"><span>Halden</span><span data-i18n-en="Day" data-i18n-zh="日间标准">Day</span></div>
             <div class="curtain-big"><span>128 km/h</span><span>420 km</span><span>21.5°C</span></div>
-            <div class="curtain-sub">West Lake, arrive 18:45 (14 min remaining)</div>
+            <div class="curtain-sub" data-i18n-en="West Lake, arrive 18:45 (14 min remaining)" data-i18n-zh="西湖大道，预计 18:45 到达（剩余 14 分钟）">West Lake, arrive 18:45 (14 min remaining)</div>
           </div>
           <div class="curtain-layer curtain-night" aria-hidden="true">
-            <div class="curtain-top"><span>Halden Dark</span><span>OLED Night</span></div>
+            <div class="curtain-top"><span>Halden Dark</span><span data-i18n-en="OLED Night" data-i18n-zh="OLED 暗夜">OLED Night</span></div>
             <div class="curtain-big"><span>128 km/h</span><span>420 km</span><span>21.5°C</span></div>
-            <div class="curtain-sub">West Lake, arrive 18:45 (14 min remaining)</div>
+            <div class="curtain-sub" data-i18n-en="West Lake, arrive 18:45 (14 min remaining)" data-i18n-zh="西湖大道，预计 18:45 到达（剩余 14 分钟）">West Lake, arrive 18:45 (14 min remaining)</div>
           </div>
           <div class="curtain-line" aria-hidden="true"></div>
         </div>
@@ -952,8 +1028,8 @@ footer {
   <!-- 5. Anatomy -->
   <section class="chapter">
     <div class="ch-rail">
-      <h2 class="ch-title">Anatomy</h2>
-      <p class="ch-note">Optical craft at glance distance</p>
+      <h2 class="ch-title" data-i18n-en="Anatomy" data-i18n-zh="字形细节">Anatomy</h2>
+      <p class="ch-note" data-i18n-en="Optical craft at glance distance" data-i18n-zh="车机一瞥视距下的光学克制">Optical craft at glance distance</p>
     </div>
     <div class="ch-body">
       <div class="details">
@@ -962,8 +1038,8 @@ footer {
             <span class="char">a</span><span class="char">3</span><span class="char">6</span><span class="char">9</span>
           </div>
           <div>
-            <div class="detail-meta"><strong>Open apertures</strong></div>
-            <p class="detail-copy">Single-story a and open numeral counters stay distinct at small cluster sizes.</p>
+            <div class="detail-meta"><strong data-i18n-en="Open apertures" data-i18n-zh="开阔字怀">Open apertures</strong></div>
+            <p class="detail-copy" data-i18n-en="Single-story a and open numeral counters stay distinct at small cluster sizes." data-i18n-zh="单层 a 与开阔数字开口，小字号仪表依然清晰可辨。">Single-story a and open numeral counters stay distinct at small cluster sizes.</p>
           </div>
         </div>
         <div class="detail-item" data-demo="dots">
@@ -971,8 +1047,8 @@ footer {
             <span>i j . :</span>
           </div>
           <div>
-            <div class="detail-meta"><strong>Superellipse dots</strong></div>
-            <p class="detail-copy">Continuous-curvature squircle terminals echo cockpit icon geometry.</p>
+            <div class="detail-meta"><strong data-i18n-en="Superellipse dots" data-i18n-zh="超椭圆圆点">Superellipse dots</strong></div>
+            <p class="detail-copy" data-i18n-en="Continuous-curvature squircle terminals echo cockpit icon geometry." data-i18n-zh="连续曲率超椭圆点形，呼应现代座舱图标几何语汇。">Continuous-curvature squircle terminals echo cockpit icon geometry.</p>
           </div>
         </div>
         <div class="detail-item" data-demo="calt" id="caltDemo" tabindex="0" role="button" aria-label="Toggle contextual colon alignment">
@@ -980,8 +1056,8 @@ footer {
             <span class="calt-sample" id="caltSample">--:--:--</span>
           </div>
           <div>
-            <div class="detail-meta"><strong>Tabular and calt</strong><span class="detail-state" id="caltState">On</span></div>
-            <p class="detail-copy">Fixed-width digits with optically centered colons, click to compare.</p>
+            <div class="detail-meta"><strong data-i18n-en="Tabular and calt" data-i18n-zh="等宽与居中冒号">Tabular and calt</strong><span class="detail-state" id="caltState">On</span></div>
+            <p class="detail-copy" data-i18n-en="Fixed-width digits with optically centered colons, click to compare." data-i18n-zh="等宽数字配垂直居中冒号，点击可开关对照。">Fixed-width digits with optically centered colons, click to compare.</p>
           </div>
         </div>
       </div>
@@ -991,8 +1067,8 @@ footer {
   <!-- 6. Characters -->
   <section class="chapter">
     <div class="ch-rail">
-      <h2 class="ch-title">Characters</h2>
-      <p class="ch-note" id="glyphReadout">Click any glyph to copy</p>
+      <h2 class="ch-title" data-i18n-en="Characters" data-i18n-zh="字符总览">Characters</h2>
+      <p class="ch-note" id="glyphReadout" data-i18n-en="Click any glyph to copy" data-i18n-zh="点击任意字符即可复制">Click any glyph to copy</p>
     </div>
     <div class="ch-body">
       <div class="glyph-field" id="glyphField"></div>
@@ -1002,8 +1078,8 @@ footer {
   <!-- 7. Install -->
   <section class="chapter">
     <div class="ch-rail">
-      <h2 class="ch-title">Install</h2>
-      <p class="ch-note">Use on any website</p>
+      <h2 class="ch-title" data-i18n-en="Install" data-i18n-zh="引入方式">Install</h2>
+      <p class="ch-note" data-i18n-en="Use on any website" data-i18n-zh="一行样式接入任意网页">Use on any website</p>
     </div>
     <div class="ch-body">
       <div class="code-block">
@@ -1020,7 +1096,7 @@ footer {
                 <path class="cp-error" d="m4.5 4.5 7 7m0-7-7 7"/>
               </svg>
             </span>
-            <span>Copy</span>
+            <span data-i18n-en="Copy" data-i18n-zh="复制">Copy</span>
           </button>
           <span class="cp-status" id="copyStatus" role="status"></span>
         </div>
@@ -1033,13 +1109,13 @@ footer {
 :root[data-theme="dark"] {
   font-family: "Halden Dark", "Halden", sans-serif;
 }</pre>
-        <div class="code-foot">Paste into your page head and stylesheet to load Halden and Halden Dark automatically.</div>
+        <div class="code-foot" data-i18n-en="Paste into your page head and stylesheet to load Halden and Halden Dark automatically." data-i18n-zh="粘贴至页面 head 与样式表，即可自动加载 Halden 与暗夜版 Halden Dark。">Paste into your page head and stylesheet to load Halden and Halden Dark automatically.</div>
       </div>
     </div>
   </section>
 
   <footer>
-    <span>Halden v1.1, SIL OFL (Press D to switch theme)</span>
+    <span data-i18n-en="Halden v1.1, SIL OFL (Press L for language, D for theme)" data-i18n-zh="Halden v1.1，SIL OFL 开源协议（按 L 切换语言，按 D 切换深浅色）">Halden v1.1, SIL OFL (Press L for language, D for theme)</span>
     <nav class="social" aria-label="Links">
       <a href="https://github.com/Paxton0209/halden" target="_blank" rel="noopener">GitHub</a>
       <a href="https://x.com/Parker_EV_UX" target="_blank" rel="noopener">X</a>
@@ -1052,9 +1128,9 @@ footer {
 <script>
 const GLYPH_ROWS = [[{"ch": "A", "code": "U+0041", "w": 668}, {"ch": "B", "code": "U+0042", "w": 650}, {"ch": "C", "code": "U+0043", "w": 722}, {"ch": "D", "code": "U+0044", "w": 706}, {"ch": "E", "code": "U+0045", "w": 595}, {"ch": "F", "code": "U+0046", "w": 572}, {"ch": "G", "code": "U+0047", "w": 732}, {"ch": "H", "code": "U+0048", "w": 730}, {"ch": "I", "code": "U+0049", "w": 246}, {"ch": "J", "code": "U+004A", "w": 552}, {"ch": "K", "code": "U+004B", "w": 650}, {"ch": "L", "code": "U+004C", "w": 551}, {"ch": "M", "code": "U+004D", "w": 880}, {"ch": "N", "code": "U+004E", "w": 736}, {"ch": "O", "code": "U+004F", "w": 748}, {"ch": "P", "code": "U+0050", "w": 624}, {"ch": "Q", "code": "U+0051", "w": 748}, {"ch": "R", "code": "U+0052", "w": 644}, {"ch": "S", "code": "U+0053", "w": 619}, {"ch": "T", "code": "U+0054", "w": 627}, {"ch": "U", "code": "U+0055", "w": 726}, {"ch": "V", "code": "U+0056", "w": 668}, {"ch": "W", "code": "U+0057", "w": 964}, {"ch": "X", "code": "U+0058", "w": 660}, {"ch": "Y", "code": "U+0059", "w": 658}, {"ch": "Z", "code": "U+005A", "w": 626}], [{"ch": "a", "code": "U+0061", "w": 573}, {"ch": "b", "code": "U+0062", "w": 590}, {"ch": "c", "code": "U+0063", "w": 547}, {"ch": "d", "code": "U+0064", "w": 590}, {"ch": "e", "code": "U+0065", "w": 561}, {"ch": "f", "code": "U+0066", "w": 329}, {"ch": "g", "code": "U+0067", "w": 590}, {"ch": "h", "code": "U+0068", "w": 571}, {"ch": "i", "code": "U+0069", "w": 221}, {"ch": "j", "code": "U+006A", "w": 222}, {"ch": "k", "code": "U+006B", "w": 528}, {"ch": "l", "code": "U+006C", "w": 234}, {"ch": "m", "code": "U+006D", "w": 866}, {"ch": "n", "code": "U+006E", "w": 570}, {"ch": "o", "code": "U+006F", "w": 573}, {"ch": "p", "code": "U+0070", "w": 590}, {"ch": "q", "code": "U+0071", "w": 590}, {"ch": "r", "code": "U+0072", "w": 343}, {"ch": "s", "code": "U+0073", "w": 500}, {"ch": "t", "code": "U+0074", "w": 323}, {"ch": "u", "code": "U+0075", "w": 571}, {"ch": "v", "code": "U+0076", "w": 537}, {"ch": "w", "code": "U+0077", "w": 785}, {"ch": "x", "code": "U+0078", "w": 529}, {"ch": "y", "code": "U+0079", "w": 537}, {"ch": "z", "code": "U+007A", "w": 508}], [{"ch": "0", "code": "U+0030", "w": 625}, {"ch": "1", "code": "U+0031", "w": 375}, {"ch": "2", "code": "U+0032", "w": 581}, {"ch": "3", "code": "U+0033", "w": 591}, {"ch": "4", "code": "U+0034", "w": 616}, {"ch": "5", "code": "U+0035", "w": 586}, {"ch": "6", "code": "U+0036", "w": 569}, {"ch": "7", "code": "U+0037", "w": 535}, {"ch": "8", "code": "U+0038", "w": 597}, {"ch": "9", "code": "U+0039", "w": 569}, {"ch": ".", "code": "U+002E", "w": 232}, {"ch": ":", "code": "U+003A", "w": 232}, {"ch": ",", "code": "U+002C", "w": 232}, {"ch": ";", "code": "U+003B", "w": 237}, {"ch": "!", "code": "U+0021", "w": 232}, {"ch": "?", "code": "U+003F", "w": 515}, {"ch": "-", "code": "U+002D", "w": 430}, {"ch": "+", "code": "U+002B", "w": 628}, {"ch": "×", "code": "U+00D7", "w": 628}, {"ch": "÷", "code": "U+00F7", "w": 628}, {"ch": "=", "code": "U+003D", "w": 628}, {"ch": "<", "code": "U+003C", "w": 628}, {"ch": ">", "code": "U+003E", "w": 628}, {"ch": "(", "code": "U+0028", "w": 310}, {"ch": ")", "code": "U+0029", "w": 310}, {"ch": "[", "code": "U+005B", "w": 310}, {"ch": "]", "code": "U+005D", "w": 310}, {"ch": "/", "code": "U+002F", "w": 329}, {"ch": "*", "code": "U+002A", "w": 470}, {"ch": "@", "code": "U+0040", "w": 960}, {"ch": "#", "code": "U+0023", "w": 600}, {"ch": "%", "code": "U+0025", "w": 864}, {"ch": "&", "code": "U+0026", "w": 609}, {"ch": "°", "code": "U+00B0", "w": 425}, {"ch": "℃", "code": "U+2103", "w": 1138}, {"ch": "$", "code": "U+0024", "w": 613}, {"ch": "€", "code": "U+20AC", "w": 633}, {"ch": "¥", "code": "U+00A5", "w": 518}, {"ch": "→", "code": "U+2192", "w": 918}]];
 
-// Warm all Halden weights so theme transitions never flash
+// Warm all Halden + Halden SC weights so theme & language transitions never flash
 if (document.fonts && document.fonts.load) {
-  for (const fam of ['"Halden"', '"Halden Display"', '"Halden Dark"']) {
+  for (const fam of ['"Halden"', '"Halden Display"', '"Halden Dark"', '"Halden SC"', '"Halden SC Dark"']) {
     for (const wt of ['400', '500', '600']) {
       document.fonts.load(wt + ' 48px ' + fam).catch(() => {});
     }
@@ -1071,8 +1147,8 @@ function applyTesterFont() {
   const px = Number(sizeRange.value);
   const isDark = document.documentElement.dataset.theme === 'dark';
   const fam = px >= 24
-    ? '"Halden Display", "Halden", -apple-system, sans-serif'
-    : (isDark ? '"Halden Dark", "Halden", -apple-system, sans-serif' : '"Halden", -apple-system, sans-serif');
+    ? (isDark ? '"Halden Dark", "Halden", "Halden SC Dark", "Halden SC", -apple-system, sans-serif' : '"Halden Display", "Halden", "Halden SC", -apple-system, sans-serif')
+    : (isDark ? '"Halden Dark", "Halden", "Halden SC Dark", "Halden SC", -apple-system, sans-serif' : '"Halden", "Halden SC", -apple-system, sans-serif');
   const lh = px >= 24 ? '1.24' : '1.45';
   for (const el of wtSamples) {
     el.style.fontSize = px + 'px';
@@ -1449,6 +1525,159 @@ themeBtn.addEventListener('click', () => {
   setTheme(next, true, themeBtn);
 });
 mq.addEventListener('change', () => setTheme(mq.matches ? 'dark' : 'light', false, null));
+// ── Bilingual EN <-> ZH Toggle with Physical Typographic Stretch / Compress Morph ──
+const langBtn = document.getElementById('langBtn');
+const leadCopy = document.getElementById('leadCopy');
+const LEAD_HTML = {
+  en: '<strong>An open-source sans-serif for automotive HMI.</strong> Tuned for daylight and dark OLED screens, used in <a class="ul" href="https://www.drivescenestudio.com/" target="_blank" rel="noopener">DriveScene Studio</a>, <a class="ul" href="https://paxton0209.github.io/Dashline/" target="_blank" rel="noopener">Dashline</a>, and <a class="ul" href="https://paxton0209.github.io/dashnote/" target="_blank" rel="noopener">Dashnote</a>.',
+  zh: '<strong>面向车机座舱的开源无衬线字体。</strong> 兼顾日间强光与暗夜 OLED 屏幕显示，已用于 <a class="ul" href="https://www.drivescenestudio.com/" target="_blank" rel="noopener">DriveScene Studio</a>、<a class="ul" href="https://paxton0209.github.io/Dashline/" target="_blank" rel="noopener">Dashline</a> 与 <a class="ul" href="https://paxton0209.github.io/dashnote/" target="_blank" rel="noopener">Dashnote</a>。'
+};
+const LEAD_PLAIN = {
+  en: 'An open-source sans-serif for automotive HMI. Tuned for daylight and dark OLED screens, used in DriveScene Studio, Dashline, and Dashnote.',
+  zh: '面向车机座舱的开源无衬线字体。 兼顾日间强光与暗夜 OLED 屏幕显示，已用于 DriveScene Studio、Dashline 与 Dashnote。'
+};
+
+let currentLang = 'en';
+let morphBusy = false;
+
+const mCanvas = document.createElement('canvas');
+const mCtx = mCanvas.getContext('2d');
+function measureW(text, cs) {
+  mCtx.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+  return Math.max(18, mCtx.measureText(text).width);
+}
+function inView(r) {
+  return r.width > 0 && r.height > 0 && r.bottom > -30 && r.top < innerHeight + 30;
+}
+function applyLangInstant(next) {
+  currentLang = next;
+  document.documentElement.dataset.lang = next;
+  document.documentElement.lang = next === 'zh' ? 'zh-CN' : 'en';
+  document.querySelectorAll('[data-i18n-en]').forEach(el => {
+    const nextTxt = next === 'zh' ? el.dataset.i18nZh : el.dataset.i18nEn;
+    if (el.textContent.trim() !== nextTxt.trim()) el.textContent = nextTxt;
+  });
+  leadCopy.innerHTML = LEAD_HTML[next];
+}
+
+function runStretchMorph(next) {
+  const nodes = [...document.querySelectorAll('[data-i18n-en]'), leadCopy];
+  const visible = [];
+  const offscreen = [];
+  for (const el of nodes) {
+    if (el.closest('.curtain-night')) { offscreen.push(el); continue; }
+    const r = el.getBoundingClientRect();
+    const isLead = el === leadCopy;
+    const oldTxt = isLead ? LEAD_PLAIN[currentLang] : el.textContent;
+    const newTxt = isLead ? LEAD_PLAIN[next] : (next === 'zh' ? el.dataset.i18nZh : el.dataset.i18nEn);
+    // Strict guard: identical text never animates
+    if (oldTxt.trim() === newTxt.trim()) continue;
+    if (inView(r)) {
+      const cs = getComputedStyle(el);
+      const ratio = Math.max(0.62, Math.min(1.52, measureW(newTxt, cs) / measureW(oldTxt, cs)));
+      const centered = Boolean(el.dataset.morphCenter);
+      visible.push({ el, isLead, newTxt, ratio, rect: r, cs, centered, top: r.top });
+    } else {
+      offscreen.push(el);
+    }
+  }
+  if (!visible.length) { applyLangInstant(next); return; }
+  visible.sort((a, b) => a.top - b.top);
+  morphBusy = true;
+
+  // 1. Snapshot outgoing text as fixed ghost layers (container shells like .dl-btn stay 100% solid!)
+  const ghosts = visible.map((item) => {
+    const g = item.el.cloneNode(true);
+    g.removeAttribute('id');
+    g.removeAttribute('contenteditable');
+    g.setAttribute('aria-hidden', 'true');
+    const cs = item.cs;
+    g.className = (item.el.className ? item.el.className + ' ' : '') + 'morph-ghost' + (item.centered ? ' centered' : '');
+    g.style.left = item.rect.left + 'px';
+    g.style.top = item.rect.top + 'px';
+    g.style.width = item.rect.width + 'px';
+    g.style.height = item.rect.height + 'px';
+    g.style.font = cs.font;
+    g.style.color = cs.color;
+    g.style.letterSpacing = cs.letterSpacing;
+    g.style.lineHeight = cs.lineHeight;
+    g.style.textAlign = cs.textAlign;
+    g.style.opacity = '1';
+    g.style.transform = 'scaleX(1) scaleY(1)';
+    g.style.filter = 'blur(0px)';
+    document.body.appendChild(g);
+    return g;
+  });
+
+  // 2. Immediately swap to target language & set incoming inverse deformation (ZERO blank trough!)
+  currentLang = next;
+  document.documentElement.dataset.lang = next;
+  document.documentElement.lang = next === 'zh' ? 'zh-CN' : 'en';
+  offscreen.forEach(el => {
+    if (el === leadCopy) el.innerHTML = LEAD_HTML[next];
+    else el.textContent = next === 'zh' ? el.dataset.i18nZh : el.dataset.i18nEn;
+  });
+
+  visible.forEach((item) => {
+    const el = item.el;
+    const isBlock = item.cs.display === 'block' || item.cs.display === 'flex' || item.cs.display === 'grid';
+    if (item.isLead) el.innerHTML = LEAD_HTML[next];
+    else el.textContent = item.newTxt;
+    el.classList.add('morph-in-prep');
+    if (isBlock) el.classList.add('block-node');
+    if (item.centered) el.classList.add('centered');
+    const inv = Math.max(0.66, Math.min(1.48, 1 / item.ratio));
+    el.style.transform = `scaleX(${inv.toFixed(3)}) scaleY(${(1 / Math.sqrt(inv)).toFixed(3)})`;
+    el.style.opacity = '0';
+    el.style.filter = 'blur(1.8px)';
+  });
+
+  // Force layout flush so both outgoing ghosts & incoming elements animate simultaneously on the next frame
+  void document.body.offsetWidth;
+
+  // 3. Simultaneous cross-morph: outgoing stretches out while incoming springs in (overlapping, never blank!)
+  visible.forEach((item, idx) => {
+    const delay = Math.min(70, idx * 6);
+    const g = ghosts[idx];
+    g.style.transitionDelay = delay + 'ms';
+    g.style.transform = `scaleX(${item.ratio.toFixed(3)}) scaleY(${(1 / Math.sqrt(item.ratio)).toFixed(3)})`;
+    g.style.opacity = '0';
+    g.style.filter = 'blur(1.8px)';
+
+    const el = item.el;
+    el.classList.add('morph-in-active');
+    el.style.transitionDelay = (delay + 35) + 'ms';
+    el.style.transform = 'scaleX(1) scaleY(1)';
+    el.style.opacity = '1';
+    el.style.filter = 'blur(0px)';
+  });
+
+  setTimeout(() => {
+    ghosts.forEach(g => g.remove());
+    visible.forEach(item => {
+      const el = item.el;
+      el.classList.remove('morph-in-prep', 'block-node', 'centered', 'morph-in-active');
+      el.style.transitionDelay = '';
+      el.style.transform = '';
+      el.style.opacity = '';
+      el.style.filter = '';
+    });
+    morphBusy = false;
+  }, 440);
+}
+
+function toggleLanguage() {
+  if (morphBusy) return;
+  const next = currentLang === 'en' ? 'zh' : 'en';
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    applyLangInstant(next);
+    return;
+  }
+  runStretchMorph(next);
+}
+
+langBtn.addEventListener('click', toggleLanguage);
+
 document.addEventListener('keydown', (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
   const tag = (e.target && e.target.tagName) || '';
@@ -1456,6 +1685,9 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'd' || e.key === 'D') {
     const next = (changingTheme ? requestedTheme : currentTheme()) === 'dark' ? 'light' : 'dark';
     setTheme(next, true, null);
+  }
+  if (e.key === 'l' || e.key === 'L') {
+    toggleLanguage();
   }
 });
 </script>
