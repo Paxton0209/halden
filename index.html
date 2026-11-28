@@ -24,11 +24,10 @@ try{
   --canvas: #f3f3f3;
   --stage: #f8f8f8;
   --raised: #ffffff;
-  --track: #ececec;
+  --track: #e6e6e6;
   --selected: #ffffff;
   --line: rgba(0, 0, 0, .06);
   --line-control: rgba(0, 0, 0, .07);
-  --line-selected: rgba(0, 0, 0, .07);
   --line-strong: rgba(0, 0, 0, .14);
   --text-1: #1d1d1f;
   --text-2: #6e6e6e;
@@ -43,6 +42,7 @@ try{
   --mono: ui-monospace, "SF Mono", Menlo, monospace;
   --ease: cubic-bezier(.2, 0, 0, 1);
   --ease-out: cubic-bezier(.23, 1, .32, 1);
+  --sp-rel: cubic-bezier(.22, 1.12, .36, 1);
   color-scheme: light;
 }
 
@@ -50,11 +50,10 @@ try{
   --canvas: #0a0a0b;
   --stage: #0f0f10;
   --raised: #141416;
-  --track: #1c1c1e;
+  --track: #262629;
   --selected: #333336;
   --line: rgba(255, 255, 255, .08);
   --line-control: rgba(255, 255, 255, .09);
-  --line-selected: transparent;
   --line-strong: rgba(255, 255, 255, .16);
   --text-1: #ededef;
   --text-2: #a0a0a4;
@@ -77,7 +76,7 @@ body {
   font-feature-settings: "calt" 1, "kern" 1;
   font-kerning: normal;
   -webkit-font-smoothing: antialiased;
-  padding: 56px 32px 112px;
+  padding: 80px 32px 144px;
   transition: background-color .4s, color .4s;
 }
 
@@ -87,15 +86,7 @@ body {
   margin: 0 auto;
 }
 
-@keyframes rise {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
-}
-.reveal {
-  animation: rise 420ms var(--ease-out) both;
-  animation-delay: var(--d, 0ms);
-}
-/* Dashline / DriveScene Studio feathered radial theme reveal */
+/* Dashline feathered radial theme reveal */
 @property --theme-reveal-progress {
   syntax: "<length>";
   inherits: false;
@@ -150,23 +141,14 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 24px;
-  padding-bottom: 36px;
+  gap: 32px;
+  padding-bottom: 56px;
 }
 .mast-left { max-width: 560px; }
-.mast-title-row {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 10px;
-}
 .head-title {
-  font: 500 28px/34px var(--display);
+  font: 500 32px/38px var(--display);
   color: var(--text-1);
-}
-.head-ver {
-  font: 400 13px/18px var(--font);
-  color: var(--text-2);
+  margin-bottom: 14px;
 }
 .lead {
   font: 400 16px/26px var(--font);
@@ -176,98 +158,74 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   font-weight: 500;
   color: var(--text-1);
 }
+.mast-cta {
+  margin-top: 24px;
+}
 .mast-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
   flex-shrink: 0;
   padding-top: 2px;
+  margin-right: -9px;
 }
 
-/* PDS Segmented Control */
-.seg {
-  display: inline-flex;
-  align-items: center;
-  height: 32px;
-  padding: 2px;
-  border-radius: 8px;
-  background: var(--track);
-  gap: 2px;
-}
-.seg--compact {
-  height: 28px;
-  border-radius: 6px;
-}
-.seg button {
-  height: 100%;
-  padding: 0 11px;
-  border-radius: 6px;
-  font: 400 13px/16px var(--font);
+/* Dashnote pure icon theme toggle (no background fill) */
+.theme-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
   color: var(--text-2);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  transition: background-color 160ms var(--ease), color 160ms var(--ease), box-shadow 160ms var(--ease), opacity 120ms var(--ease);
+  background: transparent;
+  transition: transform .42s var(--sp-rel), color .15s;
 }
-.seg--compact button {
-  border-radius: 4px;
-  padding: 0 10px;
-}
-.seg button:hover:not(.on) { opacity: .7; }
-.seg button.on {
-  background: var(--selected);
+.theme-btn:hover {
   color: var(--text-1);
-  font-weight: 500;
-  box-shadow: inset 0 0 0 1px var(--line-selected);
+}
+.theme-btn:active {
+  transform: scale(.94);
+  transition-duration: .10s;
+  transition-timing-function: var(--ease);
+}
+.theme-btn svg {
+  display: block;
+  transition: transform .46s var(--sp-rel);
+}
+:root[data-theme="dark"] .theme-btn svg {
+  transform: rotate(180deg);
 }
 
+/* PDS D-29 single primary ink pill CTA (pure text, 36px height) */
 .dl-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 32px;
-  padding: 0 14px;
+  justify-content: center;
+  height: 36px;
+  padding: 0 20px;
   border-radius: 999px;
   background: var(--ink);
   color: var(--on-ink);
-  font: 500 13px/16px var(--font);
+  font: 500 14px/18px var(--font);
   transition: opacity 120ms var(--ease), transform 110ms var(--ease);
 }
 .dl-btn:hover { opacity: .82; }
 .dl-btn:active { transform: scale(.97); }
-.dl-btn svg { width: 13px; height: 13px; }
 
-/* ── 2. Living Specimen Instrument (Replaces generic Google Fonts box & dead scale table) ── */
+/* ── 2. Hero Living Cockpit Specimen (Zero toolbar chrome, click any field to edit) ── */
 .instrument {
   background: var(--raised);
   border-radius: 16px;
   box-shadow: inset 0 0 0 1px var(--line-control);
   overflow: hidden;
 }
-
-/* Locked stage height ensures 0px vertical jump when switching Cockpit / Weights / Type */
-.inst-viewport {
-  height: 312px;
-  display: flex;
-  flex-direction: column;
-}
-.inst-panel {
-  flex: 1;
-  min-height: 0;
-  display: none;
-}
-.inst-panel.active {
-  display: grid;
-}
-
-/* Mode 1: Cockpit — Halden alive at 4 real HMI scales simultaneously */
 .cockpit-grid {
-  grid-template-columns: 310px minmax(0, 1fr);
-  height: 100%;
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  min-height: 320px;
 }
 .cockpit-speed {
-  padding: 36px 36px 32px;
+  padding: 36px 40px;
   border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
@@ -317,17 +275,16 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   min-width: 0;
 }
 .cockpit-nav {
-  padding: 36px 40px 28px;
+  padding: 40px 44px 32px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
 }
 .nav-kicker {
   font: 400 12px/16px var(--font);
   color: var(--text-2);
-  margin-bottom: 4px;
 }
 .nav-primary {
   font-family: var(--display);
@@ -346,15 +303,15 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 
 .cockpit-telemetry {
   border-top: 1px solid var(--line);
-  padding: 20px 40px;
+  padding: 24px 44px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
+  gap: 32px;
 }
 .tele-cell {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 .tele-val {
   font-family: var(--display);
@@ -369,162 +326,35 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   font: 400 12px/16px var(--font);
   color: var(--text-2);
 }
-
-/* Mode 2: Weights — All 3 weights side-by-side simultaneously (zero toggling memory tax) */
-.weights-grid {
-  grid-template-rows: repeat(3, 1fr);
-  height: 100%;
+@keyframes colon-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .22; }
 }
-.wt-row {
-  padding: 0 36px;
-  border-top: 1px solid var(--line);
-  display: grid;
-  grid-template-columns: 120px minmax(0, 1fr);
-  align-items: center;
-  gap: 24px;
-}
-.wt-row:first-child { border-top: 0; }
-.wt-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.wt-name {
-  font: 500 13px/18px var(--font);
-  color: var(--text-1);
-}
-.wt-num {
-  font: 400 12px/16px var(--font);
-  color: var(--text-2);
-  font-variant-numeric: tabular-nums;
-}
-.wt-sample {
-  font-family: var(--display);
-  font-size: 32px;
-  line-height: 1.2;
-  color: var(--text-1);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  outline: none;
+.clock-colon {
+  display: inline-block;
+  font-feature-settings: "case" 1, "calt" 1;
+  animation: colon-breathe 2.2s ease-in-out infinite;
+  will-change: opacity;
 }
 
-/* Mode 3: Type — Open blank canvas for free testing */
-.free-grid {
-  grid-template-rows: 1fr;
-  height: 100%;
-  padding: 36px 40px;
-  align-items: center;
-  cursor: text;
-}
-.free-input {
-  width: 100%;
-  max-height: 100%;
-  overflow-y: auto;
-  outline: none;
-  font-family: var(--display);
-  font-weight: 400;
-  font-size: 48px;
-  line-height: 1.2;
-  letter-spacing: 0;
-  font-variant-numeric: tabular-nums;
-  word-break: break-word;
-  color: var(--text-1);
-  caret-color: var(--text-1);
-}
-
-/* Subtle focus highlight on editable instrument fields */
+/* Subtle focus highlight on editable specimen fields */
 [contenteditable="true"] {
   border-radius: 4px;
   transition: background-color 120ms var(--ease);
 }
-[contenteditable="true"]:hover {
-  background: var(--stage);
-}
+[contenteditable="true"]:hover,
 [contenteditable="true"]:focus {
   background: var(--stage);
 }
 
-/* Unified quiet bottom bar of the instrument */
-.inst-bar {
-  min-height: 52px;
-  padding: 10px 20px;
-  border-top: 1px solid var(--line);
-  background: var(--stage);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px 16px;
-}
-.inst-bar-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-.bar-hint {
-  font: 400 12px/16px var(--font);
-  color: var(--text-2);
-}
-.free-tools {
-  display: none;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-.free-tools.visible {
-  display: flex;
-}
-.size-wrap {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font: 400 13px/16px var(--font);
-  color: var(--text-2);
-  font-variant-numeric: tabular-nums;
-}
-.size-wrap output {
-  min-width: 34px;
-  text-align: right;
-  color: var(--text-1);
-  font-weight: 500;
-}
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 96px;
-  height: 4px;
-  border-radius: 999px;
-  background: var(--track);
-  cursor: pointer;
-}
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 12px;
-  height: 16px;
-  border-radius: 4px;
-  background: var(--ink);
-  transition: transform 120ms var(--ease);
-}
-input[type="range"]:hover::-webkit-slider-thumb { transform: scale(1.08); }
-input[type="range"]::-moz-range-thumb {
-  width: 12px;
-  height: 16px;
-  border: 0;
-  border-radius: 4px;
-  background: var(--ink);
-}
-
-/* ── 3. Swiss 2-Column Editorial Chapters (Only 4 focused chapters total) ── */
+/* ── 3. Swiss 2-Column Editorial Chapters (Spacious 96px rhythm) ── */
 .chapter {
-  margin-top: 64px;
-  padding-top: 32px;
+  margin-top: 96px;
+  padding-top: 40px;
   border-top: 1px solid var(--line);
   display: grid;
-  grid-template-columns: 210px minmax(0, 1fr);
-  gap: 24px 40px;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 24px 48px;
   align-items: start;
 }
 .ch-rail {
@@ -550,10 +380,96 @@ input[type="range"]::-moz-range-thumb {
   max-width: 58ch;
   font: 400 15px/24px var(--font);
   color: var(--text-2);
-  margin-bottom: 20px;
+  margin-bottom: 28px;
 }
 
-/* Day & OLED Night press-and-drag comparator */
+/* Chapter 1: Linked 3-Weight Type Tester (Size control in rail, pure typography on stage) */
+.rail-control {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 156px;
+}
+.rail-control-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font: 400 12px/16px var(--font);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.rail-control-head output {
+  color: var(--text-1);
+  font-weight: 500;
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--track);
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 16px;
+  border-radius: 4px;
+  background: var(--ink);
+  transition: transform 120ms var(--ease);
+}
+input[type="range"]:hover::-webkit-slider-thumb { transform: scale(1.08); }
+input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 16px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--ink);
+}
+
+.weights-card {
+  background: var(--raised);
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px var(--line-control);
+  overflow: hidden;
+}
+.wt-row {
+  padding: 28px 32px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 24px;
+}
+.wt-row:first-child { border-top: 0; }
+.wt-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.wt-name {
+  font: 500 13px/18px var(--font);
+  color: var(--text-1);
+}
+.wt-num {
+  font: 400 12px/16px var(--font);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.wt-sample {
+  font-family: var(--display);
+  font-size: 32px;
+  line-height: 1.24;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+  word-break: break-word;
+  outline: none;
+  caret-color: var(--text-1);
+}
+
+/* Chapter 2: Day & OLED Night press-and-drag comparator */
 .curtain-card {
   border-radius: 12px;
   overflow: hidden;
@@ -571,10 +487,10 @@ input[type="range"]::-moz-range-thumb {
 }
 .curtain.dragging { cursor: grabbing; }
 .curtain-layer {
-  padding: 28px 28px 30px;
+  padding: 32px 32px 34px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 .curtain-day {
   background: #ffffff;
@@ -628,7 +544,7 @@ input[type="range"]::-moz-range-thumb {
 }
 .curtain-bar {
   position: relative;
-  height: 40px;
+  height: 44px;
   background: var(--stage);
   border-top: 1px solid var(--line);
   cursor: grab;
@@ -640,8 +556,8 @@ input[type="range"]::-moz-range-thumb {
 .curtain-bar::before {
   content: "";
   position: absolute;
-  left: 24px;
-  right: 24px;
+  left: 28px;
+  right: 28px;
   top: 50%;
   height: 2px;
   border-radius: 999px;
@@ -676,36 +592,39 @@ input[type="range"]::-moz-range-thumb {
   transform: translate(-50%, -50%) scale(.96);
 }
 
-/* Anatomy details */
+/* Chapter 3: Anatomy details */
 .details {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 16px;
 }
 .detail-item {
   background: var(--raised);
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: inset 0 0 0 1px var(--line-control);
-  padding: 20px;
-  cursor: pointer;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 18px;
+  gap: 22px;
   transition: opacity 120ms var(--ease);
 }
-.detail-item:hover { opacity: .92; }
+.detail-item[role="button"] {
+  cursor: pointer;
+}
+.detail-item[role="button"]:hover { opacity: .88; }
 .detail-glyph {
   font-family: var(--display);
-  font-size: 36px;
-  line-height: 1.1;
+  font-size: 32px;
+  line-height: 1.15;
   font-weight: 500;
   color: var(--text-1);
   font-variant-numeric: tabular-nums;
   display: flex;
   align-items: baseline;
   gap: 6px;
-  min-height: 42px;
+  min-height: 38px;
+  white-space: nowrap;
 }
 .detail-glyph .char {
   display: inline-block;
@@ -713,28 +632,13 @@ input[type="range"]::-moz-range-thumb {
   transition: transform 220ms var(--ease-out);
 }
 .detail-item[data-demo="apertures"]:hover .char { transform: translateY(-2px); }
-.dot-lens {
-  width: 20px;
-  height: 20px;
-  margin-left: auto;
-  align-self: center;
-  color: var(--text-1);
-  opacity: .22;
-  transform: scale(.8);
-  transition: opacity 160ms var(--ease), transform 220ms var(--ease-out);
-}
-.detail-item[data-demo="dots"]:hover .dot-lens,
-.detail-item[data-demo="dots"].pinned .dot-lens {
-  opacity: 1;
-  transform: scale(1.15);
-}
 .calt-sample.off { font-feature-settings: "calt" 0, "kern" 1; }
 .detail-meta {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 .detail-meta strong {
   font: 500 13px/18px var(--font);
@@ -746,19 +650,19 @@ input[type="range"]::-moz-range-thumb {
   font-variant-numeric: tabular-nums;
 }
 .detail-copy {
-  font: 400 13px/19px var(--font);
+  font: 400 13px/20px var(--font);
   color: var(--text-2);
 }
 
-/* Characters grid */
+/* Chapter 4: Characters grid */
 .glyph-field {
   background: var(--raised);
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: inset 0 0 0 1px var(--line-control);
-  padding: 18px 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 .glyph-row {
   display: flex;
@@ -778,10 +682,10 @@ input[type="range"]::-moz-range-thumb {
 }
 .glyph-btn:active { transform: scale(.94) !important; }
 
-/* Install snippet */
+/* Chapter 5: Install snippet */
 .code-block {
-  padding: 20px 24px;
-  border-radius: 10px;
+  padding: 24px 28px;
+  border-radius: 12px;
   background: var(--raised);
   box-shadow: inset 0 0 0 1px var(--line-control);
   position: relative;
@@ -790,16 +694,17 @@ input[type="range"]::-moz-range-thumb {
   font: 400 13px/22px var(--mono);
   color: var(--text-1);
   overflow-x: auto;
-  padding-right: 60px;
+  padding-right: 64px;
 }
 .copy-link {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 20px;
+  right: 20px;
   height: 28px;
   padding: 0 10px;
   border-radius: 6px;
-  background: var(--track);
+  background: var(--stage);
+  box-shadow: inset 0 0 0 1px var(--line-control);
   font: 500 12px/16px var(--font);
   color: var(--text-1);
   transition: opacity 120ms var(--ease);
@@ -807,8 +712,8 @@ input[type="range"]::-moz-range-thumb {
 .copy-link:hover { opacity: .7; }
 
 footer {
-  margin-top: 72px;
-  padding-top: 24px;
+  margin-top: 112px;
+  padding-top: 28px;
   border-top: 1px solid var(--line);
   display: flex;
   align-items: center;
@@ -821,7 +726,7 @@ footer {
 .social {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
 }
 .social a {
   color: var(--text-2);
@@ -830,23 +735,22 @@ footer {
 .social a:hover { color: var(--text-1); }
 
 @media (max-width: 760px) {
-  body { padding: 32px 16px 80px; }
-  .masthead { flex-direction: column; gap: 20px; padding-bottom: 24px; }
-  .inst-viewport { height: auto; min-height: 260px; }
-  .cockpit-grid { grid-template-columns: 1fr; }
-  .cockpit-speed { border-right: 0; border-bottom: 1px solid var(--line); padding: 24px; gap: 16px; }
+  body { padding: 40px 20px 96px; }
+  .masthead { gap: 16px; padding-bottom: 36px; }
+  .head-title { font-size: 28px; line-height: 34px; }
+  .cockpit-grid { grid-template-columns: 1fr; min-height: 0; }
+  .cockpit-speed { border-right: 0; border-bottom: 1px solid var(--line); padding: 28px 24px; gap: 20px; }
   .speed-num { font-size: 64px; }
-  .cockpit-nav { padding: 24px; }
+  .cockpit-nav { padding: 28px 24px; }
   .nav-primary { font-size: 26px; }
-  .cockpit-telemetry { padding: 16px 24px; gap: 16px; }
-  .wt-row { padding: 16px 20px; grid-template-columns: 84px minmax(0, 1fr); gap: 12px; }
-  .wt-sample { font-size: 22px; }
-  .free-grid { padding: 28px 20px; min-height: 220px; }
-  .free-input { font-size: 32px; }
-  .chapter { grid-template-columns: 1fr; gap: 16px; margin-top: 48px; padding-top: 24px; }
+  .cockpit-telemetry { padding: 20px 24px; gap: 16px; }
+  .chapter { grid-template-columns: 1fr; gap: 20px; margin-top: 64px; padding-top: 32px; }
+  .rail-control { margin-top: 12px; max-width: 220px; }
+  .wt-row { padding: 22px 24px; grid-template-columns: 1fr; gap: 8px; }
   .details { grid-template-columns: 1fr; }
-  .curtain-layer { padding: 20px; }
+  .curtain-layer { padding: 24px; }
   .curtain-big { gap: 18px; }
+  footer { margin-top: 72px; }
 }
 </style>
 </head>
@@ -854,132 +758,112 @@ footer {
 
 <main class="page">
   <!-- 1. Masthead -->
-  <header class="masthead reveal" style="--d:0ms">
+  <header class="masthead">
     <div class="mast-left">
-      <div class="mast-title-row">
-        <h1 class="head-title">Halden</h1>
-        <span class="head-ver">v1.1, SIL OFL 1.1</span>
-      </div>
+      <h1 class="head-title">Halden</h1>
       <p class="lead">
         <strong>An open-source sans-serif for automotive HMI.</strong> Built for rapid glance legibility with OLED dark-mode optical compensation. Used in <a class="ul" href="https://www.drivescenestudio.com/" target="_blank" rel="noopener">DriveScene Studio</a>, <a class="ul" href="https://paxton0209.github.io/Dashline/" target="_blank" rel="noopener">Dashline</a>, and <a class="ul" href="https://paxton0209.github.io/dashnote/" target="_blank" rel="noopener">Dashnote</a>.
       </p>
+      <div class="mast-cta">
+        <a class="dl-btn" href="https://github.com/Paxton0209/halden/archive/refs/heads/main.zip">Download</a>
+      </div>
     </div>
 
     <div class="mast-actions">
-      <div class="seg" role="group" aria-label="Page theme" id="themeSeg">
-        <button type="button" data-theme-choice="light">Light</button>
-        <button type="button" data-theme-choice="dark">Dark</button>
-      </div>
-      <a class="dl-btn" href="https://github.com/Paxton0209/halden/archive/refs/heads/main.zip">
-        <span>Download</span>
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M8 2.5v8.2M4.8 7.8 8 11l3.2-3.2M3 13.5h10"/>
+      <button type="button" class="theme-btn" id="themeBtn" aria-label="Day / Night" title="Switch theme (D)">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 1.5a6.5 6.5 0 0 1 0 13Z" fill="currentColor"/>
         </svg>
-      </a>
+      </button>
     </div>
   </header>
 
-  <!-- 2. Living Specimen Instrument: Cockpit (default) / Weights (all 3 at once) / Type (free canvas) -->
-  <section class="instrument reveal" style="--d:50ms" aria-label="Halden specimen">
-    <div class="inst-viewport">
-      <!-- View A: Real HMI Cockpit Hierarchy -->
-      <div class="inst-panel cockpit-grid active" id="panelCockpit">
-        <div class="cockpit-speed">
-          <div class="speed-top">
-            <span>Highway assist</span>
-            <span>D</span>
-          </div>
-          <div class="speed-readout">
-            <span class="speed-num" contenteditable="true" spellcheck="false" aria-label="Editable speed">118</span>
-            <span class="speed-unit">km/h</span>
-          </div>
-          <div class="speed-meta">
-            <span>Limit <strong>120</strong></span>
-            <span>82%</span>
-          </div>
+  <!-- 2. Hero: Pure Living Cockpit Specimen (click any field directly to edit) -->
+  <section class="instrument" aria-label="Halden cockpit specimen">
+    <div class="cockpit-grid">
+      <div class="cockpit-speed">
+        <div class="speed-top">
+          <span>Highway assist</span>
+          <span>D</span>
         </div>
-
-        <div class="cockpit-right">
-          <div class="cockpit-nav">
-            <span class="nav-kicker">Next maneuver</span>
-            <div class="nav-primary" contenteditable="true" spellcheck="false" aria-label="Editable navigation prompt">Turn right in 350 m</div>
-            <div class="nav-secondary" contenteditable="true" spellcheck="false" aria-label="Editable street name">West Lake Avenue, Exit 14B</div>
-          </div>
-
-          <div class="cockpit-telemetry">
-            <div class="tele-cell">
-              <span class="tele-val" id="liveClock">18:45</span>
-              <span class="tele-lbl">Arrival</span>
-            </div>
-            <div class="tele-cell">
-              <span class="tele-val" contenteditable="true" spellcheck="false" aria-label="Editable range">420 km</span>
-              <span class="tele-lbl">Range</span>
-            </div>
-            <div class="tele-cell">
-              <span class="tele-val" contenteditable="true" spellcheck="false" aria-label="Editable cabin temperature">21.5°C</span>
-              <span class="tele-lbl">Cabin</span>
-            </div>
-          </div>
+        <div class="speed-readout">
+          <span class="speed-num" contenteditable="true" spellcheck="false" aria-label="Editable speed">118</span>
+          <span class="speed-unit">km/h</span>
+        </div>
+        <div class="speed-meta">
+          <span>Limit <strong>120</strong></span>
+          <span>82%</span>
         </div>
       </div>
 
-      <!-- View B: All 3 Weights Compared Simultaneously -->
-      <div class="inst-panel weights-grid" id="panelWeights">
+      <div class="cockpit-right">
+        <div class="cockpit-nav">
+          <span class="nav-kicker">Next maneuver</span>
+          <div class="nav-primary" contenteditable="true" spellcheck="false" aria-label="Editable navigation prompt">Turn right in 350 m</div>
+          <div class="nav-secondary" contenteditable="true" spellcheck="false" aria-label="Editable street name">West Lake Avenue, Exit 14B</div>
+        </div>
+
+        <div class="cockpit-telemetry">
+          <div class="tele-cell">
+            <span class="tele-val" id="cockpitClock" aria-label="Local time"><span id="clockH">--</span><span class="clock-colon">:</span><span id="clockM">--</span></span>
+            <span class="tele-lbl">Time</span>
+          </div>
+          <div class="tele-cell">
+            <span class="tele-val" contenteditable="true" spellcheck="false" aria-label="Editable range">420 km</span>
+            <span class="tele-lbl">Range</span>
+          </div>
+          <div class="tele-cell">
+            <span class="tele-val" id="cockpitTemp" contenteditable="true" spellcheck="false" aria-label="Editable local temperature">21.5°C</span>
+            <span class="tele-lbl" id="cockpitTempLbl">Outside</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Linked 3-Weight Type Tester -->
+  <section class="chapter">
+    <div class="ch-rail">
+      <h2 class="ch-title">Weights</h2>
+      <p class="ch-note">Edit any line to sync all three</p>
+      <label class="rail-control">
+        <span class="rail-control-head">
+          <span>Size</span>
+          <output id="sizeOut" for="sizeRange">32px</output>
+        </span>
+        <input type="range" id="sizeRange" min="16" max="56" value="32" aria-label="Specimen font size">
+      </label>
+    </div>
+    <div class="ch-body">
+      <div class="weights-card" id="weightsCard">
         <div class="wt-row">
           <div class="wt-meta">
             <span class="wt-name">Regular</span>
             <span class="wt-num">400</span>
           </div>
-          <div class="wt-sample" style="font-weight:400" contenteditable="true" spellcheck="false">Clear legibility at arm's length, 118 km/h</div>
+          <div class="wt-sample" data-wt="400" style="font-weight:400" contenteditable="true" spellcheck="false" aria-label="Regular 400 editable sample">Clear legibility at arm's length, 118 km/h</div>
         </div>
         <div class="wt-row">
           <div class="wt-meta">
             <span class="wt-name">Medium</span>
             <span class="wt-num">500</span>
           </div>
-          <div class="wt-sample" style="font-weight:500" contenteditable="true" spellcheck="false">Clear legibility at arm's length, 118 km/h</div>
+          <div class="wt-sample" data-wt="500" style="font-weight:500" contenteditable="true" spellcheck="false" aria-label="Medium 500 editable sample">Clear legibility at arm's length, 118 km/h</div>
         </div>
         <div class="wt-row">
           <div class="wt-meta">
             <span class="wt-name">SemiBold</span>
             <span class="wt-num">600</span>
           </div>
-          <div class="wt-sample" style="font-weight:600" contenteditable="true" spellcheck="false">Clear legibility at arm's length, 118 km/h</div>
-        </div>
-      </div>
-
-      <!-- View C: Free Type Playground -->
-      <div class="inst-panel free-grid" id="panelType">
-        <div class="free-input" id="freeInput" contenteditable="true" spellcheck="false" aria-label="Type your own text">Turn right in 350 m</div>
-      </div>
-    </div>
-
-    <div class="inst-bar">
-      <div class="seg seg--compact" role="tablist" aria-label="Specimen view" id="viewTabs">
-        <button type="button" role="tab" aria-selected="true" class="on" data-view="cockpit">Cockpit</button>
-        <button type="button" role="tab" aria-selected="false" data-view="weights">Weights</button>
-        <button type="button" role="tab" aria-selected="false" data-view="type">Type</button>
-      </div>
-
-      <div class="inst-bar-right">
-        <span class="bar-hint" id="barHint">Click any value or text to edit</span>
-        <div class="free-tools" id="freeTools">
-          <div class="seg seg--compact" role="group" aria-label="Font weight" id="weightTabs">
-            <button type="button" class="on" data-wt="400">Regular</button>
-            <button type="button" data-wt="500">Medium</button>
-            <button type="button" data-wt="600">SemiBold</button>
-          </div>
-          <label class="size-wrap">
-            <input type="range" id="sizeRange" min="16" max="72" value="48" aria-label="Font size">
-            <output id="sizeOut" for="sizeRange">48px</output>
-          </label>
+          <div class="wt-sample" data-wt="600" style="font-weight:600" contenteditable="true" spellcheck="false" aria-label="SemiBold 600 editable sample">Clear legibility at arm's length, 118 km/h</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 3. Day & OLED Night Optical Compensation -->
-  <section class="chapter reveal" style="--d:100ms">
+  <!-- 4. Day & OLED Night Optical Compensation -->
+  <section class="chapter">
     <div class="ch-rail">
       <h2 class="ch-title">Day and OLED night</h2>
       <p class="ch-note">Press and drag divider</p>
@@ -1013,8 +897,8 @@ footer {
     </div>
   </section>
 
-  <!-- 4. Anatomy -->
-  <section class="chapter reveal" style="--d:140ms">
+  <!-- 5. Anatomy -->
+  <section class="chapter">
     <div class="ch-rail">
       <h2 class="ch-title">Anatomy</h2>
       <p class="ch-note">Optical craft at glance distance</p>
@@ -1030,21 +914,18 @@ footer {
             <p class="detail-copy">Single-story a and open numeral counters stay distinct at small cluster sizes.</p>
           </div>
         </div>
-        <div class="detail-item" data-demo="dots" id="dotDemo" tabindex="0" role="button" aria-label="Magnify superellipse dot">
+        <div class="detail-item" data-demo="dots">
           <div class="detail-glyph">
             <span>i j . :</span>
-            <svg class="dot-lens" viewBox="0 0 40 40" aria-hidden="true">
-              <path fill="currentColor" d="M20 4C30.8 4 36 9.2 36 20S30.8 36 20 36 4 30.8 4 20 9.2 4 20 4Z"/>
-            </svg>
           </div>
           <div>
-            <div class="detail-meta"><strong>Superellipse dots</strong><span class="detail-state">Hover</span></div>
+            <div class="detail-meta"><strong>Superellipse dots</strong></div>
             <p class="detail-copy">Continuous-curvature squircle terminals echo cockpit icon geometry.</p>
           </div>
         </div>
         <div class="detail-item" data-demo="calt" id="caltDemo" tabindex="0" role="button" aria-label="Toggle contextual colon alignment">
           <div class="detail-glyph">
-            <span class="calt-sample" id="caltSample">12:45</span>
+            <span class="calt-sample" id="caltSample">--:--:--</span>
           </div>
           <div>
             <div class="detail-meta"><strong>Tabular and calt</strong><span class="detail-state" id="caltState">On</span></div>
@@ -1055,8 +936,8 @@ footer {
     </div>
   </section>
 
-  <!-- 5. Characters -->
-  <section class="chapter reveal" style="--d:180ms">
+  <!-- 6. Characters -->
+  <section class="chapter">
     <div class="ch-rail">
       <h2 class="ch-title">Characters</h2>
       <p class="ch-note" id="glyphReadout">Click any glyph to copy</p>
@@ -1066,8 +947,8 @@ footer {
     </div>
   </section>
 
-  <!-- 6. Install -->
-  <section class="chapter reveal" style="--d:220ms">
+  <!-- 7. Install -->
+  <section class="chapter">
     <div class="ch-rail">
       <h2 class="ch-title">Install</h2>
       <p class="ch-note">Static WOFF2 stylesheet</p>
@@ -1097,7 +978,7 @@ footer {
 <script>
 const GLYPH_ROWS = [[{"ch": "A", "code": "U+0041", "w": 668}, {"ch": "B", "code": "U+0042", "w": 650}, {"ch": "C", "code": "U+0043", "w": 722}, {"ch": "D", "code": "U+0044", "w": 706}, {"ch": "E", "code": "U+0045", "w": 595}, {"ch": "F", "code": "U+0046", "w": 572}, {"ch": "G", "code": "U+0047", "w": 732}, {"ch": "H", "code": "U+0048", "w": 730}, {"ch": "I", "code": "U+0049", "w": 246}, {"ch": "J", "code": "U+004A", "w": 552}, {"ch": "K", "code": "U+004B", "w": 650}, {"ch": "L", "code": "U+004C", "w": 551}, {"ch": "M", "code": "U+004D", "w": 880}, {"ch": "N", "code": "U+004E", "w": 736}, {"ch": "O", "code": "U+004F", "w": 748}, {"ch": "P", "code": "U+0050", "w": 624}, {"ch": "Q", "code": "U+0051", "w": 748}, {"ch": "R", "code": "U+0052", "w": 644}, {"ch": "S", "code": "U+0053", "w": 619}, {"ch": "T", "code": "U+0054", "w": 627}, {"ch": "U", "code": "U+0055", "w": 726}, {"ch": "V", "code": "U+0056", "w": 668}, {"ch": "W", "code": "U+0057", "w": 964}, {"ch": "X", "code": "U+0058", "w": 660}, {"ch": "Y", "code": "U+0059", "w": 658}, {"ch": "Z", "code": "U+005A", "w": 626}], [{"ch": "a", "code": "U+0061", "w": 573}, {"ch": "b", "code": "U+0062", "w": 590}, {"ch": "c", "code": "U+0063", "w": 547}, {"ch": "d", "code": "U+0064", "w": 590}, {"ch": "e", "code": "U+0065", "w": 561}, {"ch": "f", "code": "U+0066", "w": 329}, {"ch": "g", "code": "U+0067", "w": 590}, {"ch": "h", "code": "U+0068", "w": 571}, {"ch": "i", "code": "U+0069", "w": 221}, {"ch": "j", "code": "U+006A", "w": 222}, {"ch": "k", "code": "U+006B", "w": 528}, {"ch": "l", "code": "U+006C", "w": 234}, {"ch": "m", "code": "U+006D", "w": 866}, {"ch": "n", "code": "U+006E", "w": 570}, {"ch": "o", "code": "U+006F", "w": 573}, {"ch": "p", "code": "U+0070", "w": 590}, {"ch": "q", "code": "U+0071", "w": 590}, {"ch": "r", "code": "U+0072", "w": 343}, {"ch": "s", "code": "U+0073", "w": 500}, {"ch": "t", "code": "U+0074", "w": 323}, {"ch": "u", "code": "U+0075", "w": 571}, {"ch": "v", "code": "U+0076", "w": 537}, {"ch": "w", "code": "U+0077", "w": 785}, {"ch": "x", "code": "U+0078", "w": 529}, {"ch": "y", "code": "U+0079", "w": 537}, {"ch": "z", "code": "U+007A", "w": 508}], [{"ch": "0", "code": "U+0030", "w": 625}, {"ch": "1", "code": "U+0031", "w": 375}, {"ch": "2", "code": "U+0032", "w": 581}, {"ch": "3", "code": "U+0033", "w": 591}, {"ch": "4", "code": "U+0034", "w": 616}, {"ch": "5", "code": "U+0035", "w": 586}, {"ch": "6", "code": "U+0036", "w": 569}, {"ch": "7", "code": "U+0037", "w": 535}, {"ch": "8", "code": "U+0038", "w": 597}, {"ch": "9", "code": "U+0039", "w": 569}, {"ch": ".", "code": "U+002E", "w": 232}, {"ch": ":", "code": "U+003A", "w": 232}, {"ch": ",", "code": "U+002C", "w": 232}, {"ch": ";", "code": "U+003B", "w": 237}, {"ch": "!", "code": "U+0021", "w": 232}, {"ch": "?", "code": "U+003F", "w": 515}, {"ch": "-", "code": "U+002D", "w": 430}, {"ch": "+", "code": "U+002B", "w": 628}, {"ch": "×", "code": "U+00D7", "w": 628}, {"ch": "÷", "code": "U+00F7", "w": 628}, {"ch": "=", "code": "U+003D", "w": 628}, {"ch": "<", "code": "U+003C", "w": 628}, {"ch": ">", "code": "U+003E", "w": 628}, {"ch": "(", "code": "U+0028", "w": 310}, {"ch": ")", "code": "U+0029", "w": 310}, {"ch": "[", "code": "U+005B", "w": 310}, {"ch": "]", "code": "U+005D", "w": 310}, {"ch": "/", "code": "U+002F", "w": 329}, {"ch": "*", "code": "U+002A", "w": 470}, {"ch": "@", "code": "U+0040", "w": 960}, {"ch": "#", "code": "U+0023", "w": 600}, {"ch": "%", "code": "U+0025", "w": 864}, {"ch": "&", "code": "U+0026", "w": 609}, {"ch": "°", "code": "U+00B0", "w": 425}, {"ch": "℃", "code": "U+2103", "w": 1138}, {"ch": "$", "code": "U+0024", "w": 613}, {"ch": "€", "code": "U+20AC", "w": 633}, {"ch": "¥", "code": "U+00A5", "w": 518}, {"ch": "→", "code": "U+2192", "w": 918}]];
 
-// Warm all Halden weights so view/theme transitions never flash
+// Warm all Halden weights so theme transitions never flash
 if (document.fonts && document.fonts.load) {
   for (const fam of ['"Halden"', '"Halden Display"', '"Halden Dark"']) {
     for (const wt of ['400', '500', '600']) {
@@ -1106,76 +987,39 @@ if (document.fonts && document.fonts.load) {
   }
 }
 
-// Living Specimen View Switcher (Cockpit / Weights / Type)
-const viewTabs = document.getElementById('viewTabs');
-const panels = {
-  cockpit: document.getElementById('panelCockpit'),
-  weights: document.getElementById('panelWeights'),
-  type: document.getElementById('panelType'),
-};
-const barHint = document.getElementById('barHint');
-const freeTools = document.getElementById('freeTools');
-const freeInput = document.getElementById('freeInput');
-const weightTabs = document.getElementById('weightTabs');
+// Linked 3-weight type tester + size slider
 const sizeRange = document.getElementById('sizeRange');
 const sizeOut = document.getElementById('sizeOut');
-const themeSeg = document.getElementById('themeSeg');
+const wtSamples = [...document.querySelectorAll('.wt-sample')];
+const themeBtn = document.getElementById('themeBtn');
 
-const HINTS = {
-  cockpit: 'Click any value or text to edit',
-  weights: 'Regular, Medium, and SemiBold side by side',
-};
-
-function applyFreeFont() {
+function applyTesterFont() {
   const px = Number(sizeRange.value);
   const isDark = document.documentElement.dataset.theme === 'dark';
-  if (px >= 24) {
-    freeInput.style.fontFamily = '"Halden Display", "Halden", -apple-system, sans-serif';
-    freeInput.style.lineHeight = '1.2';
-  } else {
-    freeInput.style.fontFamily = isDark
-      ? '"Halden Dark", "Halden", -apple-system, sans-serif'
-      : '"Halden", -apple-system, sans-serif';
-    freeInput.style.lineHeight = '1.45';
+  const fam = px >= 24
+    ? '"Halden Display", "Halden", -apple-system, sans-serif'
+    : (isDark ? '"Halden Dark", "Halden", -apple-system, sans-serif' : '"Halden", -apple-system, sans-serif');
+  const lh = px >= 24 ? '1.24' : '1.45';
+  for (const el of wtSamples) {
+    el.style.fontSize = px + 'px';
+    el.style.fontFamily = fam;
+    el.style.lineHeight = lh;
   }
 }
 
-viewTabs.addEventListener('click', (e) => {
-  const btn = e.target.closest('button[data-view]');
-  if (!btn) return;
-  const v = btn.dataset.view;
-  for (const b of viewTabs.querySelectorAll('button')) {
-    const on = b === btn;
-    b.classList.toggle('on', on);
-    b.setAttribute('aria-selected', on ? 'true' : 'false');
-  }
-  for (const [k, el] of Object.entries(panels)) {
-    el.classList.toggle('active', k === v);
-  }
-  const isType = v === 'type';
-  freeTools.classList.toggle('visible', isType);
-  barHint.style.display = isType ? 'none' : '';
-  if (!isType) barHint.textContent = HINTS[v] || '';
-  else freeInput.focus();
-});
-
-panels.type.addEventListener('click', (e) => {
-  if (e.target === panels.type) freeInput.focus();
-});
-
-weightTabs.addEventListener('click', (e) => {
-  const btn = e.target.closest('button[data-wt]');
-  if (!btn) return;
-  for (const b of weightTabs.querySelectorAll('button')) b.classList.toggle('on', b === btn);
-  freeInput.style.fontWeight = btn.dataset.wt;
-});
-
 sizeRange.addEventListener('input', () => {
-  const px = Number(sizeRange.value);
-  freeInput.style.fontSize = px + 'px';
-  sizeOut.textContent = px + 'px';
-  applyFreeFont();
+  sizeOut.textContent = sizeRange.value + 'px';
+  applyTesterFont();
 });
+
+for (const el of wtSamples) {
+  el.addEventListener('input', () => {
+    const txt = el.textContent;
+    for (const other of wtSamples) {
+      if (other !== el && other.textContent !== txt) other.textContent = txt;
+    }
+  });
+}
 
 // Strictly press-and-drag Day <-> OLED Night scrubber (never triggers on hover)
 const curtainCard = document.getElementById('curtainCard');
@@ -1226,7 +1070,11 @@ curtainBar.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowRight') { e.preventDefault(); setSplit(cur + 5); }
 });
 
-// Live tabular ticking clock + interactive calt toggle
+// Real-time local system clock (Cockpit breathing HH:MM + Anatomy live HH:MM:SS) & interactive calt toggle
+const clockH = document.getElementById('clockH');
+const clockM = document.getElementById('clockM');
+const cockpitTemp = document.getElementById('cockpitTemp');
+const cockpitTempLbl = document.getElementById('cockpitTempLbl');
 const caltDemo = document.getElementById('caltDemo');
 const caltSample = document.getElementById('caltSample');
 const caltState = document.getElementById('caltState');
@@ -1239,15 +1087,73 @@ function toggleCalt() {
 caltDemo.addEventListener('click', toggleCalt);
 caltDemo.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCalt(); } });
 
-let tickSec = 45;
-setInterval(() => {
-  tickSec = (tickSec + 1) % 60;
-  caltSample.textContent = '12:' + String(tickSec).padStart(2, '0');
-}, 1000);
+function updateClocks() {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  clockH.textContent = hh;
+  clockM.textContent = mm;
+  caltSample.textContent = hh + ':' + mm + ':' + ss;
+}
+updateClocks();
+setTimeout(() => {
+  updateClocks();
+  setInterval(updateClocks, 1000);
+}, 1000 - (Date.now() % 1000));
 
-// Dot lens pin on click
-const dotDemo = document.getElementById('dotDemo');
-dotDemo.addEventListener('click', () => dotDemo.classList.toggle('pinned'));
+// Real-time local temperature aligned with reader's system timezone (VPN-safe, zero permission prompts)
+let tempEdited = false;
+cockpitTemp.addEventListener('input', () => { tempEdited = true; });
+(async () => {
+  const TZ_COORDS = {
+    'Asia/Shanghai': [31.23, 121.47], 'Asia/Chongqing': [29.56, 106.55], 'Asia/Hong_Kong': [22.32, 114.17],
+    'Asia/Taipei': [25.03, 121.57], 'Asia/Tokyo': [35.68, 139.69], 'Asia/Seoul': [37.57, 126.98],
+    'Asia/Singapore': [1.35, 103.82], 'Europe/London': [51.51, -0.13], 'Europe/Berlin': [52.52, 13.40],
+    'Europe/Paris': [48.86, 2.35], 'Europe/Munich': [48.14, 11.58], 'Europe/Zurich': [47.37, 8.54],
+    'Europe/Stockholm': [59.33, 18.07], 'America/Los_Angeles': [34.05, -118.24],
+    'America/New_York': [40.71, -74.01], 'America/Chicago': [41.88, -87.63],
+    'America/Detroit': [42.33, -83.05], 'America/Toronto': [43.65, -79.38], 'Australia/Sydney': [-33.87, 151.21]
+  };
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+  const cacheKey = 'halden-weather:' + tz;
+  try {
+    const cached = JSON.parse(sessionStorage.getItem(cacheKey) || 'null');
+    if (cached && Date.now() - cached.ts < 20 * 60 * 1000) {
+      if (!tempEdited) cockpitTemp.textContent = cached.temp.toFixed(1) + '°C';
+      return;
+    }
+  } catch {}
+  try {
+    let lat = null, lon = null;
+    try {
+      const g = await fetch('https://get.geojs.io/v1/ip/geo.json').then(r => r.ok ? r.json() : null);
+      if (g && g.timezone === tz && g.latitude && g.longitude) {
+        lat = Number(g.latitude);
+        lon = Number(g.longitude);
+      }
+    } catch {}
+    if (lat === null || lon === null) {
+      if (TZ_COORDS[tz]) {
+        [lat, lon] = TZ_COORDS[tz];
+      } else if (tz.includes('/')) {
+        const city = tz.split('/').pop().replace(/_/g, ' ');
+        const geo = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(city) + '&count=1').then(r => r.ok ? r.json() : null);
+        if (geo && geo.results && geo.results[0]) {
+          lat = geo.results[0].latitude;
+          lon = geo.results[0].longitude;
+        }
+      }
+    }
+    if (lat === null || lon === null) return;
+    const w = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current=temperature_2m').then(r => r.ok ? r.json() : null);
+    const t = w && w.current && typeof w.current.temperature_2m === 'number' ? w.current.temperature_2m : null;
+    if (t !== null && !tempEdited) {
+      cockpitTemp.textContent = t.toFixed(1) + '°C';
+      try { sessionStorage.setItem(cacheKey, JSON.stringify({ temp: t, ts: Date.now() })); } catch {}
+    }
+  } catch {}
+})();
 
 // Character field with gentle hover scale + click to copy
 const field = document.getElementById('glyphField');
@@ -1316,15 +1222,13 @@ copyBtn.addEventListener('click', async () => {
   } catch (e) {}
 });
 
-// System theme + segmented toggle + D shortcut (Dashline feathered radial View Transition)
+// System theme + Dashnote contrast-circle toggle + D shortcut (Dashline feathered radial View Transition)
 const mq = matchMedia('(prefers-color-scheme: dark)');
 const currentTheme = () => document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
 function syncThemeUI() {
-  const cur = currentTheme();
-  for (const b of themeSeg.querySelectorAll('button')) {
-    b.classList.toggle('on', b.dataset.themeChoice === cur);
-  }
-  applyFreeFont();
+  const isDark = currentTheme() === 'dark';
+  themeBtn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+  applyTesterFont();
 }
 function applyThemeImmediate(next, persist) {
   document.documentElement.dataset.theme = next;
@@ -1385,10 +1289,9 @@ async function setTheme(next, persist, originEl = null) {
   }
 }
 syncThemeUI();
-themeSeg.addEventListener('click', (e) => {
-  const btn = e.target.closest('button[data-theme-choice]');
-  if (!btn) return;
-  setTheme(btn.dataset.themeChoice, true, btn);
+themeBtn.addEventListener('click', () => {
+  const next = (changingTheme ? requestedTheme : currentTheme()) === 'dark' ? 'light' : 'dark';
+  setTheme(next, true, themeBtn);
 });
 mq.addEventListener('change', () => setTheme(mq.matches ? 'dark' : 'light', false, null));
 document.addEventListener('keydown', (e) => {
