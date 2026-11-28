@@ -327,13 +327,13 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   color: var(--text-2);
 }
 @keyframes colon-breathe {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .22; }
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 .clock-colon {
   display: inline-block;
   font-feature-settings: "case" 1, "calt" 1;
-  animation: colon-breathe 2.2s ease-in-out infinite;
+  animation: colon-breathe 1.05s cubic-bezier(.45, .05, .55, .95) infinite alternate;
   will-change: opacity;
 }
 
@@ -682,34 +682,86 @@ input[type="range"]::-moz-range-thumb {
 }
 .glyph-btn:active { transform: scale(.94) !important; }
 
-/* Chapter 5: Install snippet */
+/* Chapter 5: Install card (Dashnote prompt-box layout + tactile Copy morph) */
 .code-block {
-  padding: 24px 28px;
   border-radius: 12px;
   background: var(--raised);
   box-shadow: inset 0 0 0 1px var(--line-control);
-  position: relative;
+  overflow: hidden;
+}
+.code-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px 12px 20px;
+}
+.code-title {
+  font: 500 14px/20px var(--font);
+  color: var(--text-1);
 }
 .code-block pre {
-  font: 400 13px/22px var(--mono);
-  color: var(--text-1);
-  overflow-x: auto;
-  padding-right: 64px;
+  margin: 0;
+  padding: 2px 20px 14px;
+  font: 400 12.5px/20px var(--mono);
+  color: var(--text-2);
+  white-space: pre-wrap;
+  word-break: break-word;
 }
-.copy-link {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+.code-foot {
+  padding: 10px 20px 14px;
+  border-top: 1px solid var(--line);
+  font: 400 12px/18px var(--font);
+  color: var(--text-3);
+}
+.cbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
   height: 28px;
   padding: 0 10px;
   border-radius: 6px;
-  background: var(--stage);
-  box-shadow: inset 0 0 0 1px var(--line-control);
   font: 500 12px/16px var(--font);
-  color: var(--text-1);
-  transition: opacity 120ms var(--ease);
+  background: var(--ink);
+  color: var(--on-ink);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .12), 0 3px 10px -4px rgba(0, 0, 0, .24);
+  transition: background-color .22s, transform .38s var(--sp-rel), box-shadow .22s, opacity .15s;
 }
-.copy-link:hover { opacity: .7; }
+.cbtn:hover {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .14), 0 5px 14px -4px rgba(0, 0, 0, .32);
+  opacity: .92;
+}
+.cbtn:active {
+  transform: scale(.96);
+  transition-duration: .10s;
+  transition-timing-function: var(--ease);
+}
+.cp-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 12.5px;
+  height: 12.5px;
+}
+.cp-icon svg {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+}
+.cp-result { opacity: 0; }
+.cp-tick { stroke-dasharray: 1; stroke-dashoffset: 0; }
+.cp-error,
+[data-copy-state="failure"] .cp-tick { display: none; }
+[data-copy-state="failure"] .cp-error { display: inline; }
+.cp-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 
 footer {
   margin-top: 112px;
@@ -951,15 +1003,37 @@ footer {
   <section class="chapter">
     <div class="ch-rail">
       <h2 class="ch-title">Install</h2>
-      <p class="ch-note">Static WOFF2 stylesheet</p>
+      <p class="ch-note">Use on any website</p>
     </div>
     <div class="ch-body">
       <div class="code-block">
+        <div class="code-head">
+          <span class="code-title">HTML and CSS</span>
+          <button type="button" class="cbtn" id="copyBtn" data-copy="snippet" aria-label="Copy HTML and CSS snippet">
+            <span class="cp-icon" aria-hidden="true">
+              <svg class="cp-idle" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5.5" y="5.5" width="8" height="8" rx="2"/>
+                <path d="M10.5 3.5v-.5A1.5 1.5 0 0 0 9 1.5H4A1.5 1.5 0 0 0 2.5 3v5A1.5 1.5 0 0 0 4 9.5h.5"/>
+              </svg>
+              <svg class="cp-result" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path class="cp-tick" pathLength="1" d="m3 8 3 3 7-7"/>
+                <path class="cp-error" d="m4.5 4.5 7 7m0-7-7 7"/>
+              </svg>
+            </span>
+            <span>Copy</span>
+          </button>
+          <span class="cp-status" id="copyStatus" role="status"></span>
+        </div>
         <pre id="cssCode">&lt;link rel="stylesheet" href="https://paxton0209.github.io/halden/fonts.css"&gt;
 
-:root { font-family: "Halden", -apple-system, sans-serif; font-feature-settings: "calt" 1; }
-:root[data-theme="dark"] { font-family: "Halden Dark", "Halden", sans-serif; }</pre>
-        <button type="button" class="copy-link" id="copyBtn">Copy</button>
+:root {
+  font-family: "Halden", -apple-system, sans-serif;
+  font-feature-settings: "calt" 1;
+}
+:root[data-theme="dark"] {
+  font-family: "Halden Dark", "Halden", sans-serif;
+}</pre>
+        <div class="code-foot">Paste into your page head and stylesheet to load Halden and Halden Dark automatically.</div>
       </div>
     </div>
   </section>
@@ -1211,15 +1285,96 @@ field.addEventListener('focusout', (e) => {
   if (!field.contains(e.relatedTarget)) clearWave();
 });
 
-// Copy CSS
+// Copy HTML & CSS (exact Dashnote icon-morph + stroke-drawn checkmark + tactile tap)
+const COPY_TIMING = { out: 100, in: 120, iconDelay: 40, tickDelay: 80, tick: 180, hold: 1000, returnOut: 100, returnIn: 180 };
+const RM = matchMedia('(prefers-reduced-motion: reduce)');
+let copyAudio, copyNoiseBuffer;
+function prepareCopyAudio() {
+  try {
+    const A = window.AudioContext || window.webkitAudioContext;
+    if (!A) return;
+    copyAudio ??= new A();
+    if (copyAudio.state === 'suspended') copyAudio.resume().catch(() => {});
+  } catch {}
+}
+function playCopyTap() {
+  try {
+    const audio = copyAudio;
+    if (!audio || audio.state !== 'running') return;
+    if (!copyNoiseBuffer) {
+      copyNoiseBuffer = audio.createBuffer(1, Math.ceil(audio.sampleRate * .03), audio.sampleRate);
+      const d = copyNoiseBuffer.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    const t = audio.currentTime;
+    const noise = audio.createBufferSource(), filter = audio.createBiquadFilter(), ng = audio.createGain();
+    noise.buffer = copyNoiseBuffer; filter.type = 'bandpass'; filter.frequency.value = 3200; filter.Q.value = 2.5;
+    ng.gain.setValueAtTime(0, t); ng.gain.linearRampToValueAtTime(.22, t + .001); ng.gain.exponentialRampToValueAtTime(.0001, t + .03);
+    noise.connect(filter).connect(ng).connect(audio.destination); noise.start(t); noise.stop(t + .03);
+    const tone = audio.createOscillator(), tg = audio.createGain();
+    tone.type = 'sine'; tone.frequency.setValueAtTime(180, t); tone.frequency.exponentialRampToValueAtTime(90, t + .03);
+    tg.gain.setValueAtTime(0, t); tg.gain.linearRampToValueAtTime(.08, t + .001); tg.gain.exponentialRampToValueAtTime(.0001, t + .03);
+    tone.connect(tg).connect(audio.destination); tone.start(t); tone.stop(t + .03);
+    noise.onended = () => { noise.disconnect(); filter.disconnect(); ng.disconnect(); };
+    tone.onended = () => { tone.disconnect(); tg.disconnect(); };
+  } catch {}
+}
 const copyBtn = document.getElementById('copyBtn');
+const copyStatus = document.getElementById('copyStatus');
 const cssCode = document.getElementById('cssCode').textContent;
 copyBtn.addEventListener('click', async () => {
+  if (copyBtn._req) return;
+  copyBtn._req = 1;
+  prepareCopyAudio();
+  copyStatus.textContent = '';
+  let ok = false;
   try {
     await navigator.clipboard.writeText(cssCode);
-    copyBtn.textContent = 'Copied';
-    setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1400);
-  } catch (e) {}
+    ok = true;
+  } catch {
+    const f = document.activeElement, ta = document.createElement('textarea');
+    ta.value = cssCode; ta.readOnly = true;
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
+    document.body.append(ta); ta.select();
+    try { ok = document.execCommand('copy'); } catch {}
+    ta.remove();
+    if (f && f.isConnected) f.focus({ preventScroll: true });
+  }
+  copyBtn._req = 0;
+  const idle = copyBtn.querySelector('.cp-idle');
+  const res = copyBtn.querySelector('.cp-result');
+  const tick = res.querySelector('.cp-tick');
+  const T = COPY_TIMING;
+  const replay = Boolean(copyBtn.dataset.copyState);
+  const fi = replay ? +getComputedStyle(idle).opacity : 1;
+  const fr = replay ? +getComputedStyle(res).opacity : 0;
+  (copyBtn._t || []).forEach(clearTimeout);
+  (copyBtn._a || []).forEach(a => a.cancel());
+  copyBtn._t = []; copyBtn._a = [];
+  const fade = (el, a, b, d, dl = 0, e = 'ease') => {
+    const x = el.animate([{ opacity: a }, { opacity: b }], { duration: d, delay: dl, fill: 'both', easing: e });
+    copyBtn._a.push(x); return x;
+  };
+  copyBtn.dataset.copyState = ok ? 'success' : 'failure';
+  copyStatus.textContent = ok ? 'Copied to clipboard.' : 'Could not copy to the clipboard.';
+  fade(idle, fi, 0, T.out);
+  fade(res, fr, 1, T.in, T.iconDelay);
+  if (ok) {
+    if (!RM.matches) copyBtn._a.push(tick.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: T.tick, delay: T.tickDelay, fill: 'both', easing: 'cubic-bezier(.65,0,.35,1)' }));
+    copyBtn._t.push(setTimeout(playCopyTap, T.tickDelay));
+  }
+  copyBtn._t.push(setTimeout(() => {
+    copyBtn._a.forEach(a => a.cancel()); copyBtn._a = [];
+    const eo = 'cubic-bezier(.23,1,.32,1)';
+    fade(res, 1, 0, T.returnOut, 0, eo);
+    const inc = fade(idle, 0, 1, T.returnIn, 0, eo);
+    inc.onfinish = () => {
+      if (copyBtn._a.includes(inc)) {
+        copyBtn._a.forEach(a => a.cancel()); copyBtn._a = [];
+        delete copyBtn.dataset.copyState;
+      }
+    };
+  }, T.tickDelay + T.tick + T.hold));
 });
 
 // System theme + Dashnote contrast-circle toggle + D shortcut (Dashline feathered radial View Transition)
