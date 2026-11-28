@@ -20,7 +20,7 @@ try{
 <link rel="preload" href="webfonts/HaldenDisplay-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="webfonts/HaldenDisplay-Medium.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="webfonts/HaldenDark-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="fonts.css?v=3">
+<link rel="stylesheet" href="fonts.css?v=5">
 <style>
 /* PDS v1.7 surface tokens */
 :root {
@@ -213,32 +213,20 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   transform: rotate(180deg);
 }
 
-/* Bilingual Simultaneous Cross-Morph (zero blank gap, GPU-only) */
-.morph-ghost {
+/* Bilingual Optical Blur Cross-Dissolve (WAAPI GPU-composited, zero wrap, zero blank gap) */
+span[data-i18n-en],
+strong[data-i18n-en] {
+  display: inline-block;
+  vertical-align: baseline;
+}
+.lang-ghost {
   position: fixed;
   margin: 0 !important;
   pointer-events: none;
   z-index: 9990;
-  transform-origin: left center;
-  will-change: transform, opacity, filter;
-  transition: transform 240ms cubic-bezier(.4, 0, .2, 1), opacity 220ms cubic-bezier(.4, 0, .2, 1), filter 220ms ease;
-}
-.morph-ghost.centered {
-  transform-origin: center center;
-}
-.morph-in-prep {
-  display: inline-block;
-  transform-origin: left center;
-  will-change: transform, opacity, filter;
-}
-.morph-in-prep.block-node {
-  display: block;
-}
-.morph-in-prep.centered {
-  transform-origin: center center;
-}
-.morph-in-active {
-  transition: transform 320ms cubic-bezier(.16, 1, .3, 1), opacity 260ms cubic-bezier(.16, 1, .3, 1), filter 280ms cubic-bezier(.16, 1, .3, 1);
+  box-sizing: border-box;
+  will-change: opacity, filter;
+  transform: translateZ(0);
 }
 
 /* PDS D-29 single primary ink pill CTA (rock-steady shell, only inner label morphs) */
@@ -313,6 +301,9 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .speed-meta strong {
   font-weight: 500;
   color: var(--text-1);
+}
+.limit-lbl {
+  min-width: 31px;
 }
 
 .cockpit-right {
@@ -508,9 +499,9 @@ input[type="range"]::-moz-range-thumb {
 .wt-sample {
   font-family: var(--display);
   font-size: 32px;
-  line-height: 1.24;
+  line-height: 1.34;
   color: var(--text-1);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: proportional-nums;
   word-break: break-word;
   outline: none;
   caret-color: var(--text-1);
@@ -707,6 +698,8 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 12px;
   box-shadow: inset 0 0 0 1px var(--line-control);
   padding: 24px;
+}
+.glyph-rows {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -764,8 +757,10 @@ input[type="range"]::-moz-range-thumb {
 .cbtn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 5px;
   white-space: nowrap;
+  min-width: 68px;
   height: 28px;
   padding: 0 10px;
   border-radius: 6px;
@@ -862,7 +857,7 @@ footer {
       <div class="mast-left">
         <h1 class="head-title">Halden</h1>
         <p class="lead" id="leadCopy">
-          <strong>An open-source sans-serif for automotive HMI.</strong> Tuned for daylight and dark OLED screens, used in <a class="ul" href="https://www.drivescenestudio.com/" target="_blank" rel="noopener">DriveScene Studio</a>, <a class="ul" href="https://paxton0209.github.io/Dashline/" target="_blank" rel="noopener">Dashline</a>, and <a class="ul" href="https://paxton0209.github.io/dashnote/" target="_blank" rel="noopener">Dashnote</a>.
+          <strong>An open-source sans-serif for automotive HMI.</strong> Open counters and refined stroke details for clear reading, used in <a class="ul" href="https://www.drivescenestudio.com/" target="_blank" rel="noopener">DriveScene Studio</a>, <a class="ul" href="https://paxton0209.github.io/Dashline/" target="_blank" rel="noopener">Dashline</a>, and <a class="ul" href="https://paxton0209.github.io/dashnote/" target="_blank" rel="noopener">Dashnote</a>.
         </p>
       </div>
 
@@ -920,7 +915,7 @@ footer {
           <span class="speed-unit">km/h</span>
         </div>
         <div class="speed-meta">
-          <span><span data-i18n-en="Limit" data-i18n-zh="限速">Limit</span> <strong>120</strong></span>
+          <span><span class="limit-lbl" data-i18n-en="Limit" data-i18n-zh="限速">Limit</span> <strong>120</strong></span>
           <span>82%</span>
         </div>
       </div>
@@ -1071,7 +1066,7 @@ footer {
       <p class="ch-note" id="glyphReadout" data-i18n-en="Click any glyph to copy" data-i18n-zh="点击任意字符即可复制">Click any glyph to copy</p>
     </div>
     <div class="ch-body">
-      <div class="glyph-field" id="glyphField"></div>
+      <div class="glyph-field" id="glyphField"><div class="glyph-rows" id="glyphRows"></div></div>
     </div>
   </section>
 
@@ -1103,11 +1098,11 @@ footer {
         <pre id="cssCode">&lt;link rel="stylesheet" href="https://paxton0209.github.io/halden/fonts.css"&gt;
 
 :root {
-  font-family: "Halden", -apple-system, sans-serif;
+  font-family: "Halden", "Halden SC", -apple-system, sans-serif;
   font-feature-settings: "calt" 1;
 }
 :root[data-theme="dark"] {
-  font-family: "Halden Dark", "Halden", sans-serif;
+  font-family: "Halden Dark", "Halden SC Dark", "Halden", sans-serif;
 }</pre>
         <div class="code-foot" data-i18n-en="Paste into your page head and stylesheet to load Halden and Halden Dark automatically." data-i18n-zh="粘贴至页面 head 与样式表，即可自动加载 Halden 与暗夜版 Halden Dark。">Paste into your page head and stylesheet to load Halden and Halden Dark automatically.</div>
       </div>
@@ -1126,7 +1121,10 @@ footer {
 </main>
 
 <script>
-const GLYPH_ROWS = [[{"ch": "A", "code": "U+0041", "w": 668}, {"ch": "B", "code": "U+0042", "w": 650}, {"ch": "C", "code": "U+0043", "w": 722}, {"ch": "D", "code": "U+0044", "w": 706}, {"ch": "E", "code": "U+0045", "w": 595}, {"ch": "F", "code": "U+0046", "w": 572}, {"ch": "G", "code": "U+0047", "w": 732}, {"ch": "H", "code": "U+0048", "w": 730}, {"ch": "I", "code": "U+0049", "w": 246}, {"ch": "J", "code": "U+004A", "w": 552}, {"ch": "K", "code": "U+004B", "w": 650}, {"ch": "L", "code": "U+004C", "w": 551}, {"ch": "M", "code": "U+004D", "w": 880}, {"ch": "N", "code": "U+004E", "w": 736}, {"ch": "O", "code": "U+004F", "w": 748}, {"ch": "P", "code": "U+0050", "w": 624}, {"ch": "Q", "code": "U+0051", "w": 748}, {"ch": "R", "code": "U+0052", "w": 644}, {"ch": "S", "code": "U+0053", "w": 619}, {"ch": "T", "code": "U+0054", "w": 627}, {"ch": "U", "code": "U+0055", "w": 726}, {"ch": "V", "code": "U+0056", "w": 668}, {"ch": "W", "code": "U+0057", "w": 964}, {"ch": "X", "code": "U+0058", "w": 660}, {"ch": "Y", "code": "U+0059", "w": 658}, {"ch": "Z", "code": "U+005A", "w": 626}], [{"ch": "a", "code": "U+0061", "w": 573}, {"ch": "b", "code": "U+0062", "w": 590}, {"ch": "c", "code": "U+0063", "w": 547}, {"ch": "d", "code": "U+0064", "w": 590}, {"ch": "e", "code": "U+0065", "w": 561}, {"ch": "f", "code": "U+0066", "w": 329}, {"ch": "g", "code": "U+0067", "w": 590}, {"ch": "h", "code": "U+0068", "w": 571}, {"ch": "i", "code": "U+0069", "w": 221}, {"ch": "j", "code": "U+006A", "w": 222}, {"ch": "k", "code": "U+006B", "w": 528}, {"ch": "l", "code": "U+006C", "w": 234}, {"ch": "m", "code": "U+006D", "w": 866}, {"ch": "n", "code": "U+006E", "w": 570}, {"ch": "o", "code": "U+006F", "w": 573}, {"ch": "p", "code": "U+0070", "w": 590}, {"ch": "q", "code": "U+0071", "w": 590}, {"ch": "r", "code": "U+0072", "w": 343}, {"ch": "s", "code": "U+0073", "w": 500}, {"ch": "t", "code": "U+0074", "w": 323}, {"ch": "u", "code": "U+0075", "w": 571}, {"ch": "v", "code": "U+0076", "w": 537}, {"ch": "w", "code": "U+0077", "w": 785}, {"ch": "x", "code": "U+0078", "w": 529}, {"ch": "y", "code": "U+0079", "w": 537}, {"ch": "z", "code": "U+007A", "w": 508}], [{"ch": "0", "code": "U+0030", "w": 625}, {"ch": "1", "code": "U+0031", "w": 375}, {"ch": "2", "code": "U+0032", "w": 581}, {"ch": "3", "code": "U+0033", "w": 591}, {"ch": "4", "code": "U+0034", "w": 616}, {"ch": "5", "code": "U+0035", "w": 586}, {"ch": "6", "code": "U+0036", "w": 569}, {"ch": "7", "code": "U+0037", "w": 535}, {"ch": "8", "code": "U+0038", "w": 597}, {"ch": "9", "code": "U+0039", "w": 569}, {"ch": ".", "code": "U+002E", "w": 232}, {"ch": ":", "code": "U+003A", "w": 232}, {"ch": ",", "code": "U+002C", "w": 232}, {"ch": ";", "code": "U+003B", "w": 237}, {"ch": "!", "code": "U+0021", "w": 232}, {"ch": "?", "code": "U+003F", "w": 515}, {"ch": "-", "code": "U+002D", "w": 430}, {"ch": "+", "code": "U+002B", "w": 628}, {"ch": "×", "code": "U+00D7", "w": 628}, {"ch": "÷", "code": "U+00F7", "w": 628}, {"ch": "=", "code": "U+003D", "w": 628}, {"ch": "<", "code": "U+003C", "w": 628}, {"ch": ">", "code": "U+003E", "w": 628}, {"ch": "(", "code": "U+0028", "w": 310}, {"ch": ")", "code": "U+0029", "w": 310}, {"ch": "[", "code": "U+005B", "w": 310}, {"ch": "]", "code": "U+005D", "w": 310}, {"ch": "/", "code": "U+002F", "w": 329}, {"ch": "*", "code": "U+002A", "w": 470}, {"ch": "@", "code": "U+0040", "w": 960}, {"ch": "#", "code": "U+0023", "w": 600}, {"ch": "%", "code": "U+0025", "w": 864}, {"ch": "&", "code": "U+0026", "w": 609}, {"ch": "°", "code": "U+00B0", "w": 425}, {"ch": "℃", "code": "U+2103", "w": 1138}, {"ch": "$", "code": "U+0024", "w": 613}, {"ch": "€", "code": "U+20AC", "w": 633}, {"ch": "¥", "code": "U+00A5", "w": 518}, {"ch": "→", "code": "U+2192", "w": 918}]];
+const GLYPH_ROWS_BY_LANG = {
+  en: [[{"ch": "A", "code": "U+0041", "w": 668}, {"ch": "B", "code": "U+0042", "w": 650}, {"ch": "C", "code": "U+0043", "w": 722}, {"ch": "D", "code": "U+0044", "w": 706}, {"ch": "E", "code": "U+0045", "w": 595}, {"ch": "F", "code": "U+0046", "w": 572}, {"ch": "G", "code": "U+0047", "w": 732}, {"ch": "H", "code": "U+0048", "w": 730}, {"ch": "I", "code": "U+0049", "w": 246}, {"ch": "J", "code": "U+004A", "w": 552}, {"ch": "K", "code": "U+004B", "w": 650}, {"ch": "L", "code": "U+004C", "w": 551}, {"ch": "M", "code": "U+004D", "w": 880}, {"ch": "N", "code": "U+004E", "w": 736}, {"ch": "O", "code": "U+004F", "w": 748}, {"ch": "P", "code": "U+0050", "w": 624}, {"ch": "Q", "code": "U+0051", "w": 748}, {"ch": "R", "code": "U+0052", "w": 644}, {"ch": "S", "code": "U+0053", "w": 619}, {"ch": "T", "code": "U+0054", "w": 627}, {"ch": "U", "code": "U+0055", "w": 726}, {"ch": "V", "code": "U+0056", "w": 668}, {"ch": "W", "code": "U+0057", "w": 964}, {"ch": "X", "code": "U+0058", "w": 660}, {"ch": "Y", "code": "U+0059", "w": 658}, {"ch": "Z", "code": "U+005A", "w": 626}], [{"ch": "a", "code": "U+0061", "w": 573}, {"ch": "b", "code": "U+0062", "w": 590}, {"ch": "c", "code": "U+0063", "w": 547}, {"ch": "d", "code": "U+0064", "w": 590}, {"ch": "e", "code": "U+0065", "w": 561}, {"ch": "f", "code": "U+0066", "w": 329}, {"ch": "g", "code": "U+0067", "w": 590}, {"ch": "h", "code": "U+0068", "w": 571}, {"ch": "i", "code": "U+0069", "w": 221}, {"ch": "j", "code": "U+006A", "w": 222}, {"ch": "k", "code": "U+006B", "w": 528}, {"ch": "l", "code": "U+006C", "w": 234}, {"ch": "m", "code": "U+006D", "w": 866}, {"ch": "n", "code": "U+006E", "w": 570}, {"ch": "o", "code": "U+006F", "w": 573}, {"ch": "p", "code": "U+0070", "w": 590}, {"ch": "q", "code": "U+0071", "w": 590}, {"ch": "r", "code": "U+0072", "w": 343}, {"ch": "s", "code": "U+0073", "w": 500}, {"ch": "t", "code": "U+0074", "w": 323}, {"ch": "u", "code": "U+0075", "w": 571}, {"ch": "v", "code": "U+0076", "w": 537}, {"ch": "w", "code": "U+0077", "w": 785}, {"ch": "x", "code": "U+0078", "w": 529}, {"ch": "y", "code": "U+0079", "w": 537}, {"ch": "z", "code": "U+007A", "w": 508}], [{"ch": "0", "code": "U+0030", "w": 625}, {"ch": "1", "code": "U+0031", "w": 375}, {"ch": "2", "code": "U+0032", "w": 581}, {"ch": "3", "code": "U+0033", "w": 591}, {"ch": "4", "code": "U+0034", "w": 616}, {"ch": "5", "code": "U+0035", "w": 586}, {"ch": "6", "code": "U+0036", "w": 569}, {"ch": "7", "code": "U+0037", "w": 535}, {"ch": "8", "code": "U+0038", "w": 597}, {"ch": "9", "code": "U+0039", "w": 569}, {"ch": ".", "code": "U+002E", "w": 232}, {"ch": ":", "code": "U+003A", "w": 232}, {"ch": ",", "code": "U+002C", "w": 232}, {"ch": ";", "code": "U+003B", "w": 237}, {"ch": "!", "code": "U+0021", "w": 232}, {"ch": "?", "code": "U+003F", "w": 515}, {"ch": "-", "code": "U+002D", "w": 430}, {"ch": "+", "code": "U+002B", "w": 628}, {"ch": "×", "code": "U+00D7", "w": 628}, {"ch": "÷", "code": "U+00F7", "w": 628}, {"ch": "=", "code": "U+003D", "w": 628}, {"ch": "<", "code": "U+003C", "w": 628}, {"ch": ">", "code": "U+003E", "w": 628}, {"ch": "(", "code": "U+0028", "w": 310}, {"ch": ")", "code": "U+0029", "w": 310}, {"ch": "[", "code": "U+005B", "w": 310}, {"ch": "]", "code": "U+005D", "w": 310}, {"ch": "/", "code": "U+002F", "w": 329}, {"ch": "*", "code": "U+002A", "w": 470}, {"ch": "@", "code": "U+0040", "w": 960}, {"ch": "#", "code": "U+0023", "w": 600}, {"ch": "%", "code": "U+0025", "w": 864}, {"ch": "&", "code": "U+0026", "w": 609}, {"ch": "°", "code": "U+00B0", "w": 425}, {"ch": "℃", "code": "U+2103", "w": 1138}, {"ch": "$", "code": "U+0024", "w": 613}, {"ch": "€", "code": "U+20AC", "w": 633}, {"ch": "¥", "code": "U+00A5", "w": 518}, {"ch": "→", "code": "U+2192", "w": 918}]],
+  zh: [[{"ch": "前", "code": "U+524D", "w": 980}, {"ch": "方", "code": "U+65B9", "w": 980}, {"ch": "后", "code": "U+540E", "w": 980}, {"ch": "左", "code": "U+5DE6", "w": 980}, {"ch": "转", "code": "U+8F6C", "w": 980}, {"ch": "右", "code": "U+53F3", "w": 980}, {"ch": "直", "code": "U+76F4", "w": 980}, {"ch": "行", "code": "U+884C", "w": 980}, {"ch": "掉", "code": "U+6389", "w": 980}, {"ch": "头", "code": "U+5934", "w": 980}, {"ch": "驶", "code": "U+9A76", "w": 980}, {"ch": "出", "code": "U+51FA", "w": 980}, {"ch": "入", "code": "U+5165", "w": 980}, {"ch": "汇", "code": "U+6C47", "w": 980}, {"ch": "靠", "code": "U+9760", "w": 980}, {"ch": "保", "code": "U+4FDD", "w": 980}, {"ch": "持", "code": "U+6301", "w": 980}, {"ch": "进", "code": "U+8FDB", "w": 980}, {"ch": "离", "code": "U+79BB", "w": 980}, {"ch": "到", "code": "U+5230", "w": 980}, {"ch": "达", "code": "U+8FBE", "w": 980}, {"ch": "高", "code": "U+9AD8", "w": 980}, {"ch": "速", "code": "U+901F", "w": 980}, {"ch": "架", "code": "U+67B6", "w": 980}, {"ch": "隧", "code": "U+96A7", "w": 980}, {"ch": "道", "code": "U+9053", "w": 980}, {"ch": "桥", "code": "U+6865", "w": 980}, {"ch": "梁", "code": "U+6881", "w": 980}, {"ch": "环", "code": "U+73AF", "w": 980}, {"ch": "岛", "code": "U+5C9B", "w": 980}, {"ch": "口", "code": "U+53E3", "w": 980}, {"ch": "匝", "code": "U+531D", "w": 980}, {"ch": "主", "code": "U+4E3B", "w": 980}, {"ch": "辅", "code": "U+8F85", "w": 980}, {"ch": "车", "code": "U+8F66", "w": 980}, {"ch": "拥", "code": "U+62E5", "w": 980}, {"ch": "堵", "code": "U+5835", "w": 980}, {"ch": "畅", "code": "U+7545", "w": 980}, {"ch": "通", "code": "U+901A", "w": 980}, {"ch": "快", "code": "U+5FEB", "w": 980}], [{"ch": "领", "code": "U+9886", "w": 980}, {"ch": "航", "code": "U+822A", "w": 980}, {"ch": "助", "code": "U+52A9", "w": 980}, {"ch": "巡", "code": "U+5DE1", "w": 980}, {"ch": "居", "code": "U+5C45", "w": 980}, {"ch": "中", "code": "U+4E2D", "w": 980}, {"ch": "自", "code": "U+81EA", "w": 980}, {"ch": "变", "code": "U+53D8", "w": 980}, {"ch": "泊", "code": "U+6CCA", "w": 980}, {"ch": "预", "code": "U+9884", "w": 980}, {"ch": "警", "code": "U+8B66", "w": 980}, {"ch": "限", "code": "U+9650", "w": 980}, {"ch": "当", "code": "U+5F53", "w": 980}, {"ch": "启", "code": "U+542F", "w": 980}, {"ch": "续", "code": "U+7EED", "w": 980}, {"ch": "电", "code": "U+7535", "w": 980}, {"ch": "量", "code": "U+91CF", "w": 980}, {"ch": "充", "code": "U+5145", "w": 980}, {"ch": "功", "code": "U+529F", "w": 980}, {"ch": "率", "code": "U+7387", "w": 980}, {"ch": "能", "code": "U+80FD", "w": 980}, {"ch": "耗", "code": "U+8017", "w": 980}, {"ch": "舒", "code": "U+8212", "w": 980}, {"ch": "适", "code": "U+9002", "w": 980}, {"ch": "运", "code": "U+8FD0", "w": 980}, {"ch": "温", "code": "U+6E29", "w": 980}, {"ch": "湿", "code": "U+6E7F", "w": 980}, {"ch": "度", "code": "U+5EA6", "w": 980}, {"ch": "座", "code": "U+5EA7", "w": 980}, {"ch": "椅", "code": "U+6905", "w": 980}, {"ch": "空", "code": "U+7A7A", "w": 980}, {"ch": "调", "code": "U+8C03", "w": 980}, {"ch": "智", "code": "U+667A", "w": 980}, {"ch": "驾", "code": "U+9A7E", "w": 980}, {"ch": "盲", "code": "U+76F2", "w": 980}, {"ch": "测", "code": "U+6D4B", "w": 980}, {"ch": "胎", "code": "U+80CE", "w": 980}, {"ch": "压", "code": "U+538B", "w": 980}, {"ch": "锁", "code": "U+9501", "w": 980}, {"ch": "门", "code": "U+95E8", "w": 980}], [{"ch": "一", "code": "U+4E00", "w": 980}, {"ch": "二", "code": "U+4E8C", "w": 980}, {"ch": "三", "code": "U+4E09", "w": 980}, {"ch": "四", "code": "U+56DB", "w": 980}, {"ch": "五", "code": "U+4E94", "w": 980}, {"ch": "六", "code": "U+516D", "w": 980}, {"ch": "七", "code": "U+4E03", "w": 980}, {"ch": "八", "code": "U+516B", "w": 980}, {"ch": "九", "code": "U+4E5D", "w": 980}, {"ch": "十", "code": "U+5341", "w": 980}, {"ch": "零", "code": "U+96F6", "w": 980}, {"ch": "千", "code": "U+5343", "w": 980}, {"ch": "万", "code": "U+4E07", "w": 980}, {"ch": "年", "code": "U+5E74", "w": 980}, {"ch": "月", "code": "U+6708", "w": 980}, {"ch": "时", "code": "U+65F6", "w": 980}, {"ch": "分", "code": "U+5206", "w": 980}, {"ch": "米", "code": "U+7C73", "w": 980}, {"ch": "公", "code": "U+516C", "w": 980}, {"ch": "里", "code": "U+91CC", "w": 980}, {"ch": "日", "code": "U+65E5", "w": 980}, {"ch": "夜", "code": "U+591C", "w": 980}, {"ch": "暗", "code": "U+6697", "w": 980}, {"ch": "屏", "code": "U+5C4F", "w": 980}, {"ch": "光", "code": "U+5149", "w": 980}, {"ch": "学", "code": "U+5B66", "w": 980}, {"ch": "清", "code": "U+6E05", "w": 980}, {"ch": "晰", "code": "U+6670", "w": 980}, {"ch": "开", "code": "U+5F00", "w": 980}, {"ch": "阔", "code": "U+9614", "w": 980}, {"ch": "字", "code": "U+5B57", "w": 980}, {"ch": "怀", "code": "U+6000", "w": 980}, {"ch": "，", "code": "U+FF0C", "w": 607}, {"ch": "。", "code": "U+3002", "w": 626}, {"ch": "、", "code": "U+3001", "w": 620}, {"ch": "：", "code": "U+FF1A", "w": 604}, {"ch": "；", "code": "U+FF1B", "w": 620}, {"ch": "！", "code": "U+FF01", "w": 980}, {"ch": "？", "code": "U+FF1F", "w": 980}, {"ch": "℃", "code": "U+2103", "w": 980}]]
+};
 
 // Warm all Halden + Halden SC weights so theme & language transitions never flash
 if (document.fonts && document.fonts.load) {
@@ -1149,7 +1147,7 @@ function applyTesterFont() {
   const fam = px >= 24
     ? (isDark ? '"Halden Dark", "Halden", "Halden SC Dark", "Halden SC", -apple-system, sans-serif' : '"Halden Display", "Halden", "Halden SC", -apple-system, sans-serif')
     : (isDark ? '"Halden Dark", "Halden", "Halden SC Dark", "Halden SC", -apple-system, sans-serif' : '"Halden", "Halden SC", -apple-system, sans-serif');
-  const lh = px >= 24 ? '1.24' : '1.45';
+  const lh = px >= 24 ? '1.34' : '1.5';
   for (const el of wtSamples) {
     el.style.fontSize = px + 'px';
     el.style.fontFamily = fam;
@@ -1229,10 +1227,14 @@ const caltDemo = document.getElementById('caltDemo');
 const caltSample = document.getElementById('caltSample');
 const caltState = document.getElementById('caltState');
 let caltOn = true;
+function syncCaltStateLabel() {
+  const isZh = document.documentElement.dataset.lang === 'zh';
+  caltState.textContent = caltOn ? (isZh ? '开' : 'On') : (isZh ? '关' : 'Off');
+}
 function toggleCalt() {
   caltOn = !caltOn;
   caltSample.classList.toggle('off', !caltOn);
-  caltState.textContent = caltOn ? 'On' : 'Off';
+  syncCaltStateLabel();
 }
 caltDemo.addEventListener('click', toggleCalt);
 caltDemo.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCalt(); } });
@@ -1305,33 +1307,47 @@ cockpitTemp.addEventListener('input', () => { tempEdited = true; });
   } catch {}
 })();
 
-// Character field with gentle hover scale + click to copy
+// Character field with gentle hover scale + click to copy (switches EN <-> ZH Halden SC glyphs)
 const field = document.getElementById('glyphField');
+const glyphRowsEl = document.getElementById('glyphRows');
 const readout = document.getElementById('glyphReadout');
-const allBtns = [];
-for (const row of GLYPH_ROWS) {
-  const rowEl = document.createElement('div');
-  rowEl.className = 'glyph-row';
-  for (const g of row) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'glyph-btn';
-    btn.textContent = g.ch;
-    btn.dataset.ch = g.ch;
-    btn.dataset.code = g.code;
-    btn.dataset.w = g.w;
-    btn.setAttribute('aria-label', g.ch + ' ' + g.code);
-    btn.addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(g.ch); } catch (e) {}
-      readout.classList.add('active');
-      readout.textContent = 'Copied ' + g.ch + ' (' + g.code + ', ' + g.w + ' upm)';
-      setTimeout(() => readout.classList.remove('active'), 1200);
-    });
-    rowEl.appendChild(btn);
-    allBtns.push(btn);
-  }
-  field.appendChild(rowEl);
+let allBtns = [];
+function defaultGlyphPrompt() {
+  return document.documentElement.dataset.lang === 'zh' ? '点击任意字符即可复制' : 'Click any glyph to copy';
 }
+function renderGlyphField(lang) {
+  const rows = GLYPH_ROWS_BY_LANG[lang] || GLYPH_ROWS_BY_LANG.en;
+  glyphRowsEl.innerHTML = '';
+  allBtns = [];
+  for (const row of rows) {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'glyph-row';
+    for (const g of row) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'glyph-btn';
+      btn.textContent = g.ch;
+      btn.dataset.ch = g.ch;
+      btn.dataset.code = g.code;
+      btn.dataset.w = g.w;
+      btn.setAttribute('aria-label', g.ch + ' ' + g.code);
+      btn.addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(g.ch); } catch (e) {}
+        readout.classList.add('active');
+        const prefix = document.documentElement.dataset.lang === 'zh' ? '已复制 ' : 'Copied ';
+        readout.textContent = prefix + g.ch + ' (' + g.code + ', ' + g.w + ' upm)';
+        setTimeout(() => {
+          readout.classList.remove('active');
+          if (!field.matches(':hover')) readout.textContent = defaultGlyphPrompt();
+        }, 1200);
+      });
+      rowEl.appendChild(btn);
+      allBtns.push(btn);
+    }
+    glyphRowsEl.appendChild(rowEl);
+  }
+}
+renderGlyphField('en');
 
 function applyWave(target) {
   const idx = allBtns.indexOf(target);
@@ -1346,7 +1362,7 @@ function applyWave(target) {
 }
 function clearWave() {
   allBtns.forEach((b) => { b.style.transform = ''; b.style.opacity = ''; b.style.background = ''; });
-  if (!readout.classList.contains('active')) readout.textContent = 'Click any glyph to copy';
+  if (!readout.classList.contains('active')) readout.textContent = defaultGlyphPrompt();
 }
 field.addEventListener('mouseover', (e) => {
   const btn = e.target.closest('.glyph-btn');
@@ -1361,21 +1377,57 @@ field.addEventListener('focusout', (e) => {
   if (!field.contains(e.relatedTarget)) clearWave();
 });
 
-// Copy HTML & CSS (exact Dashnote icon-morph + stroke-drawn checkmark + tactile tap)
+// Shared Web Audio tactile feedback (jib.design-inspired crisp switch click + Dashnote copy tap)
 const COPY_TIMING = { out: 100, in: 120, iconDelay: 40, tickDelay: 80, tick: 180, hold: 1000, returnOut: 100, returnIn: 180 };
 const RM = matchMedia('(prefers-reduced-motion: reduce)');
-let copyAudio, copyNoiseBuffer;
-function prepareCopyAudio() {
+let uiAudio, copyNoiseBuffer, switchNoiseBuffer;
+function ensureAudio() {
   try {
     const A = window.AudioContext || window.webkitAudioContext;
-    if (!A) return;
-    copyAudio ??= new A();
-    if (copyAudio.state === 'suspended') copyAudio.resume().catch(() => {});
+    if (!A) return null;
+    uiAudio ??= new A();
+    if (uiAudio.state === 'suspended') uiAudio.resume().catch(() => {});
+    return uiAudio;
+  } catch {
+    return null;
+  }
+}
+function playSwitchSound() {
+  try {
+    const audio = ensureAudio();
+    if (!audio) return;
+    if (!switchNoiseBuffer) {
+      const len = Math.ceil(audio.sampleRate * .026);
+      switchNoiseBuffer = audio.createBuffer(1, len, audio.sampleRate);
+      const d = switchNoiseBuffer.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = (2 * Math.random() - 1) * (1 - i / len);
+    }
+    const t = audio.currentTime;
+    const noise = audio.createBufferSource(), bp = audio.createBiquadFilter(), ng = audio.createGain();
+    noise.buffer = switchNoiseBuffer;
+    bp.type = 'bandpass'; bp.frequency.value = 2600; bp.Q.value = 1.6;
+    ng.gain.setValueAtTime(.18, t);
+    ng.gain.exponentialRampToValueAtTime(.0001, t + .024);
+    noise.connect(bp).connect(ng).connect(audio.destination);
+    noise.start(t); noise.stop(t + .026);
+
+    const tone = audio.createOscillator(), tg = audio.createGain();
+    tone.type = 'sine';
+    tone.frequency.setValueAtTime(420, t);
+    tone.frequency.exponentialRampToValueAtTime(140, t + .022);
+    tg.gain.setValueAtTime(.09, t);
+    tg.gain.exponentialRampToValueAtTime(.0001, t + .024);
+    tone.connect(tg).connect(audio.destination);
+    tone.start(t); tone.stop(t + .026);
+
+    noise.onended = () => { noise.disconnect(); bp.disconnect(); ng.disconnect(); };
+    tone.onended = () => { tone.disconnect(); tg.disconnect(); };
   } catch {}
 }
+function prepareCopyAudio() { ensureAudio(); }
 function playCopyTap() {
   try {
-    const audio = copyAudio;
+    const audio = uiAudio;
     if (!audio || audio.state !== 'running') return;
     if (!copyNoiseBuffer) {
       copyNoiseBuffer = audio.createBuffer(1, Math.ceil(audio.sampleRate * .03), audio.sampleRate);
@@ -1521,159 +1573,222 @@ async function setTheme(next, persist, originEl = null) {
 }
 syncThemeUI();
 themeBtn.addEventListener('click', () => {
+  playSwitchSound();
   const next = (changingTheme ? requestedTheme : currentTheme()) === 'dark' ? 'light' : 'dark';
   setTheme(next, true, themeBtn);
 });
 mq.addEventListener('change', () => setTheme(mq.matches ? 'dark' : 'light', false, null));
-// ── Bilingual EN <-> ZH Toggle with Physical Typographic Stretch / Compress Morph ──
+// ── Bilingual EN <-> ZH Toggle with Silky Optical Cross-Dissolve (WAAPI, zero distortion, zero blank) ──
 const langBtn = document.getElementById('langBtn');
 const leadCopy = document.getElementById('leadCopy');
 const LEAD_HTML = {
-  en: '<strong>An open-source sans-serif for automotive HMI.</strong> Tuned for daylight and dark OLED screens, used in <a class="ul" href="https://www.drivescenestudio.com/" target="_blank" rel="noopener">DriveScene Studio</a>, <a class="ul" href="https://paxton0209.github.io/Dashline/" target="_blank" rel="noopener">Dashline</a>, and <a class="ul" href="https://paxton0209.github.io/dashnote/" target="_blank" rel="noopener">Dashnote</a>.',
-  zh: '<strong>面向车机座舱的开源无衬线字体。</strong> 兼顾日间强光与暗夜 OLED 屏幕显示，已用于 <a class="ul" href="https://www.drivescenestudio.com/" target="_blank" rel="noopener">DriveScene Studio</a>、<a class="ul" href="https://paxton0209.github.io/Dashline/" target="_blank" rel="noopener">Dashline</a> 与 <a class="ul" href="https://paxton0209.github.io/dashnote/" target="_blank" rel="noopener">Dashnote</a>。'
+  en: '<strong>An open-source sans-serif for automotive HMI.</strong> Open counters and refined stroke details for clear reading, used in <a class="ul" href="https://www.drivescenestudio.com/" target="_blank" rel="noopener">DriveScene Studio</a>, <a class="ul" href="https://paxton0209.github.io/Dashline/" target="_blank" rel="noopener">Dashline</a>, and <a class="ul" href="https://paxton0209.github.io/dashnote/" target="_blank" rel="noopener">Dashnote</a>.',
+  zh: '<strong>面向车机座舱的开源无衬线字体。</strong> 优化字怀开口与笔画细节，让信息清晰易辨，已用于 <a class="ul" href="https://www.drivescenestudio.com/" target="_blank" rel="noopener">DriveScene Studio</a>、<a class="ul" href="https://paxton0209.github.io/Dashline/" target="_blank" rel="noopener">Dashline</a> 与 <a class="ul" href="https://paxton0209.github.io/dashnote/" target="_blank" rel="noopener">Dashnote</a>。'
 };
 const LEAD_PLAIN = {
-  en: 'An open-source sans-serif for automotive HMI. Tuned for daylight and dark OLED screens, used in DriveScene Studio, Dashline, and Dashnote.',
-  zh: '面向车机座舱的开源无衬线字体。 兼顾日间强光与暗夜 OLED 屏幕显示，已用于 DriveScene Studio、Dashline 与 Dashnote。'
+  en: 'An open-source sans-serif for automotive HMI. Open counters and refined stroke details for clear reading, used in DriveScene Studio, Dashline, and Dashnote.',
+  zh: '面向车机座舱的开源无衬线字体。 优化字怀开口与笔画细节，让信息清晰易辨，已用于 DriveScene Studio、Dashline 与 Dashnote。'
 };
 
 let currentLang = 'en';
-let morphBusy = false;
+let activeLangAnims = [];
+let activeLangGhosts = [];
+let langCleanupTimer = 0;
+let langRafId = 0;
 
-const mCanvas = document.createElement('canvas');
-const mCtx = mCanvas.getContext('2d');
-function measureW(text, cs) {
-  mCtx.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
-  return Math.max(18, mCtx.measureText(text).width);
+function clearLangTransition() {
+  if (langRafId) { cancelAnimationFrame(langRafId); langRafId = 0; }
+  if (langCleanupTimer) { clearTimeout(langCleanupTimer); langCleanupTimer = 0; }
+  activeLangAnims.forEach(a => { try { a.cancel(); } catch {} });
+  activeLangAnims = [];
+  activeLangGhosts.forEach(g => g.remove());
+  activeLangGhosts = [];
+  document.querySelectorAll('[data-i18n-en], #leadCopy, #glyphRows').forEach(el => {
+    el.style.opacity = '';
+    el.style.filter = '';
+    el.style.willChange = '';
+  });
 }
+
 function inView(r) {
   return r.width > 0 && r.height > 0 && r.bottom > -30 && r.top < innerHeight + 30;
 }
+
 function applyLangInstant(next) {
   currentLang = next;
   document.documentElement.dataset.lang = next;
   document.documentElement.lang = next === 'zh' ? 'zh-CN' : 'en';
+  langBtn.setAttribute('aria-pressed', next === 'zh' ? 'true' : 'false');
   document.querySelectorAll('[data-i18n-en]').forEach(el => {
     const nextTxt = next === 'zh' ? el.dataset.i18nZh : el.dataset.i18nEn;
     if (el.textContent.trim() !== nextTxt.trim()) el.textContent = nextTxt;
   });
   leadCopy.innerHTML = LEAD_HTML[next];
+  renderGlyphField(next);
+  syncCaltStateLabel();
 }
 
-function runStretchMorph(next) {
+function runOpticalCrossDissolve(next) {
+  clearLangTransition();
   const nodes = [...document.querySelectorAll('[data-i18n-en]'), leadCopy];
   const visible = [];
   const offscreen = [];
   for (const el of nodes) {
     if (el.closest('.curtain-night')) { offscreen.push(el); continue; }
-    const r = el.getBoundingClientRect();
     const isLead = el === leadCopy;
     const oldTxt = isLead ? LEAD_PLAIN[currentLang] : el.textContent;
     const newTxt = isLead ? LEAD_PLAIN[next] : (next === 'zh' ? el.dataset.i18nZh : el.dataset.i18nEn);
     // Strict guard: identical text never animates
     if (oldTxt.trim() === newTxt.trim()) continue;
+    const r = el.getBoundingClientRect();
     if (inView(r)) {
       const cs = getComputedStyle(el);
-      const ratio = Math.max(0.62, Math.min(1.52, measureW(newTxt, cs) / measureW(oldTxt, cs)));
-      const centered = Boolean(el.dataset.morphCenter);
-      visible.push({ el, isLead, newTxt, ratio, rect: r, cs, centered, top: r.top });
+      const fs = parseFloat(cs.fontSize) || 16;
+      const lh = parseFloat(cs.lineHeight) || fs * 1.4;
+      const singleLine = r.height <= lh * 1.38;
+      visible.push({ el, isLead, newTxt, rect: r, cs, singleLine, top: r.top });
     } else {
       offscreen.push(el);
     }
   }
   if (!visible.length) { applyLangInstant(next); return; }
   visible.sort((a, b) => a.top - b.top);
-  morphBusy = true;
 
-  // 1. Snapshot outgoing text as fixed ghost layers (container shells like .dl-btn stay 100% solid!)
+  // 1. Capture outgoing text as fixed ghost layers with EXPLICIT longhand font properties (never cs.font shorthand!)
   const ghosts = visible.map((item) => {
     const g = item.el.cloneNode(true);
     g.removeAttribute('id');
     g.removeAttribute('contenteditable');
     g.setAttribute('aria-hidden', 'true');
     const cs = item.cs;
-    g.className = (item.el.className ? item.el.className + ' ' : '') + 'morph-ghost' + (item.centered ? ' centered' : '');
+    const baseOpacity = parseFloat(cs.opacity);
+    item.baseOpacity = Number.isFinite(baseOpacity) ? baseOpacity : 1;
+    g.className = (item.isLead ? 'lead ' : '') + 'lang-ghost';
     g.style.left = item.rect.left + 'px';
     g.style.top = item.rect.top + 'px';
-    g.style.width = item.rect.width + 'px';
+    if (item.singleLine) {
+      g.style.width = 'auto';
+      g.style.whiteSpace = 'nowrap';
+    } else {
+      g.style.width = (Math.ceil(item.rect.width) + 2) + 'px';
+      g.style.whiteSpace = cs.whiteSpace;
+    }
     g.style.height = item.rect.height + 'px';
-    g.style.font = cs.font;
-    g.style.color = cs.color;
-    g.style.letterSpacing = cs.letterSpacing;
+    g.style.padding = cs.padding;
+    g.style.background = 'transparent';
+    g.style.fontFamily = cs.fontFamily;
+    g.style.fontSize = cs.fontSize;
+    g.style.fontWeight = cs.fontWeight;
+    g.style.fontStyle = cs.fontStyle;
     g.style.lineHeight = cs.lineHeight;
+    g.style.letterSpacing = cs.letterSpacing;
+    g.style.fontVariantNumeric = cs.fontVariantNumeric;
+    g.style.fontFeatureSettings = cs.fontFeatureSettings;
+    g.style.color = cs.color;
     g.style.textAlign = cs.textAlign;
-    g.style.opacity = '1';
-    g.style.transform = 'scaleX(1) scaleY(1)';
+    g.style.opacity = String(item.baseOpacity);
     g.style.filter = 'blur(0px)';
     document.body.appendChild(g);
     return g;
   });
+  activeLangGhosts = ghosts;
 
-  // 2. Immediately swap to target language & set incoming inverse deformation (ZERO blank trough!)
+  // 2. Swap DOM content & prepare incoming layers invisible before first animation frame (zero frame-0 stutter!)
+  const glyphRect = glyphRowsEl.getBoundingClientRect();
+  const glyphInView = inView(glyphRect);
+  let glyphGhost = null;
+  if (glyphInView) {
+    glyphGhost = glyphRowsEl.cloneNode(true);
+    glyphGhost.removeAttribute('id');
+    glyphGhost.setAttribute('aria-hidden', 'true');
+    glyphGhost.className = 'glyph-rows lang-ghost';
+    glyphGhost.style.left = glyphRect.left + 'px';
+    glyphGhost.style.top = glyphRect.top + 'px';
+    glyphGhost.style.width = glyphRect.width + 'px';
+    glyphGhost.style.height = glyphRect.height + 'px';
+    glyphGhost.style.background = 'transparent';
+    glyphGhost.style.opacity = '1';
+    glyphGhost.style.filter = 'blur(0px)';
+    document.body.appendChild(glyphGhost);
+    activeLangGhosts.push(glyphGhost);
+  }
+
   currentLang = next;
   document.documentElement.dataset.lang = next;
   document.documentElement.lang = next === 'zh' ? 'zh-CN' : 'en';
+  langBtn.setAttribute('aria-pressed', next === 'zh' ? 'true' : 'false');
   offscreen.forEach(el => {
     if (el === leadCopy) el.innerHTML = LEAD_HTML[next];
     else el.textContent = next === 'zh' ? el.dataset.i18nZh : el.dataset.i18nEn;
   });
-
-  visible.forEach((item) => {
-    const el = item.el;
-    const isBlock = item.cs.display === 'block' || item.cs.display === 'flex' || item.cs.display === 'grid';
-    if (item.isLead) el.innerHTML = LEAD_HTML[next];
-    else el.textContent = item.newTxt;
-    el.classList.add('morph-in-prep');
-    if (isBlock) el.classList.add('block-node');
-    if (item.centered) el.classList.add('centered');
-    const inv = Math.max(0.66, Math.min(1.48, 1 / item.ratio));
-    el.style.transform = `scaleX(${inv.toFixed(3)}) scaleY(${(1 / Math.sqrt(inv)).toFixed(3)})`;
-    el.style.opacity = '0';
-    el.style.filter = 'blur(1.8px)';
+  visible.forEach(item => {
+    if (item.isLead) item.el.innerHTML = LEAD_HTML[next];
+    else item.el.textContent = item.newTxt;
+    item.el.style.willChange = 'opacity, filter';
+    item.el.style.opacity = '0';
+    item.el.style.filter = 'blur(6px)';
   });
+  renderGlyphField(next);
+  syncCaltStateLabel();
+  if (glyphInView) {
+    glyphRowsEl.style.willChange = 'opacity, filter';
+    glyphRowsEl.style.opacity = '0';
+    glyphRowsEl.style.filter = 'blur(6px)';
+  }
 
-  // Force layout flush so both outgoing ghosts & incoming elements animate simultaneously on the next frame
-  void document.body.offsetWidth;
-
-  // 3. Simultaneous cross-morph: outgoing stretches out while incoming springs in (overlapping, never blank!)
-  visible.forEach((item, idx) => {
-    const delay = Math.min(70, idx * 6);
-    const g = ghosts[idx];
-    g.style.transitionDelay = delay + 'ms';
-    g.style.transform = `scaleX(${item.ratio.toFixed(3)}) scaleY(${(1 / Math.sqrt(item.ratio)).toFixed(3)})`;
-    g.style.opacity = '0';
-    g.style.filter = 'blur(1.8px)';
-
-    const el = item.el;
-    el.classList.add('morph-in-active');
-    el.style.transitionDelay = (delay + 35) + 'ms';
-    el.style.transform = 'scaleX(1) scaleY(1)';
-    el.style.opacity = '1';
-    el.style.filter = 'blur(0px)';
-  });
-
-  setTimeout(() => {
-    ghosts.forEach(g => g.remove());
-    visible.forEach(item => {
-      const el = item.el;
-      el.classList.remove('morph-in-prep', 'block-node', 'centered', 'morph-in-active');
-      el.style.transitionDelay = '';
-      el.style.transform = '';
-      el.style.opacity = '';
-      el.style.filter = '';
+  // 3. Start WAAPI optical blur cross-dissolve cleanly on the next painted frame (butter-smooth 60-120fps)
+  langRafId = requestAnimationFrame(() => {
+    langRafId = 0;
+    let maxEnd = 0;
+    visible.forEach((item, idx) => {
+      const delay = Math.min(90, idx * 8);
+      const g = ghosts[idx];
+      const op = item.baseOpacity;
+      const outAnim = g.animate(
+        [
+          { opacity: op, filter: 'blur(0px)' },
+          { opacity: 0, filter: 'blur(6px)' }
+        ],
+        { duration: 380, delay, easing: 'cubic-bezier(.4, 0, .2, 1)', fill: 'both' }
+      );
+      const inAnim = item.el.animate(
+        [
+          { opacity: 0, filter: 'blur(6px)' },
+          { opacity: op, filter: 'blur(0px)' }
+        ],
+        { duration: 480, delay: delay + 80, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' }
+      );
+      activeLangAnims.push(outAnim, inAnim);
+      maxEnd = Math.max(maxEnd, delay + 80 + 480);
     });
-    morphBusy = false;
-  }, 440);
+    if (glyphGhost) {
+      const gOut = glyphGhost.animate(
+        [{ opacity: 1, filter: 'blur(0px)' }, { opacity: 0, filter: 'blur(6px)' }],
+        { duration: 380, delay: 40, easing: 'cubic-bezier(.4, 0, .2, 1)', fill: 'both' }
+      );
+      const gIn = glyphRowsEl.animate(
+        [{ opacity: 0, filter: 'blur(6px)' }, { opacity: 1, filter: 'blur(0px)' }],
+        { duration: 480, delay: 120, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' }
+      );
+      activeLangAnims.push(gOut, gIn);
+      maxEnd = Math.max(maxEnd, 600);
+    }
+
+    langCleanupTimer = setTimeout(() => {
+      clearLangTransition();
+    }, maxEnd + 50);
+  });
 }
 
 function toggleLanguage() {
-  if (morphBusy) return;
+  playSwitchSound();
   const next = currentLang === 'en' ? 'zh' : 'en';
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    clearLangTransition();
     applyLangInstant(next);
     return;
   }
-  runStretchMorph(next);
+  runOpticalCrossDissolve(next);
 }
 
 langBtn.addEventListener('click', toggleLanguage);
@@ -1683,6 +1798,7 @@ document.addEventListener('keydown', (e) => {
   const tag = (e.target && e.target.tagName) || '';
   if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable)) return;
   if (e.key === 'd' || e.key === 'D') {
+    playSwitchSound();
     const next = (changingTheme ? requestedTheme : currentTheme()) === 'dark' ? 'light' : 'dark';
     setTheme(next, true, null);
   }
